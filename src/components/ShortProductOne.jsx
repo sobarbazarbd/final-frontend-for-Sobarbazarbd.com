@@ -403,7 +403,7 @@ const ShortProductOne = () => {
                       <div className='w-90 h-90 rounded-12 border border-gray-100 flex-shrink-0'>
                         <Link href='/product-details' className='link'>
                           <img
-                            src='assets/images/thumbs/short-product-img5.png'
+                            src='assets/images/thumbs/short-product-img1.png'
                             alt='marketpro'
                           />
                         </Link>
@@ -561,7 +561,7 @@ const ShortProductOne = () => {
                       <div className='w-90 h-90 rounded-12 border border-gray-100 flex-shrink-0'>
                         <Link href='/product-details' className='link'>
                           <img
-                            src='assets/images/thumbs/short-product-img5.png'
+                            src='assets/images/thumbs/short-product-img1.png'
                             alt='marketpro'
                           />
                         </Link>
