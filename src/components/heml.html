@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résolution des Problèmes d'Images - PrestaShop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e8e8e8;
+        }
+        
+        .problem-section {
+            background-color: #fff4f4;
+            border-left: 4px solid #ff6b6b;
+        }
+        
+        .solution-section {
+            background-color: #f4fff8;
+            border-left: 4px solid #51cf66;
+        }
+        
+        .steps {
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+        
+        .steps li {
+            margin-bottom: 10px;
+        }
+        
+        .code {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        
+        .important {
+            background-color: #fff9db;
+            border-left: 4px solid #fcc419;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .button {
+            display: inline-block;
+            background-color: #4a6491;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        
+        .button:hover {
+            background-color: #2c3e50;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Problèmes d'Affichage des Images PrestaShop</h1>
+            <p class="subtitle">Solutions pour résoudre les problèmes d'images non affichées sur le frontend</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card problem-section">
+            <h2>Problème Identifié</h2>
+            <p>Les images téléchargées dans le backoffice de PrestaShop n'apparaissent pas sur le frontend de votre boutique, notamment sur la page des poêles.</p>
+            <p>URL concernée : <code>https://mauviel.pp.search-factory.eu/fr/80-poeles</code></p>
+        </div>
+
+        <div class="card">
+            <h2>Causes Possibles</h2>
+            <ul class="steps">
+                <li>Problème de régénération des miniatures après l'upload</li>
+                <li>Permissions incorrectes sur les dossiers d'images</li>
+                <li>Cache du navigateur ou cache PrestaShop activé</li>
+                <li>Problèmes de configuration du serveur (HTACCESS)</li>
+                <li>Erreurs dans la base de données des images</li>
+            </ul>
+        </div>
+
+        <div class="card solution-section">
+            <h2>Solution 1: Régénération des Miniatures</h2>
+            <p>Cette solution résout 80% des problèmes d'images dans PrestaShop.</p>
+            <ol class="steps">
+                <li>Connectez-vous à l'administration PrestaShop</li>
+                <li>Allez dans <strong>Design > Image Settings</strong></li>
+                <li>Faites défiler jusqu'à la section "Regenerate thumbnails"</li>
+                <li>Sélectionnez "All" dans le menu déroulant</li>
+                <li>Cochez "Erase previous images"</li>
+                <li>Cliquez sur "Regenerate thumbnails now"</li>
+                <li>Attendez que le processus se termine (peut prendre plusieurs minutes)</li>
+            </ol>
+        </div>
+
+        <div class="card solution-section">
+            <h2>Solution 2: Vérification des Permissions</h2>
+            <p>Utilisez FileZilla pour vérifier et corriger les permissions des dossiers.</p>
+            <ol class="steps">
+                <li>Connectez-vous à votre serveur via FileZilla</li>
+                <li>Accédez au dossier principal de PrestaShop</li>
+                <li>Recherchez le dossier <strong>/img</strong></li>
+                <li>Cliquez droit sur le dossier et sélectionnez "Permissions"</li>
+                <li>Définissez les permissions à <strong>755</strong> pour les dossiers</li>
+                <li>Définissez les permissions à <strong>644</strong> pour les fichiers</li>
+                <li>Appliquez ces paramètres à tous les sous-dossiers et fichiers</li>
+            </ol>
+            
+            <div class="important">
+                <p><strong>Important :</strong> Si vous ne pouvez pas modifier les permissions, contactez votre hébergeur pour qu'il le fasse pour vous.</p>
+            </div>
+        </div>
+
+        <div class="card solution-section">
+            <h2>Solution 3: Vidage des Caches</h2>
+            <p>Videz tous les caches pour forcer le rechargement des images.</p>
+            <ol class="steps">
+                <li>Dans l'admin PrestaShop, allez dans <strong>Advanced Parameters > Performance</strong></li>
+                <li>Cliquez sur "Clear cache" pour vider le cache Smarty</li>
+                <li>Videz également le cache de votre navigateur (Ctrl+F5)</li>
+                <li>Si vous utilisez un cache serveur (Varnish, etc.), videz-le également</li>
+                <li>Si vous avez un module de cache, videz son cache également</li>
+            </ol>
+        </div>
+
+        <div class="card solution-section">
+            <h2>Solution 4: Vérification de la Configuration</h2>
+            <p>Vérifiez les paramètres d'images dans PrestaShop.</p>
+            <ol class="steps">
+                <li>Allez dans <strong>Design > Image Settings</strong></li>
+                <li>Vérifiez que tous les types d'images sont activés</li>
+                <li>Vérifiez que les dimensions sont correctement configurées</li>
+                <li>Allez dans <strong>Shop Parameters > General</strong></li>
+                <li>Vérifiez que le mode de débogage n'est pas activé</li>
+            </ol>
+        </div>
+
+        <div class="important">
+            <p><strong>Conseil :</strong> Après avoir appliqué ces solutions, testez toujours votre site dans une fenêtre de navigation privée pour éviter les problèmes de cache.</p>
+        </div>
+
+        <a href="#" class="button">Accéder à l'Admin PrestaShop</a>
+        <a href="https://mauviel.pp.search-factory.eu/fr/80-poeles" class="button">Vérifier la page des poêles</a>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 Solutions PrestaShop - Assistance Technique</p>
+            <p>Cette page a été créée pour résoudre les problèmes d'affichage des images sur votre site PrestaShop.</p>
+        </div>
+    </footer>
+</body>
+</html>
