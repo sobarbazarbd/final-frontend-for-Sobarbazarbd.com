@@ -38,7 +38,7 @@ const page = () => {
   return (
     <>
       {/* Preloader */}
-      <Preloader />
+      {/* <Preloader /> */}
 
       {/* ScrollToTop */}
       <ScrollToTopInit color='#299E60' />
@@ -47,7 +47,7 @@ const page = () => {
       <ColorInit color={false} />
 
       {/* HeaderOne */}
-      <HeaderOne />
+      {/* <HeaderOne /> */}
 
       {/* BannerOne */}
       <BannerOne />
