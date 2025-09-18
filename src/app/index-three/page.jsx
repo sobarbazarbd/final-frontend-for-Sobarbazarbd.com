@@ -1,90 +1,90 @@
-// import BannerThree from "@/components/BannerThree";
-// import BrandThree from "@/components/BrandThree";
-// import DealsSection from "@/components/DealsSection";
-// import DiscountThree from "@/components/DiscountThree";
-// import FeatureThree from "@/components/FeatureThree";
-// import FooterThree from "@/components/FooterThree";
-// import HeaderThree from "@/components/HeaderThree";
-// import InstagramSection from "@/components/InstagramSection";
-// import NewArrivalThree from "@/components/NewArrivalThree";
-// import NewsletterThree from "@/components/NewsletterThree";
-// import PopularProductsThree from "@/components/PopularProductsThree";
-// import PromotionalThree from "@/components/PromotionalThree";
-// import ShippingThree from "@/components/ShippingThree";
-// import TestimonialOne from "@/components/TestimonialOne";
-// import TextSlider from "@/components/TextSlider";
-// import TrendingThree from "@/components/TrendingThree";
-// import ColorInit from "@/helper/ColorInit";
-// import Preloader from "@/helper/Preloader";
-// import ScrollToTopInit from "@/helper/ScrollToTopInit";
+import BannerThree from "@/components/BannerThree";
+import BrandThree from "@/components/BrandThree";
+import DealsSection from "@/components/DealsSection";
+import DiscountThree from "@/components/DiscountThree";
+import FeatureThree from "@/components/FeatureThree";
+import FooterThree from "@/components/FooterThree";
+import HeaderThree from "@/components/HeaderThree";
+import InstagramSection from "@/components/InstagramSection";
+import NewArrivalThree from "@/components/NewArrivalThree";
+import NewsletterThree from "@/components/NewsletterThree";
+import PopularProductsThree from "@/components/PopularProductsThree";
+import PromotionalThree from "@/components/PromotionalThree";
+import ShippingThree from "@/components/ShippingThree";
+import TestimonialOne from "@/components/TestimonialOne";
+import TextSlider from "@/components/TextSlider";
+import TrendingThree from "@/components/TrendingThree";
+import ColorInit from "@/helper/ColorInit";
+import Preloader from "@/helper/Preloader";
+import ScrollToTopInit from "@/helper/ScrollToTopInit";
 
-// export const metadata = {
-//   title: "SobazarBd - Oniline Shopping Complex",
-//   description:
-//     "User-friendly online marketplace..",
-// };
+export const metadata = {
+  title: "SobazarBd - Oniline Shopping Complex",
+  description:
+    "User-friendly online marketplace..",
+};
 
-// const page = () => {
-//   return (
-//     <>
-//       {/* ColorInit */}
-//       <ColorInit color={true} />
+const page = () => {
+  return (
+    <>
+      {/* ColorInit */}
+      <ColorInit color={true} />
 
-//       {/* ScrollToTop */}
-//       <ScrollToTopInit color='#FA6400' />
+      {/* ScrollToTop */}
+      <ScrollToTopInit color='#FA6400' />
 
-//       {/* Preloader */}
-//       <Preloader />
+      {/* Preloader */}
+      <Preloader />
 
-//       {/* HeaderThree */}
-//       <HeaderThree />
+      {/* HeaderThree */}
+      <HeaderThree />
 
-//       {/* BannerThree */}
-//       <BannerThree />
+      {/* BannerThree */}
+      <BannerThree />
 
-//       {/* PromotionalThree */}
-//       <PromotionalThree />
+      {/* PromotionalThree */}
+      <PromotionalThree />
 
-//       {/* FeatureThree */}
-//       <FeatureThree />
+      {/* FeatureThree */}
+      <FeatureThree />
 
-//       {/* TextSlider */}
-//       <TextSlider />
+      {/* TextSlider */}
+      <TextSlider />
 
-//       {/* TrendingThree */}
-//       <TrendingThree />
+      {/* TrendingThree */}
+      <TrendingThree />
 
-//       {/* DiscountThree */}
-//       <DiscountThree />
+      {/* DiscountThree */}
+      <DiscountThree />
 
-//       {/* NewArrivalThree */}
-//       <NewArrivalThree />
+      {/* NewArrivalThree */}
+      <NewArrivalThree />
 
-//       {/* DealsSection */}
-//       <DealsSection />
+      {/* DealsSection */}
+      <DealsSection />
 
-//       {/* PopularProductsThree */}
-//       <PopularProductsThree />
+      {/* PopularProductsThree */}
+      <PopularProductsThree />
 
-//       {/* BrandThree */}
-//       <BrandThree />
+      {/* BrandThree */}
+      <BrandThree />
 
-//       {/* ShippingThree */}
-//       <ShippingThree />
+      {/* ShippingThree */}
+      <ShippingThree />
 
-//       {/* TestimonialOne */}
-//       <TestimonialOne />
+      {/* TestimonialOne */}
+      <TestimonialOne />
 
-//       {/* InstagramSection */}
-//       <InstagramSection />
+      {/* InstagramSection */}
+      <InstagramSection />
 
-//       {/* NewsletterThree */}
-//       <NewsletterThree />
+      {/* NewsletterThree */}
+      <NewsletterThree />
 
-//       {/* FooterThree */}
-//       <FooterThree />
-//     </>
-//   );
-// };
+      {/* FooterThree */}
+      <FooterThree />
+    </>
+  );
+};
 
-// export default page;
+export default page;
