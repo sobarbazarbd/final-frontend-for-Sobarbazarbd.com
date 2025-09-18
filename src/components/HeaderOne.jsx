@@ -712,6 +712,39 @@ const HeaderOne = () => {
         </div>
       </header>
       {/* ==================== Header End Here ==================== */}
+      {/* ==================== Mobile Bottom Navbar Start ==================== */}
+<nav className="navbar fixed-bottom navbar-light bg-white border-top shadow-sm d-lg-none">
+  <div className="container-fluid d-flex justify-content-between text-center">
+    <Link href="/" className="flex-fill text-decoration-none text-dark py-2">
+      <i className="ph ph-house fs-4 d-block"></i>
+      <small className="d-block">Home</small>
+    </Link>
+    <Link href="/shop" className="flex-fill text-decoration-none text-dark py-2">
+      <i className="ph ph-storefront fs-4 d-block"></i>
+      <small className="d-block">Shop</small>
+    </Link>
+    <Link href="/cart" className="flex-fill text-decoration-none text-dark py-2 position-relative">
+      <i className="ph ph-shopping-cart-simple fs-4 d-block"></i>
+      <small className="d-block">Cart</small>
+      <span className="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger">
+        2
+      </span>
+    </Link>
+    <Link href="/wishlist" className="flex-fill text-decoration-none text-dark py-2 position-relative">
+      <i className="ph ph-heart fs-4 d-block"></i>
+      <small className="d-block">Wishlist</small>
+      <span className="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger">
+        2
+      </span>
+    </Link>
+    <Link href="/account" className="flex-fill text-decoration-none text-dark py-2">
+      <i className="ph ph-user-circle fs-4 d-block"></i>
+      <small className="d-block">Account</small>
+    </Link>
+  </div>
+</nav>
+{/* ==================== Mobile Bottom Navbar End ==================== */}
+
     </>
   );
 };

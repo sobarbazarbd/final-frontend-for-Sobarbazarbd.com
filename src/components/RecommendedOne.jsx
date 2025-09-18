@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 
 const RecommendedOne = () => {
@@ -9,134 +7,122 @@ const RecommendedOne = () => {
     {
       id: 1,
       name: "C-500 Antioxidant Protect Dietary Supplement",
-      image: "/assets/images/thumbs/product-img7.png",
+      image: "assets/images/thumbs/product-img7.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: null,
-      category: "all"
     },
     {
       id: 2,
       name: "Marcel's Modern Pantry Almond Unsweetened",
-      image: "/assets/images/thumbs/product-img8.png",
+      image: "assets/images/thumbs/product-img8.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: { type: "danger", text: "Sale 50%" },
-      category: "grocery"
     },
     {
       id: 3,
       name: "O Organics Milk, Whole, Vitamin D",
-      image: "/assets/images/thumbs/product-img9.png",
+      image: "assets/images/thumbs/product-img9.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: { type: "danger", text: "Sale 50%" },
-      category: "grocery"
     },
     {
       id: 4,
       name: "Whole Grains and Seeds Organic Bread",
-      image: "/assets/images/thumbs/product-img10.png",
+      image: "assets/images/thumbs/product-img10.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: { type: "info", text: "Best Sale" },
-      category: "organic"
     },
     {
       id: 5,
       name: "Lucerne Yogurt, Lowfat, Strawberry",
-      image: "/assets/images/thumbs/product-img11.png",
+      image: "assets/images/thumbs/product-img11.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: null,
-      category: "grocery"
     },
     {
       id: 6,
       name: "Nature Valley Whole Grain Oats and Honey Protein",
-      image: "/assets/images/thumbs/product-img12.png",
+      image: "assets/images/thumbs/product-img12.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: { type: "danger", text: "Sale 50%" },
-      category: "snacks"
     },
     {
       id: 7,
       name: "C-500 Antioxidant Protect Dietary Supplement",
-      image: "/assets/images/thumbs/product-img13.png",
+      image: "assets/images/thumbs/product-img13.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: null,
-      category: "all"
     },
     {
       id: 8,
       name: "C-500 Antioxidant Protect Dietary Supplement",
-      image: "/assets/images/thumbs/product-img14.png",
+      image: "assets/images/thumbs/product-img14.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: { type: "danger", text: "Sale 50%" },
-      category: "all"
     },
     {
       id: 9,
       name: "C-500 Antioxidant Protect Dietary Supplement",
-      image: "/assets/images/thumbs/product-img15.png",
+      image: "assets/images/thumbs/product-img15.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: { type: "warning", text: "New" },
-      category: "all"
     },
     {
       id: 10,
       name: "Good & Gather Farmed Atlantic Salmon",
-      image: "/assets/images/thumbs/product-img16.png",
+      image: "assets/images/thumbs/product-img16.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: { type: "danger", text: "Sale 50%" },
-      category: "grocery"
     },
     {
       id: 11,
       name: "Market Pantry 41/50 Raw Tail-Off Large Raw Shrimp",
-      image: "/assets/images/thumbs/product-img17.png",
+      image: "assets/images/thumbs/product-img17.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: { type: "danger", text: "Sale 50%" },
-      category: "grocery"
     },
     {
       id: 12,
       name: "Tropicana 100% Juice, Orange, No Pulp",
-      image: "/assets/images/thumbs/product-img18.png",
+      image: "assets/images/thumbs/product-img18.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: { type: "warning", text: "New" },
-      category: "juices"
     },
   ];
 
@@ -150,12 +136,6 @@ const RecommendedOne = () => {
     { id: "snacks", name: "Snacks" },
     { id: "organic", name: "Organic Foods" },
   ];
-
-  // Filter products by category
-  const filterProductsByCategory = (categoryId) => {
-    if (categoryId === "all") return products;
-    return products.filter(product => product.category === categoryId);
-  };
 
   // Product card component
   const ProductCard = ({ product }) => (
@@ -184,11 +164,11 @@ const RecommendedOne = () => {
           <div className="product-card__content mt-12">
             <div className="product-card__price mb-8">
               <span className="text-heading text-md fw-semibold">
-                ${product.price}{" "}
+                TK{product.price}{" "}
                 <span className="text-gray-500 fw-normal">/Qty</span>{" "}
               </span>
               <span className="text-gray-400 text-md fw-semibold text-decoration-line-through">
-                ${product.originalPrice}
+                TK{product.originalPrice}
               </span>
             </div>
             <div className="flex-align gap-6">
@@ -209,15 +189,6 @@ const RecommendedOne = () => {
       </div>
     </div>
   );
-
-  // Load Bootstrap JavaScript
-  useEffect(() => {
-    // This ensures Bootstrap's JavaScript is loaded for the tabs to work
-    if (typeof window !== 'undefined') {
-      // Import Bootstrap JavaScript
-      import('bootstrap/dist/js/bootstrap.bundle.min.js');
-    }
-  }, []);
 
   return (
     <section className="recommended">
@@ -254,7 +225,7 @@ const RecommendedOne = () => {
               tabIndex={0}
             >
               <div className="row g-12">
-                {filterProductsByCategory(category.id).map((product) => (
+                {products.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
