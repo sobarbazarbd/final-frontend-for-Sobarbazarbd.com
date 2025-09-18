@@ -132,7 +132,7 @@ const ProductDetailsOne = () => {
                       <span className='text-md text-gray-500'>$38.00</span>
                     </div>
                     <Link href='#' className='btn btn-main rounded-pill'>
-                      Order on What'sApp
+                      Order App
                     </Link>
                   </div>
                   <span className='mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block' />

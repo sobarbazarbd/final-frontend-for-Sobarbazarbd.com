@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
 import query from "jquery";
 
 // Configuration objects for dynamic content
@@ -32,33 +31,11 @@ const headerConfig = {
   navigation: [
     {
       title: "Home",
-      path: "#",
-      submenu: [
-        { title: "Home Grocery", path: "/" },
-        { title: "Home Electronics", path: "/index-two" },
-        { title: "Home Fashion", path: "/index-three" },
-      ],
+      path: "/",
     },
     {
       title: "Shop",
-      path: "#",
-      submenu: [
-        { title: "Shop", path: "/shop" },
-        { title: "Shop Details", path: "/product-details" },
-        { title: "Shop Details Two", path: "/product-details-two" },
-      ],
-    },
-    {
-      title: "Pages",
-      path: "#",
-      badge: { text: "New", color: "warning" },
-      submenu: [
-        { title: "Cart", path: "/cart" },
-        { title: "Wishlist", path: "/wishlist" },
-        { title: "Checkout", path: "/checkout" },
-        { title: "Become Seller", path: "/become-seller" },
-        { title: "Account", path: "/account" },
-      ],
+      path: "/shop",
     },
     {
       title: "Vendors",
@@ -69,14 +46,6 @@ const headerConfig = {
         { title: "Vendor Details", path: "/vendor-details" },
         { title: "Vendors Two", path: "/vendor-two" },
         { title: "Vendors Two Details", path: "/vendor-two-details" },
-      ],
-    },
-    {
-      title: "Blog",
-      path: "#",
-      submenu: [
-        { title: "Blog", path: "/blog" },
-        { title: "Blog Details", path: "/blog-details" },
       ],
     },
     {
