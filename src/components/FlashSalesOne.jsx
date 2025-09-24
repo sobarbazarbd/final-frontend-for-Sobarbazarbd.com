@@ -36,7 +36,7 @@ const FlashSalesOne = () => {
     dots: false,
     arrows: true,
     infinite: true,
-    speed: 1000,
+    speed: 1500,
     slidesToShow: 2,
     slidesToScroll: 1,
     initialSlide: 0,

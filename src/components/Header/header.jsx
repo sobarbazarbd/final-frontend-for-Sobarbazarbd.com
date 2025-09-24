@@ -290,6 +290,8 @@ const HeaderOne = () => {
                 </ul>
               </li>
 
+              {/* Page Menu Ends */}
+
               {/* Vendors Menu */}
               <li
                 onClick={() => handleMenuClick(3)}

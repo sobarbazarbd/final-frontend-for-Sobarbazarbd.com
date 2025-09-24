@@ -3,8 +3,8 @@ import React from "react";
 import Link from "next/link";
 import Slider from "react-slick";
 
-// Configuration object for feature items
-const featureConfig = {
+// Default configuration
+const defaultFeatureConfig = {
   items: [
     {
       id: 1,
@@ -81,10 +81,12 @@ const featureConfig = {
     dots: false,
     arrows: true,
     infinite: true,
-    speed: 1000,
+    speed: 1500,
     slidesToShow: 10,
     slidesToScroll: 1,
     initialSlide: 0,
+    autoplay: true,
+    autoplaySpeed: 3000,
     responsive: [
       {
         breakpoint: 1699,
@@ -138,7 +140,25 @@ const featureConfig = {
   }
 };
 
-const FeatureOne = () => {
+const FeatureOne = ({ 
+  features = [], 
+  sliderConfig = {},
+  sectionId = "featureSection",
+  showArrows = true 
+}) => {
+  // Merge provided features with defaults
+  const featureItems = features.length > 0 ? features : defaultFeatureConfig.items;
+  
+  // Merge provided slider config with defaults
+  const mergedSliderSettings = {
+    ...defaultFeatureConfig.sliderSettings,
+    ...sliderConfig,
+    responsive: [
+      ...defaultFeatureConfig.sliderSettings.responsive,
+      ...(sliderConfig.responsive || [])
+    ]
+  };
+
   // Custom arrow components
   function SampleNextArrow(props) {
     const { className, onClick } = props;
@@ -146,7 +166,8 @@ const FeatureOne = () => {
       <button
         type='button'
         onClick={onClick}
-        className={` ${className} slick-next slick-arrow flex-center rounded-circle bg-white text-xl hover-bg-main-600 hover-text-white transition-1`}
+        className={`${className} slick-next slick-arrow flex-center rounded-circle bg-white text-xl hover-bg-main-600 hover-text-white transition-1`}
+        aria-label="Next slide"
       >
         <i className='ph ph-caret-right' />
       </button>
@@ -160,6 +181,7 @@ const FeatureOne = () => {
         type='button'
         onClick={onClick}
         className={`${className} slick-prev slick-arrow flex-center rounded-circle bg-white text-xl hover-bg-main-600 hover-text-white transition-1`}
+        aria-label="Previous slide"
       >
         <i className='ph ph-caret-left' />
       </button>
@@ -168,43 +190,49 @@ const FeatureOne = () => {
 
   // Complete slider settings with custom arrows
   const settings = {
-    ...featureConfig.sliderSettings,
-    nextArrow: <SampleNextArrow />,
-    prevArrow: <SamplePrevArrow />,
+    ...mergedSliderSettings,
+    nextArrow: showArrows ? <SampleNextArrow /> : undefined,
+    prevArrow: showArrows ? <SamplePrevArrow /> : undefined,
   };
 
   return (
-    <div className='feature' id='featureSection'>
+    <div className='feature' id={sectionId}>
       <div className='container container-lg'>
         <div className='position-relative arrow-center'>
-          <div className='flex-align'>
-            <button
-              type='button'
-              id='feature-item-wrapper-prev'
-              className='slick-prev slick-arrow flex-center rounded-circle bg-white text-xl hover-bg-main-600 hover-text-white transition-1'
-            >
-              <i className='ph ph-caret-left' />
-            </button>
-            <button
-              type='button'
-              id='feature-item-wrapper-next'
-              className='slick-next slick-arrow flex-center rounded-circle bg-white text-xl hover-bg-main-600 hover-text-white transition-1'
-            >
-              <i className='ph ph-caret-right' />
-            </button>
-          </div>
+          {showArrows && (
+            <div className='flex-align'>
+              <button
+                type='button'
+                id='feature-item-wrapper-prev'
+                className='slick-prev slick-arrow flex-center rounded-circle bg-white text-xl hover-bg-main-600 hover-text-white transition-1'
+              >
+                <i className='ph ph-caret-left' />
+              </button>
+              <button
+                type='button'
+                id='feature-item-wrapper-next'
+                className='slick-next slick-arrow flex-center rounded-circle bg-white text-xl hover-bg-main-600 hover-text-white transition-1'
+              >
+                <i className='ph ph-caret-right' />
+              </button>
+            </div>
+          )}
           <div className='feature-item-wrapper'>
             <Slider {...settings}>
-              {featureConfig.items.map((item) => (
+              {featureItems.map((item) => (
                 <div key={item.id} className='feature-item text-center'>
                   <div className='feature-item__thumb rounded-circle'>
                     <Link href={item.link} className='w-100 h-100 flex-center'>
-                      <img src={item.image} alt={item.title} />
+                      <img 
+                        src={item.image} 
+                        alt={item.alt || item.title} 
+                        loading="lazy"
+                      />
                     </Link>
                   </div>
                   <div className='feature-item__content mt-16'>
                     <h6 className='text-lg mb-8'>
-                      <Link href={item.link} className='text-inherit'>
+                      <Link href={item.link} className='text-inherit hover-text-main-600'>
                         {item.title}
                       </Link>
                     </h6>
