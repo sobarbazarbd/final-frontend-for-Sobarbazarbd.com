@@ -5,9 +5,9 @@ import "./globals.scss";
 import PhosphorIconInit from "@/helper/PhosphorIconInit";
 
 export const metadata = {
-  title: "Digital Market Place NEXT Js Template",
+  title: "SobazarBd - Oniline Shopping Complex",
   description:
-    "DpMarket – Digital Products Marketplace NEXT JS Template – A versatile and meticulously designed set of templates crafted to elevate your Digital Products Marketplace content and experiences.",
+    "SobazarBd - Oniline Shopping Complex",
 };
 
 export default function RootLayout({ children }) {
