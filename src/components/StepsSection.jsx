@@ -14,7 +14,7 @@ const StepsSection = () => {
             <div className='col-lg-6'>
               <div className='step-content'>
                 <div className='section-heading ms-auto text-end'>
-                  <h5 className=''>Over $200k in potential benefits</h5>
+                  <h5 className=''>Over tk 200k in potential benefits</h5>
                   <span className='text-gray-600'>
                     Ready to sell? Launch your brand today with a powerful for
                     new sellers and over $200k in potential benefits

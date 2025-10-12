@@ -15,6 +15,7 @@ import NewArrivalThree from "@/components/NewArrivalThree";
 import NewsletterOne from "@/components/NewsletterOne";
 import OfferOne from "@/components/OfferOne";
 import OrganicOne from "@/components/OrganicOne";
+import PopularProductsOne from "@/components/PopularProductsOne";
 import ProductListOne from "@/components/ProductListOne";
 import PromotionalOne from "@/components/PromotionalOne";
 import PromotionalThree from "@/components/PromotionalThree";
@@ -63,6 +64,7 @@ const page = () => {
       <FlashSalesOne />
         {/* RecommendedOne */}
       <RecommendedOne />
+      <PopularProductsOne></PopularProductsOne>
       
       {/* NewArrivalThree */}
       <NewArrivalThree />
