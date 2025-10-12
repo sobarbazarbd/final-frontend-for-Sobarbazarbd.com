@@ -130,7 +130,7 @@ const Contact = () => {
                   href='/mailto:support24@marketpro.com'
                   className='text-md text-gray-900 hover-text-main-600'
                 >
-                  support24@marketpro.com
+                  support24@sobarbazarbd.com
                 </Link>
               </div>
               <div className='flex-align gap-16 mb-0'>
