@@ -2,19 +2,21 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import Slider from "react-slick";
+import dynamic from "next/dynamic";
+
+// Import Slider dynamically, disable SSR to avoid hydration errors
+const Slider = dynamic(() => import("react-slick"), { ssr: false });
 
 const BannerOne = ({
   banners = [],
   scrollTarget = "#featureSection",
   exploreButtonText = "Explore Shop",
-  slideDuration = 6500, // Time each slide stays visible
-  transitionSpeed = 1500, // Slide transition speed
-  dataSource = "/data/banner.json", // Dynamic data source
+  slideDuration = 6500,
+  transitionSpeed = 1500,
+  dataSource = "/data/banner.json",
 }) => {
-  const [bannerData, setBannerData] = useState([]);
+  const [bannerData, setBannerData] = useState(null); // Start with null
 
-  // Default banners if none provided or fetch fails
   const defaultBanners = [
     {
       id: 1,
@@ -33,13 +35,11 @@ const BannerOne = ({
   ];
 
   useEffect(() => {
-    const fetchBannerData = async () => {
+    const fetchData = async () => {
       try {
-        // Try fetching from local JSON (public/data/banner.json)
         const res = await fetch(dataSource);
-        if (!res.ok) throw new Error("Failed to load banner data");
+        if (!res.ok) throw new Error("Failed to fetch banner data");
         const data = await res.json();
-
         if (Array.isArray(data) && data.length > 0) {
           setBannerData(data);
         } else if (banners.length > 0) {
@@ -47,16 +47,17 @@ const BannerOne = ({
         } else {
           setBannerData(defaultBanners);
         }
-      } catch (error) {
-        console.warn("⚠️ Using default banner data:", error.message);
+      } catch (err) {
+        console.warn("⚠️ Using default banners", err);
         setBannerData(banners.length > 0 ? banners : defaultBanners);
       }
     };
-
-    fetchBannerData();
+    fetchData();
   }, [banners, dataSource]);
 
-  // Custom Arrows
+  // Return null on server (prevents hydration mismatch)
+  if (!bannerData) return null;
+
   const SampleNextArrow = ({ className, onClick }) => (
     <button
       type="button"
@@ -77,7 +78,6 @@ const BannerOne = ({
     </button>
   );
 
-  // Slider Settings
   const settings = {
     dots: false,
     arrows: true,
@@ -133,7 +133,7 @@ const BannerOne = ({
                       >
                         {exploreButtonText}{" "}
                         <span className="icon text-xl d-flex">
-                          <i className="ph ph-shopping-cart-simple" />{" "}
+                          <i className="ph ph-shopping-cart-simple" />
                         </span>
                       </Link>
                     </div>
