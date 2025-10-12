@@ -1,129 +1,62 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const RecommendedOne = () => {
+  const router = useRouter();
+  
   // Product data array
   const products = [
     {
       id: 1,
       name: "C-500 Antioxidant Protect Dietary Supplement",
-      image: "assets/images/thumbs/product-img7.png",
+      image: "/assets/images/thumbs/product-img7.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: null,
+      category: "supplements",
+      slug: "c-500-antioxidant-protect-dietary-supplement"
     },
     {
       id: 2,
       name: "Marcel's Modern Pantry Almond Unsweetened",
-      image: "assets/images/thumbs/product-img8.png",
+      image: "/assets/images/thumbs/product-img8.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: { type: "danger", text: "Sale 50%" },
+      category: "grocery",
+      slug: "marcels-modern-pantry-almond-unsweetened"
     },
     {
       id: 3,
       name: "O Organics Milk, Whole, Vitamin D",
-      image: "assets/images/thumbs/product-img9.png",
+      image: "/assets/images/thumbs/product-img9.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: { type: "danger", text: "Sale 50%" },
+      category: "dairy",
+      slug: "o-organics-milk-whole-vitamin-d"
     },
     {
       id: 4,
       name: "Whole Grains and Seeds Organic Bread",
-      image: "assets/images/thumbs/product-img10.png",
+      image: "/assets/images/thumbs/product-img10.png",
       price: 14.99,
       originalPrice: 28.99,
       rating: 4.8,
       reviews: "17k",
       badge: { type: "info", text: "Best Sale" },
-    },
-    {
-      id: 5,
-      name: "Lucerne Yogurt, Lowfat, Strawberry",
-      image: "assets/images/thumbs/product-img11.png",
-      price: 14.99,
-      originalPrice: 28.99,
-      rating: 4.8,
-      reviews: "17k",
-      badge: null,
-    },
-    {
-      id: 6,
-      name: "Nature Valley Whole Grain Oats and Honey Protein",
-      image: "assets/images/thumbs/product-img12.png",
-      price: 14.99,
-      originalPrice: 28.99,
-      rating: 4.8,
-      reviews: "17k",
-      badge: { type: "danger", text: "Sale 50%" },
-    },
-    {
-      id: 7,
-      name: "C-500 Antioxidant Protect Dietary Supplement",
-      image: "assets/images/thumbs/product-img13.png",
-      price: 14.99,
-      originalPrice: 28.99,
-      rating: 4.8,
-      reviews: "17k",
-      badge: null,
-    },
-    {
-      id: 8,
-      name: "C-500 Antioxidant Protect Dietary Supplement",
-      image: "assets/images/thumbs/product-img14.png",
-      price: 14.99,
-      originalPrice: 28.99,
-      rating: 4.8,
-      reviews: "17k",
-      badge: { type: "danger", text: "Sale 50%" },
-    },
-    {
-      id: 9,
-      name: "C-500 Antioxidant Protect Dietary Supplement",
-      image: "assets/images/thumbs/product-img15.png",
-      price: 14.99,
-      originalPrice: 28.99,
-      rating: 4.8,
-      reviews: "17k",
-      badge: { type: "warning", text: "New" },
-    },
-    {
-      id: 10,
-      name: "Good & Gather Farmed Atlantic Salmon",
-      image: "assets/images/thumbs/product-img16.png",
-      price: 14.99,
-      originalPrice: 28.99,
-      rating: 4.8,
-      reviews: "17k",
-      badge: { type: "danger", text: "Sale 50%" },
-    },
-    {
-      id: 11,
-      name: "Market Pantry 41/50 Raw Tail-Off Large Raw Shrimp",
-      image: "assets/images/thumbs/product-img17.png",
-      price: 14.99,
-      originalPrice: 28.99,
-      rating: 4.8,
-      reviews: "17k",
-      badge: { type: "danger", text: "Sale 50%" },
-    },
-    {
-      id: 12,
-      name: "Tropicana 100% Juice, Orange, No Pulp",
-      image: "assets/images/thumbs/product-img18.png",
-      price: 14.99,
-      originalPrice: 28.99,
-      rating: 4.8,
-      reviews: "17k",
-      badge: { type: "warning", text: "New" },
-    },
+      category: "bakery",
+      slug: "whole-grains-and-seeds-organic-bread"
+    }
   ];
 
   // Tab categories
@@ -137,6 +70,19 @@ const RecommendedOne = () => {
     { id: "organic", name: "Organic Foods" },
   ];
 
+  // Handle product click
+  const handleProductClick = (product) => {
+    // Navigate to product details page
+    router.push(`/product/${product.slug}`);
+  };
+
+  // Handle category filter
+  const [activeCategory, setActiveCategory] = useState("all");
+
+  const filteredProducts = activeCategory === "all" 
+    ? products 
+    : products.filter(product => product.category === activeCategory);
+
   // Product card component
   const ProductCard = ({ product }) => (
     <div className="col-xxl-2 col-lg-3 col-sm-4 col-6">
@@ -146,14 +92,22 @@ const RecommendedOne = () => {
             {product.badge.text}
           </span>
         )}
-        <Link href="/product-details" className="product-card__thumb flex-center">
-          <img src={product.image} alt={product.name} />
-        </Link>
+        <div 
+          className="product-card__thumb flex-center cursor-pointer"
+          onClick={() => handleProductClick(product)}
+          style={{ cursor: 'pointer', height: '200px' }}
+        >
+          <img src={product.image} alt={product.name} style={{ maxHeight: '150px', objectFit: 'contain' }} />
+        </div>
         <div className="product-card__content p-sm-2">
           <h6 className="title text-lg fw-semibold mt-12 mb-8">
-            <Link href="/product-details" className="link text-line-2">
+            <div 
+              className="link text-line-2 cursor-pointer"
+              onClick={() => handleProductClick(product)}
+              style={{ cursor: 'pointer' }}
+            >
               {product.name}
-            </Link>
+            </div>
           </h6>
           <div className="flex-align gap-4">
             <span className="text-main-600 text-md d-flex">
@@ -164,11 +118,11 @@ const RecommendedOne = () => {
           <div className="product-card__content mt-12">
             <div className="product-card__price mb-8">
               <span className="text-heading text-md fw-semibold">
-                TK{product.price}{" "}
+                ${product.price}{" "}
                 <span className="text-gray-500 fw-normal">/Qty</span>{" "}
               </span>
               <span className="text-gray-400 text-md fw-semibold text-decoration-line-through">
-                TK{product.originalPrice}
+                ${product.originalPrice}
               </span>
             </div>
             <div className="flex-align gap-6">
@@ -178,12 +132,12 @@ const RecommendedOne = () => {
               </span>
               <span className="text-xs fw-bold text-gray-600">({product.reviews})</span>
             </div>
-            <Link
-              href="/cart"
-              className="product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 mt-24 w-100 justify-content-center"
+            <div 
+              className="product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8 mt-24 w-100 justify-content-center cursor-pointer"
+              onClick={() => handleProductClick(product)}
             >
               Add To Cart <i className="ph ph-shopping-cart" />
-            </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -199,14 +153,10 @@ const RecommendedOne = () => {
             {categories.map((category, index) => (
               <li key={category.id} className="nav-item" role="presentation">
                 <button
-                  className={`nav-link ${index === 0 ? "active" : ""}`}
-                  id={`pills-${category.id}-tab`}
-                  data-bs-toggle="pill"
-                  data-bs-target={`#pills-${category.id}`}
+                  className={`nav-link ${activeCategory === category.id ? "active" : ""}`}
+                  onClick={() => setActiveCategory(category.id)}
                   type="button"
                   role="tab"
-                  aria-controls={`pills-${category.id}`}
-                  aria-selected={index === 0}
                 >
                   {category.name}
                 </button>
@@ -214,23 +164,15 @@ const RecommendedOne = () => {
             ))}
           </ul>
         </div>
+        
         <div className="tab-content" id="pills-tabContent">
-          {categories.map((category, index) => (
-            <div
-              key={category.id}
-              className={`tab-pane fade ${index === 0 ? "show active" : ""}`}
-              id={`pills-${category.id}`}
-              role="tabpanel"
-              aria-labelledby={`pills-${category.id}-tab`}
-              tabIndex={0}
-            >
-              <div className="row g-12">
-                {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
+          <div className="tab-pane fade show active">
+            <div className="row g-12">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>

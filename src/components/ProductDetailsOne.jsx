@@ -2,11 +2,87 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-
 import dynamic from "next/dynamic";
 const Slider = dynamic(() => import("react-slick"), { ssr: false });
 
-const ProductDetailsOne = () => {
+// Product data - আপনি এটিকে API থেকে fetch করতে পারেন
+const productData = {
+  "c-500-antioxidant-protect-dietary-supplement": {
+    id: 1,
+    name: "C-500 Antioxidant Protect Dietary Supplement",
+    price: 14.99,
+    originalPrice: 28.99,
+    rating: 4.8,
+    reviews: "17k",
+    sku: "EB4DRP",
+    description: "Vivamus adipiscing nisl ut dolor dignissim semper. Nulla luctus malesuada tincidunt. Class aptent taciti sociosqu ad litora torquent",
+    images: [
+      "/assets/images/thumbs/product-details-thumb1.png",
+      "/assets/images/thumbs/product-details-thumb2.png",
+      "/assets/images/thumbs/product-details-thumb3.png",
+      "/assets/images/thumbs/product-details-thumb2.png",
+    ],
+    category: "supplements",
+    stock: 45,
+    brand: "Marketpro"
+  },
+  "marcels-modern-pantry-almond-unsweetened": {
+    id: 2,
+    name: "Marcel's Modern Pantry Almond Unsweetened",
+    price: 14.99,
+    originalPrice: 28.99,
+    rating: 4.8,
+    reviews: "17k",
+    sku: "ALM789",
+    description: "Premium quality unsweetened almonds from Marcel's Modern Pantry.",
+    images: [
+      "/assets/images/thumbs/product-details-thumb1.png",
+      "/assets/images/thumbs/product-details-thumb2.png",
+    ],
+    category: "grocery",
+    stock: 32,
+    brand: "Marcel's"
+  },
+  "o-organics-milk-whole-vitamin-d": {
+    id: 3,
+    name: "O Organics Milk, Whole, Vitamin D",
+    price: 14.99,
+    originalPrice: 28.99,
+    rating: 4.8,
+    reviews: "17k",
+    sku: "MILK456",
+    description: "Fresh organic whole milk with Vitamin D.",
+    images: [
+      "/assets/images/thumbs/product-details-thumb1.png",
+      "/assets/images/thumbs/product-details-thumb2.png",
+    ],
+    category: "dairy",
+    stock: 25,
+    brand: "O Organics"
+  },
+  "whole-grains-and-seeds-organic-bread": {
+    id: 4,
+    name: "Whole Grains and Seeds Organic Bread",
+    price: 14.99,
+    originalPrice: 28.99,
+    rating: 4.8,
+    reviews: "17k",
+    sku: "BREAD123",
+    description: "Healthy organic bread with whole grains and seeds.",
+    images: [
+      "/assets/images/thumbs/product-details-thumb1.png",
+      "/assets/images/thumbs/product-details-thumb2.png",
+    ],
+    category: "bakery",
+    stock: 18,
+    brand: "Organic Bakery"
+  }
+};
+
+const ProductDetailsOne = ({ productSlug }) => {
+  // Product data fetch based on slug
+  const product = productData[productSlug] || productData["c-500-antioxidant-protect-dietary-supplement"];
+
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -26,12 +102,6 @@ const ProductDetailsOne = () => {
 
     return () => clearInterval(interval);
   }, []);
-  const productImages = [
-    "assets/images/thumbs/product-details-thumb1.png",
-    "assets/images/thumbs/product-details-thumb2.png",
-    "assets/images/thumbs/product-details-thumb3.png",
-    "assets/images/thumbs/product-details-thumb2.png",
-  ];
 
   // increment & decrement
   const [quantity, setQuantity] = useState(1);
@@ -39,7 +109,7 @@ const ProductDetailsOne = () => {
   const decrementQuantity = () =>
     setQuantity(quantity > 1 ? quantity - 1 : quantity);
 
-  const [mainImage, setMainImage] = useState(productImages[0]);
+  const [mainImage, setMainImage] = useState(product.images[0]);
 
   const settingsThumbs = {
     dots: false,
@@ -49,6 +119,7 @@ const ProductDetailsOne = () => {
     slidesToScroll: 1,
     focusOnSelect: true,
   };
+
   return (
     <section className='product-details py-80'>
       <div className='container container-lg'>
@@ -60,14 +131,14 @@ const ProductDetailsOne = () => {
                   <div className='product-details__thumb-slider border border-gray-100 rounded-16'>
                     <div className=''>
                       <div className='product-details__thumb flex-center h-100'>
-                        <img src={mainImage} alt='Main Product' />
+                        <img src={mainImage} alt={product.name} />
                       </div>
                     </div>
                   </div>
                   <div className='mt-24'>
                     <div className='product-details__images-slider'>
                       <Slider {...settingsThumbs}>
-                        {productImages.map((image, index) => (
+                        {product.images.map((image, index) => (
                           <div
                             className='center max-w-120 max-h-120 h-100 flex-center border border-gray-100 rounded-16 p-8'
                             key={index}
@@ -76,7 +147,7 @@ const ProductDetailsOne = () => {
                             <img
                               className='thum'
                               src={image}
-                              alt={`Thumbnail ${index}`}
+                              alt={`${product.name} thumbnail ${index}`}
                             />
                           </div>
                         ))}
@@ -87,49 +158,37 @@ const ProductDetailsOne = () => {
               </div>
               <div className='col-xl-6'>
                 <div className='product-details__content'>
-                  <h5 className='mb-12'>Lay's Potato Chips Onion Flavored</h5>
+                  <h5 className='mb-12'>{product.name}</h5>
                   <div className='flex-align flex-wrap gap-12'>
                     <div className='flex-align gap-12 flex-wrap'>
                       <div className='flex-align gap-8'>
-                        <span className='text-15 fw-medium text-warning-600 d-flex'>
-                          <i className='ph-fill ph-star' />
-                        </span>
-                        <span className='text-15 fw-medium text-warning-600 d-flex'>
-                          <i className='ph-fill ph-star' />
-                        </span>
-                        <span className='text-15 fw-medium text-warning-600 d-flex'>
-                          <i className='ph-fill ph-star' />
-                        </span>
-                        <span className='text-15 fw-medium text-warning-600 d-flex'>
-                          <i className='ph-fill ph-star' />
-                        </span>
-                        <span className='text-15 fw-medium text-warning-600 d-flex'>
-                          <i className='ph-fill ph-star' />
-                        </span>
+                        {[...Array(5)].map((_, index) => (
+                          <span key={index} className='text-15 fw-medium text-warning-600 d-flex'>
+                            <i className='ph-fill ph-star' />
+                          </span>
+                        ))}
                       </div>
                       <span className='text-sm fw-medium text-neutral-600'>
-                        4.7 Star Rating
+                        {product.rating} Star Rating
                       </span>
                       <span className='text-sm fw-medium text-gray-500'>
-                        (21,671)
+                        ({product.reviews})
                       </span>
                     </div>
                     <span className='text-sm fw-medium text-gray-500'>|</span>
                     <span className='text-gray-900'>
                       {" "}
-                      <span className='text-gray-400'>SKU:</span>EB4DRP{" "}
+                      <span className='text-gray-400'>SKU:</span>{product.sku}{" "}
                     </span>
                   </div>
                   <span className='mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block' />
                   <p className='text-gray-700'>
-                    Vivamus adipiscing nisl ut dolor dignissim semper. Nulla
-                    luctus malesuada tincidunt. Class aptent taciti sociosqu ad
-                    litora torquent
+                    {product.description}
                   </p>
                   <div className='mt-32 flex-align flex-wrap gap-32'>
                     <div className='flex-align gap-8'>
-                      <h4 className='mb-0'>$25.00</h4>
-                      <span className='text-md text-gray-500'>$38.00</span>
+                      <h4 className='mb-0'>${product.price}</h4>
+                      <span className='text-md text-gray-500'>${product.originalPrice}</span>
                     </div>
                     <Link href='#' className='btn btn-main rounded-pill'>
                       Order App
@@ -188,7 +247,7 @@ const ProductDetailsOne = () => {
                       />
                     </div>
                     <span className='text-sm text-gray-700 mt-8'>
-                      Available only:45
+                      Available only: {product.stock}
                     </span>
                   </div>
                   <span className='text-gray-900 d-block mb-8'>Quantity:</span>
@@ -285,7 +344,7 @@ const ProductDetailsOne = () => {
                     <span className='w-44 h-44 bg-white rounded-circle flex-center text-2xl'>
                       <i className='ph ph-storefront' />
                     </span>
-                    <span className='text-white'>by Marketpro</span>
+                    <span className='text-white'>by {product.brand}</span>
                   </div>
                   <Link
                     href='/shop'
