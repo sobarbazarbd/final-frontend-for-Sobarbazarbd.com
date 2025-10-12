@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "title": "Get Fresh Groceries in 15 Minutes",
+    "image": "/assets/images/thumbs/banner-img1.png",
+    "link": "/shop",
+    "hasAnimation": true
+  },
+  {
+    "id": 2,
+    "title": "Save Big on Organic Products!",
+    "image": "/assets/images/thumbs/banner-img3.png",
+    "link": "/shop",
+    "hasAnimation": false
+  }
+]
