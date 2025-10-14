@@ -5,9 +5,9 @@ const ColorInit = ({ color }) => {
     useEffect(() => {
         if (color === true) {
             // localStorage.setItem('theme', 'color-two');
-            document.documentElement.classList.add('color-two');
+            document.documentElement.classList.add('color-one');
         } else {
-            document.documentElement.classList.remove('color-two');
+            document.documentElement.classList.remove('color-one');
         }
     }, [color]);
     return (

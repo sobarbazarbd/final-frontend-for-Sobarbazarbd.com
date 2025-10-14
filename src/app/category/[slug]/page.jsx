@@ -27,10 +27,7 @@ const CategoryPage = ({ params }) => {
 
   return (
     <>
-      <ColorInit color={true} />
       <ScrollToTopInit color="#FA6400" />
-      <Preloader />
-      <HeaderTwo category={true} />
       <Breadcrumb title={slug.replace(/-/g, " ")} />
 
       {/* ShopSection এর exact design */}

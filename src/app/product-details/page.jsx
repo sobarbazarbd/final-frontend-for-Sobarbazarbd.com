@@ -28,8 +28,7 @@ const page = () => {
       {/* Preloader */}
       <Preloader />
 
-      {/* HeaderOne */}
-      <HeaderOne />
+    
 
       {/* Breadcrumb */}
       <BreadcrumbTwo title={"Product Details"} />

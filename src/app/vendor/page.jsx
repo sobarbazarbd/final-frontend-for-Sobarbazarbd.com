@@ -24,11 +24,7 @@ const page = () => {
       {/* ScrollToTop */}
       <ScrollToTopInit color='#299E60' />
 
-      {/* Preloader */}
-      <Preloader />
-
-      {/* HeaderOne */}
-      <HeaderOne />
+     
 
       {/* BreadcrumbThree */}
       <BreadcrumbThree title={"Vendor List"} />

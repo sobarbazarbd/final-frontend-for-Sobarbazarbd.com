@@ -40,18 +40,6 @@ const HeaderOne = () => {
     }
   }, []);
 
-  // Set the default language
-  const [selectedLanguage, setSelectedLanguage] = useState(headerConfig.languages[0]);
-  const handleLanguageChange = (language) => {
-    setSelectedLanguage(language);
-  };
-
-  // Set the default currency
-  const [selectedCurrency, setSelectedCurrency] = useState(headerConfig.currencies[0]);
-  const handleCurrencyChange = (currency) => {
-    setSelectedCurrency(currency);
-  };
-
   // Mobile menu support
   const [menuActive, setMenuActive] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null);
@@ -231,58 +219,6 @@ const HeaderOne = () => {
                           <i className={item.icon} />
                         </span>
                         {item.text}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-              <li className='on-hover-item border-right-item border-right-item-sm-space has-submenu arrow-white'>
-                <Link
-                  href='#'
-                  className='selected-text text-white text-sm py-8'
-                >
-                  {selectedLanguage.code}
-                </Link>
-                <ul className='selectable-text-list on-hover-dropdown common-dropdown common-dropdown--sm max-h-200 scroll-sm px-0 py-8'>
-                  {headerConfig.languages.map((language, index) => (
-                    <li key={index}>
-                      <Link
-                        href='#'
-                        className='hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0'
-                        onClick={() => handleLanguageChange(language)}
-                      >
-                        <img
-                          src={language.flag}
-                          alt=''
-                          className='w-16 h-12 rounded-4 border border-gray-100'
-                        />
-                        {language.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-              <li className='on-hover-item border-right-item border-right-item-sm-space has-submenu arrow-white'>
-                <Link
-                  href='#'
-                  className='selected-text text-white text-sm py-8'
-                >
-                  {selectedCurrency.code}
-                </Link>
-                <ul className='selectable-text-list on-hover-dropdown common-dropdown common-dropdown--sm max-h-200 scroll-sm px-0 py-8'>
-                  {headerConfig.currencies.map((currency, index) => (
-                    <li key={index}>
-                      <Link
-                        href='#'
-                        className='hover-bg-gray-100 text-gray-500 text-xs py-6 px-16 flex-align gap-8 rounded-0'
-                        onClick={() => handleCurrencyChange(currency)}
-                      >
-                        <img
-                          src={currency.flag}
-                          alt=''
-                          className='w-16 h-12 rounded-4 border border-gray-100'
-                        />
-                        {currency.name}
                       </Link>
                     </li>
                   ))}

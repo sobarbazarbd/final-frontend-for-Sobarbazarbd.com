@@ -47,8 +47,7 @@ const page = () => {
       {/* ColorInit */}
       <ColorInit color={false} />
 
-      {/* HeaderOne */}
-       <HeaderOne /> 
+     
 
       {/* BannerOne */}
       <BannerOne />

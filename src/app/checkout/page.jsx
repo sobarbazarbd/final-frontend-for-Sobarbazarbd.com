@@ -17,17 +17,14 @@ export const metadata = {
 const page = () => {
   return (
     <>
-      {/* ColorInit */}
-      <ColorInit color={true} />
+     
 
       {/* ScrollToTop */}
       <ScrollToTopInit color='#FA6400' />
 
-      {/* Preloader */}
-      <Preloader />
+     
 
-      {/* HeaderTwo */}
-      <HeaderTwo category={true} />
+
 
       {/* Breadcrumb */}
       <Breadcrumb title={"Checkout"} />

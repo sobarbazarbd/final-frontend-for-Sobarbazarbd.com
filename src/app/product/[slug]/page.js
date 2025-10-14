@@ -16,7 +16,7 @@ const ProductDetailPage = ({ params }) => {
       <ColorInit color={true} />
       <ScrollToTopInit color="#19fa00ff" />
       <Preloader />
-      <HeaderTwo category={true} />
+      
       <Breadcrumb title={slug.replace(/-/g, " ")} />
       
       <ProductDetailsOne productSlug={slug} />

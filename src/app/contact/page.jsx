@@ -22,11 +22,8 @@ const page = () => {
       {/* ScrollToTop */}
       <ScrollToTopInit color='#FA6400' />
 
-      {/* Preloader */}
-      <Preloader />
 
-      {/* HeaderTwo */}
-      <HeaderTwo category={true} />
+      
 
       {/* Breadcrumb */}
       <Breadcrumb title={"Contact"} />
