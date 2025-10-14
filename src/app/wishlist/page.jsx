@@ -30,14 +30,7 @@ const page = () => {
       {/* WishListSection */}
       <WishListSection />
 
-      {/* ShippingOne */}
-      <ShippingOne />
-
-      {/* FooterTwo */}
-      <FooterTwo />
-
-      {/* BottomFooter */}
-      <BottomFooter />
+      
     </>
   );
 };

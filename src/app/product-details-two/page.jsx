@@ -40,17 +40,7 @@ const page = () => {
       {/* NewArrivalTwo */}
       <NewArrivalTwo />
 
-      {/* ShippingOne */}
-      <ShippingOne />
-
-      {/* NewsletterOne */}
-      <NewsletterOne />
-
-      {/* FooterTwo */}
-      <FooterTwo />
-
-      {/* BottomFooter */}
-      <BottomFooter />
+      
     </>
   );
 };

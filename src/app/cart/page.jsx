@@ -29,14 +29,7 @@ const page = () => {
       {/* CartSection */}
       <CartSection />
 
-      {/* ShippingOne */}
-      <ShippingOne />
-
-      {/* FooterTwo */}
-      <FooterTwo />
-
-      {/* BottomFooter */}
-      <BottomFooter />
+     
     </>
   );
 };

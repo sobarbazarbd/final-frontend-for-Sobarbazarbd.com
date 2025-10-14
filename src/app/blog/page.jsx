@@ -35,14 +35,7 @@ const page = () => {
       {/* Blog */}
       <Blog />
 
-      {/* ShippingOne */}
-      <ShippingOne />
-
-      {/* FooterTwo */}
-      <FooterTwo />
-
-      {/* BottomFooter */}
-      <BottomFooter />
+      
     </>
   );
 };

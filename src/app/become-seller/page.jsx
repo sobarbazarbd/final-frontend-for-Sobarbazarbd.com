@@ -46,14 +46,7 @@ const page = () => {
         <TestimonialOne />
       </section>
 
-      {/* ShippingOne */}
-      <ShippingOne />
-
-      {/* FooterTwo */}
-      <FooterTwo />
-
-      {/* BottomFooter */}
-      <BottomFooter />
+     
     </>
   );
 };

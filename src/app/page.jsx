@@ -1,32 +1,27 @@
 import BannerOne from "@/components/BannerOne";
 import BestSellsOne from "@/components/BestSellsOne";
-import BottomFooter from "@/components/BottomFooter";
+
 import BrandOne from "@/components/BrandOne";
 import DealsOne from "@/components/DealsOne";
 import DeliveryOne from "@/components/DeliveryOne";
 import FeatureOne from "@/components/FeatureOne";
 import FeatureThree from "@/components/FeatureThree";
 import FlashSalesOne from "@/components/FlashSalesOne";
-import FooterOne from "@/components/FooterOne";
-import HeaderOne from "@/components/Header/HeaderOne";
 import HotDealsOne from "@/components/HotDealsOne";
 import NewArrivalOne from "@/components/NewArrivalOne";
 import NewArrivalThree from "@/components/NewArrivalThree";
-import NewsletterOne from "@/components/NewsletterOne";
 import OfferOne from "@/components/OfferOne";
 import OrganicOne from "@/components/OrganicOne";
 import PopularProductsOne from "@/components/PopularProductsOne";
-import ProductListOne from "@/components/ProductListOne";
 import PromotionalOne from "@/components/PromotionalOne";
 import PromotionalThree from "@/components/PromotionalThree";
 import RecommendedOne from "@/components/RecommendedOne";
-import ShippingOne from "@/components/ShippingOne";
 import ShortProductOne from "@/components/ShortProductOne";
 import TextSlider from "@/components/TextSlider";
 import TopVendorsOne from "@/components/TopVendorsOne";
 import TrendingOne from "@/components/TrendingOne";
 import ColorInit from "@/helper/ColorInit";
-import Preloader from "@/helper/Preloader";
+
 import ScrollToTopInit from "@/helper/ScrollToTopInit";
 
 export const metadata = {
@@ -111,17 +106,7 @@ const page = () => {
       {/* NewArrivalOne */}
       <NewArrivalOne />
 
-      {/* ShippingOne */}
-      <ShippingOne />
-
-      {/* NewsletterOne */}
-      <NewsletterOne />
-
-      {/* FooterOne */}
-      <FooterOne />
-
-      {/* BottomFooter */}
-      <BottomFooter />
+    
     </>
   );
 };

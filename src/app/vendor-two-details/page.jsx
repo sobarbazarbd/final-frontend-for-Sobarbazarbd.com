@@ -35,14 +35,7 @@ const page = () => {
       {/* VendorTwoDetails */}
       <VendorTwoDetails />
 
-      {/* ShippingOne */}
-      <ShippingOne />
-
-      {/* FooterTwo */}
-      <FooterTwo />
-
-      {/* BottomFooter */}
-      <BottomFooter />
+    
     </>
   );
 };

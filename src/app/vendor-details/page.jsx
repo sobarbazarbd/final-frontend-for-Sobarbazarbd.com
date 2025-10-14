@@ -31,14 +31,7 @@ const page = () => {
       {/* VendorsListTwo */}
       <VendorsListTwo />
 
-      {/* NewsletterOne */}
-      <NewsletterOne />
-
-      {/* FooterOne */}
-      <FooterOne />
-
-      {/* BottomFooter */}
-      <BottomFooter />
+      
     </>
   );
 };

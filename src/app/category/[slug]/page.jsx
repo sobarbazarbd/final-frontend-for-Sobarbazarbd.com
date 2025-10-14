@@ -221,8 +221,7 @@ const CategoryPage = ({ params }) => {
         </div>
       </section>
 
-      <ShippingTwo />
-      <FooterTwo />
+      
     </>
   );
 };

@@ -30,11 +30,7 @@ const page = () => {
       {/* ShopSection */}
       <ShopSection />
 
-      {/* ShippingTwo */}
-      <ShippingTwo />
-
-      {/* FooterTwo */}
-      <FooterTwo />
+     
     </>
   );
 };

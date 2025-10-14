@@ -32,17 +32,7 @@ const page = () => {
       {/* VendorsList */}
       <VendorsList />
 
-      {/* ShippingOne */}
-      <ShippingOne />
-
-      {/* NewsletterOne */}
-      <NewsletterOne />
-
-      {/* FooterOne */}
-      <FooterOne />
-
-      {/* BottomFooter */}
-      <BottomFooter />
+     
     </>
   );
 };

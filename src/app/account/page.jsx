@@ -35,14 +35,7 @@ const page = () => {
       {/* Account */}
       <Account />
 
-      {/* ShippingOne */}
-      <ShippingOne />
-
-      {/* FooterTwo */}
-      <FooterTwo />
-
-      {/* BottomFooter */}
-      <BottomFooter />
+     
     </>
   );
 };

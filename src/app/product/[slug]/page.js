@@ -16,13 +16,12 @@ const ProductDetailPage = ({ params }) => {
       <ColorInit color={true} />
       <ScrollToTopInit color="#19fa00ff" />
       <Preloader />
-      
       <Breadcrumb title={slug.replace(/-/g, " ")} />
       
       <ProductDetailsOne productSlug={slug} />
       
-      <ShippingTwo />
-      <FooterTwo />
+    
+    
     </>
   );
 };
