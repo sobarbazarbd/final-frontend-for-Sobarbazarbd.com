@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import { FaGoogle, FaFacebookF, FaEye, FaEyeSlash } from "react-icons/fa";
 
 const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +15,22 @@ const SignupPage = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle signup logic here
+    console.log("Signup form submitted");
+  };
+
+  const handleGoogleSignup = () => {
+    // Handle Google signup logic here
+    console.log("Google signup clicked");
+  };
+
+  const handleFacebookSignup = () => {
+    // Handle Facebook signup logic here
+    console.log("Facebook signup clicked");
+  };
+
   return (
     <section className='account py-80'>
       <div className='container container-lg'>
@@ -21,7 +38,42 @@ const SignupPage = () => {
           <div className="col-lg-6">
             <div className='border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40'>
               <h6 className='text-xl mb-32'>Create New Account</h6>
-              <form action='#'>
+              
+              {/* Social Signup Buttons */}
+              <div className="mb-32">
+                <div className="row g-3">
+                  <div className="col-6">
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary w-100 py-12 d-flex align-items-center justify-content-center gap-2"
+                      onClick={handleGoogleSignup}
+                    >
+                      <FaGoogle className="text-danger" />
+                      <span className="d-none d-sm-inline">Google</span>
+                    </button>
+                  </div>
+                  <div className="col-6">
+                    <button
+                      type="button"
+                      className="btn btn-outline-primary w-100 py-12 d-flex align-items-center justify-content-center gap-2"
+                      onClick={handleFacebookSignup}
+                    >
+                      <FaFacebookF className="text-primary" />
+                      <span className="d-none d-sm-inline">Facebook</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="position-relative text-center mb-32">
+                <hr className="border-gray-300" />
+                <span className="position-absolute top-50 start-50 translate-middle bg-white px-3 text-gray-500 text-sm">
+                  OR
+                </span>
+              </div>
+
+              <form onSubmit={handleSubmit}>
                 <div className='mb-24'>
                   <label
                     htmlFor='username'
@@ -34,6 +86,7 @@ const SignupPage = () => {
                     className='common-input'
                     id='username'
                     placeholder='Choose a username'
+                    required
                   />
                 </div>
                 <div className='mb-24'>
@@ -48,6 +101,7 @@ const SignupPage = () => {
                     className='common-input'
                     id='email'
                     placeholder='Enter your email address'
+                    required
                   />
                 </div>
                 <div className='mb-24'>
@@ -63,13 +117,14 @@ const SignupPage = () => {
                       className='common-input'
                       id='password'
                       placeholder='Create a password'
+                      required
                     />
                     <span
-                      className={`toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ${
-                        showPassword ? "ph ph-eye" : "ph ph-eye-slash"
-                      }`}
+                      className={`toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer text-gray-600`}
                       onClick={togglePasswordVisibility}
-                    />
+                    >
+                      {showPassword ? <FaEye /> : <FaEyeSlash />}
+                    </span>
                   </div>
                 </div>
                 <div className='mb-24'>
@@ -85,13 +140,14 @@ const SignupPage = () => {
                       className='common-input'
                       id='confirmPassword'
                       placeholder='Confirm your password'
+                      required
                     />
                     <span
-                      className={`toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ${
-                        showConfirmPassword ? "ph ph-eye" : "ph ph-eye-slash"
-                      }`}
+                      className={`toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer text-gray-600`}
                       onClick={toggleConfirmPasswordVisibility}
-                    />
+                    >
+                      {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
+                    </span>
                   </div>
                 </div>
                 <div className='my-32'>
@@ -100,6 +156,7 @@ const SignupPage = () => {
                       className='form-check-input'
                       type='checkbox'
                       id='terms'
+                      required
                     />
                     <label
                       className='form-check-label flex-grow-1'

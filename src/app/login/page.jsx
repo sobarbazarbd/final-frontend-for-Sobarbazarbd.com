@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import { FaGoogle, FaFacebookF, FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +16,16 @@ const LoginPage = () => {
     console.log("Login form submitted");
   };
 
+  const handleGoogleLogin = () => {
+    // Handle Google login logic here
+    console.log("Google login clicked");
+  };
+
+  const handleFacebookLogin = () => {
+    // Handle Facebook login logic here
+    console.log("Facebook login clicked");
+  };
+
   return (
     <section className='account py-80'>
       <div className='container container-lg'>
@@ -22,6 +33,41 @@ const LoginPage = () => {
           <div className="col-lg-6">
             <div className='border border-gray-100 hover-border-main-600 transition-1 rounded-16 px-24 py-40'>
               <h6 className='text-xl mb-32'>Login to Your Account</h6>
+              
+              {/* Social Login Buttons */}
+              <div className="mb-32">
+                <div className="row g-3">
+                  <div className="col-6">
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary w-100 py-12 d-flex align-items-center justify-content-center gap-2"
+                      onClick={handleGoogleLogin}
+                    >
+                      <FaGoogle className="text-danger" />
+                      <span className="d-none d-sm-inline">Google</span>
+                    </button>
+                  </div>
+                  <div className="col-6">
+                    <button
+                      type="button"
+                      className="btn btn-outline-primary w-100 py-12 d-flex align-items-center justify-content-center gap-2"
+                      onClick={handleFacebookLogin}
+                    >
+                      <FaFacebookF className="text-primary" />
+                      <span className="d-none d-sm-inline">Facebook</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="position-relative text-center mb-32">
+                <hr className="border-gray-300" />
+                <span className="position-absolute top-50 start-50 translate-middle bg-white px-3 text-gray-500 text-sm">
+                  OR
+                </span>
+              </div>
+
               <form onSubmit={handleSubmit}>
                 <div className='mb-24'>
                   <label
@@ -55,11 +101,11 @@ const LoginPage = () => {
                       required
                     />
                     <span
-                      className={`toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer ${
-                        showPassword ? "ph ph-eye" : "ph ph-eye-slash"
-                      }`}
+                      className={`toggle-password position-absolute top-50 inset-inline-end-0 me-16 translate-middle-y cursor-pointer text-gray-600`}
                       onClick={togglePasswordVisibility}
-                    />
+                    >
+                      {showPassword ? <FaEye /> : <FaEyeSlash />}
+                    </span>
                   </div>
                 </div>
                 <div className='mb-24 mt-48'>
