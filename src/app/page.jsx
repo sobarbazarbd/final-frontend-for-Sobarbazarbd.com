@@ -8,7 +8,7 @@ import FeatureOne from "@/components/FeatureOne";
 import FeatureThree from "@/components/FeatureThree";
 import FlashSalesOne from "@/components/FlashSalesOne";
 import FooterOne from "@/components/FooterOne";
-import HeaderOne from "@/components/HeaderOne";
+import HeaderOne from "@/components/Header/HeaderOne";
 import HotDealsOne from "@/components/HotDealsOne";
 import NewArrivalOne from "@/components/NewArrivalOne";
 import NewArrivalThree from "@/components/NewArrivalThree";

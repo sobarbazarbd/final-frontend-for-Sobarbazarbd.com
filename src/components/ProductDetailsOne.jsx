@@ -5,7 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 const Slider = dynamic(() => import("react-slick"), { ssr: false });
 
-// Product data - আপনি এটিকে API থেকে fetch করতে পারেন
+// Product data
 const productData = {
   "c-500-antioxidant-protect-dietary-supplement": {
     id: 1,
@@ -16,15 +16,68 @@ const productData = {
     reviews: "17k",
     sku: "EB4DRP",
     description: "Vivamus adipiscing nisl ut dolor dignissim semper. Nulla luctus malesuada tincidunt. Class aptent taciti sociosqu ad litora torquent",
+    detailedDescription: "Wherever celebrations and good times happen, the C-500 Antioxidant brand will be there just as it has been for more than 75 years. With health benefits almost as rich as our history, we have a supplement formula guaranteed to bring wellness to your life.",
     images: [
       "/assets/images/thumbs/product-details-thumb1.png",
       "/assets/images/thumbs/product-details-thumb2.png",
       "/assets/images/thumbs/product-details-thumb3.png",
-      "/assets/images/thumbs/product-details-thumb2.png",
     ],
     category: "supplements",
     stock: 45,
-    brand: "Marketpro"
+    brand: "Marketpro",
+    specifications: [
+      "Product Type: Dietary Supplements",
+      "Product Name: C-500 Antioxidant Protect",
+      "Brand: HealthPlus",
+      "FSA Eligible: Yes",
+      "Size/Count: 60 capsules",
+      "Item Code: 331539",
+      "Ingredients: Vitamin C, Zinc, Selenium, Natural Antioxidants"
+    ],
+    nutritionFacts: [
+      "Vitamin C: 500mg 556%",
+      "Zinc: 15mg 136%", 
+      "Selenium: 70mcg 127%",
+      "Calories: 5",
+      "Total Carbohydrate: 1g 0%"
+    ],
+    moreDetails: [
+      "Supports immune system function",
+      "Provides antioxidant protection",
+      "Helps in collagen production",
+      "Promotes skin health and vitality"
+    ],
+    productReviews: [
+      {
+        id: 1,
+        name: "Nicolas Cage",
+        rating: 5,
+        date: "3 Days ago",
+        title: "Great Product",
+        comment: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour",
+        avatar: "/assets/images/thumbs/comment-img1.png"
+      },
+      {
+        id: 2,
+        name: "Sarah Johnson",
+        rating: 4,
+        date: "1 Week ago",
+        title: "Effective Supplement",
+        comment: "I've been using this for a month and feel much more energetic. The quality is excellent and it's easy to swallow.",
+        avatar: "/assets/images/thumbs/comment-img1.png"
+      }
+    ],
+    ratingStats: {
+      average: 4.8,
+      total: 124,
+      breakdown: [
+        { stars: 5, count: 87, percentage: 70 },
+        { stars: 4, count: 25, percentage: 50 },
+        { stars: 3, count: 8, percentage: 35 },
+        { stars: 2, count: 3, percentage: 20 },
+        { stars: 1, count: 1, percentage: 5 }
+      ]
+    }
   },
   "marcels-modern-pantry-almond-unsweetened": {
     id: 2,
@@ -35,13 +88,58 @@ const productData = {
     reviews: "17k",
     sku: "ALM789",
     description: "Premium quality unsweetened almonds from Marcel's Modern Pantry.",
+    detailedDescription: "Marcel's Modern Pantry brings you the finest quality unsweetened almonds, carefully selected and processed to maintain their natural goodness. Our almonds are sourced from sustainable farms and packed with essential nutrients.",
     images: [
       "/assets/images/thumbs/product-details-thumb1.png",
       "/assets/images/thumbs/product-details-thumb2.png",
     ],
     category: "grocery",
     stock: 32,
-    brand: "Marcel's"
+    brand: "Marcel's",
+    specifications: [
+      "Product Type: Nuts & Seeds",
+      "Product Name: Unsweetened Almonds",
+      "Brand: Marcel's Modern Pantry",
+      "FSA Eligible: No",
+      "Size/Count: 16oz",
+      "Item Code: ALM789",
+      "Ingredients: 100% Raw Almonds"
+    ],
+    nutritionFacts: [
+      "Calories: 160",
+      "Total Fat: 14g 18%",
+      "Saturated Fat: 1g 5%",
+      "Sodium: 0mg 0%",
+      "Total Carbohydrate: 6g 2%"
+    ],
+    moreDetails: [
+      "Rich in Vitamin E and antioxidants",
+      "Excellent source of healthy fats",
+      "No added sugar or preservatives",
+      "Perfect for snacking and cooking"
+    ],
+    productReviews: [
+      {
+        id: 1,
+        name: "Emily Chen",
+        rating: 5,
+        date: "2 Days ago",
+        title: "Fresh and Crunchy",
+        comment: "These almonds are so fresh and have the perfect crunch. Love that they're unsweetened and natural.",
+        avatar: "/assets/images/thumbs/comment-img1.png"
+      }
+    ],
+    ratingStats: {
+      average: 4.8,
+      total: 52,
+      breakdown: [
+        { stars: 5, count: 36, percentage: 70 },
+        { stars: 4, count: 12, percentage: 50 },
+        { stars: 3, count: 3, percentage: 35 },
+        { stars: 2, count: 1, percentage: 20 },
+        { stars: 1, count: 0, percentage: 5 }
+      ]
+    }
   },
   "o-organics-milk-whole-vitamin-d": {
     id: 3,
@@ -52,13 +150,58 @@ const productData = {
     reviews: "17k",
     sku: "MILK456",
     description: "Fresh organic whole milk with Vitamin D.",
+    detailedDescription: "O Organics Whole Milk with Vitamin D is sourced from cows raised on organic farms without the use of antibiotics or synthetic hormones. Our milk is rich, creamy, and packed with essential nutrients for your family's health.",
     images: [
       "/assets/images/thumbs/product-details-thumb1.png",
       "/assets/images/thumbs/product-details-thumb2.png",
     ],
     category: "dairy",
     stock: 25,
-    brand: "O Organics"
+    brand: "O Organics",
+    specifications: [
+      "Product Type: Dairy",
+      "Product Name: Whole Milk with Vitamin D",
+      "Brand: O Organics",
+      "FSA Eligible: Yes",
+      "Size/Count: 1 Gallon",
+      "Item Code: MILK456",
+      "Ingredients: Organic Grade A Milk, Vitamin D3"
+    ],
+    nutritionFacts: [
+      "Calories: 150",
+      "Total Fat: 8g 10%",
+      "Saturated Fat: 5g 25%",
+      "Cholesterol: 35mg 12%",
+      "Protein: 8g 16%"
+    ],
+    moreDetails: [
+      "USDA Organic Certified",
+      "No artificial growth hormones",
+      "Excellent source of Calcium and Vitamin D",
+      "From pasture-raised cows"
+    ],
+    productReviews: [
+      {
+        id: 1,
+        name: "Michael Rodriguez",
+        rating: 5,
+        date: "5 Days ago",
+        title: "Creamy and Delicious",
+        comment: "This is the creamiest organic milk I've ever tasted. My whole family loves it!",
+        avatar: "/assets/images/thumbs/comment-img1.png"
+      }
+    ],
+    ratingStats: {
+      average: 4.8,
+      total: 89,
+      breakdown: [
+        { stars: 5, count: 62, percentage: 70 },
+        { stars: 4, count: 20, percentage: 50 },
+        { stars: 3, count: 5, percentage: 35 },
+        { stars: 2, count: 2, percentage: 20 },
+        { stars: 1, count: 0, percentage: 5 }
+      ]
+    }
   },
   "whole-grains-and-seeds-organic-bread": {
     id: 4,
@@ -69,13 +212,58 @@ const productData = {
     reviews: "17k",
     sku: "BREAD123",
     description: "Healthy organic bread with whole grains and seeds.",
+    detailedDescription: "Our Whole Grains and Seeds Organic Bread is baked fresh daily using traditional methods. Packed with nutritious whole grains, seeds, and organic ingredients, this bread offers both great taste and health benefits for your daily diet.",
     images: [
       "/assets/images/thumbs/product-details-thumb1.png",
-      "/assets/images/thumbs/product-details-thumb2.png",
+      "/assets/images/thumbs/product-dumbs-thumb2.png",
     ],
     category: "bakery",
     stock: 18,
-    brand: "Organic Bakery"
+    brand: "Organic Bakery",
+    specifications: [
+      "Product Type: Bakery",
+      "Product Name: Whole Grains & Seeds Bread",
+      "Brand: Organic Bakery",
+      "FSA Eligible: No",
+      "Size/Count: 24oz",
+      "Item Code: BREAD123",
+      "Ingredients: Organic Whole Wheat Flour, Sunflower Seeds, Flax Seeds, Oats, Honey, Sea Salt"
+    ],
+    nutritionFacts: [
+      "Calories: 110",
+      "Total Fat: 2g 3%",
+      "Saturated Fat: 0g 0%",
+      "Sodium: 150mg 7%",
+      "Total Carbohydrate: 20g 7%"
+    ],
+    moreDetails: [
+      "Certified Organic ingredients",
+      "No artificial preservatives",
+      "Rich in fiber and protein",
+      "Perfect for sandwiches and toast"
+    ],
+    productReviews: [
+      {
+        id: 1,
+        name: "Jennifer Wilson",
+        rating: 5,
+        date: "1 Week ago",
+        title: "Hearty and Nutritious",
+        comment: "This bread has amazing texture with all the seeds and grains. It's become our family's favorite!",
+        avatar: "/assets/images/thumbs/comment-img1.png"
+      }
+    ],
+    ratingStats: {
+      average: 4.8,
+      total: 67,
+      breakdown: [
+        { stars: 5, count: 47, percentage: 70 },
+        { stars: 4, count: 15, percentage: 50 },
+        { stars: 3, count: 4, percentage: 35 },
+        { stars: 2, count: 1, percentage: 20 },
+        { stars: 1, count: 0, percentage: 5 }
+      ]
+    }
   }
 };
 
@@ -120,6 +308,15 @@ const ProductDetailsOne = ({ productSlug }) => {
     focusOnSelect: true,
   };
 
+  // Render stars based on rating
+  const renderStars = (rating) => {
+    return [...Array(5)].map((_, index) => (
+      <span key={index} className={`text-15 fw-medium ${index < Math.floor(rating) ? 'text-warning-600' : 'text-gray-300'} d-flex`}>
+        <i className='ph-fill ph-star' />
+      </span>
+    ));
+  };
+
   return (
     <section className='product-details py-80'>
       <div className='container container-lg'>
@@ -162,11 +359,7 @@ const ProductDetailsOne = ({ productSlug }) => {
                   <div className='flex-align flex-wrap gap-12'>
                     <div className='flex-align gap-12 flex-wrap'>
                       <div className='flex-align gap-8'>
-                        {[...Array(5)].map((_, index) => (
-                          <span key={index} className='text-15 fw-medium text-warning-600 d-flex'>
-                            <i className='ph-fill ph-star' />
-                          </span>
-                        ))}
+                        {renderStars(product.rating)}
                       </div>
                       <span className='text-sm fw-medium text-neutral-600'>
                         {product.rating} Star Rating
@@ -459,7 +652,7 @@ const ProductDetailsOne = ({ productSlug }) => {
                     aria-controls='pills-reviews'
                     aria-selected='false'
                   >
-                    Reviews
+                    Reviews ({product.productReviews.length})
                   </button>
                 </li>
               </ul>
@@ -483,11 +676,7 @@ const ProductDetailsOne = ({ productSlug }) => {
                   <div className='mb-40'>
                     <h6 className='mb-24'>Product Description</h6>
                     <p>
-                      Wherever celebrations and good times happen, the LAY'S
-                      brand will be there just as it has been for more than 75
-                      years. With flavors almost as rich as our history, we have
-                      a chip or crisp flavor guaranteed to bring a smile on your
-                      face.{" "}
+                      {product.detailedDescription}
                     </p>
                     <p>
                       Morbi ut sapien vitae odio accumsan gravida. Morbi vitae
@@ -503,191 +692,59 @@ const ProductDetailsOne = ({ productSlug }) => {
                       mauris, sed egestas purus commodo vel.
                     </p>
                     <ul className='list-inside mt-32 ms-16'>
-                      <li className='text-gray-400 mb-4'>
-                        8.0 oz. bag of LAY'S Classic Potato Chips
-                      </li>
-                      <li className='text-gray-400 mb-4'>
-                        Tasty LAY's potato chips are a great snack
-                      </li>
-                      <li className='text-gray-400 mb-4'>
-                        Includes three ingredients: potatoes, oil, and salt
-                      </li>
-                      <li className='text-gray-400 mb-4'>
-                        Gluten free product
-                      </li>
-                    </ul>
-                    <ul className='mt-32'>
-                      <li className='text-gray-400 mb-4'>Made in USA</li>
-                      <li className='text-gray-400 mb-4'>Ready To Eat.</li>
+                      {product.moreDetails.map((detail, index) => (
+                        <li key={index} className='text-gray-400 mb-4'>
+                          {detail}
+                        </li>
+                      ))}
                     </ul>
                   </div>
                   <div className='mb-40'>
                     <h6 className='mb-24'>Product Specifications</h6>
                     <ul className='mt-32'>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-heading fw-medium'>
-                          Product Type:
-                          <span className='text-gray-500'>
-                            {" "}
-                            Chips &amp; Dips
+                      {product.specifications.map((spec, index) => (
+                        <li key={index} className='text-gray-400 mb-14 flex-align gap-14'>
+                          <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
+                            <i className='ph ph-check' />
                           </span>
-                        </span>
-                      </li>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-heading fw-medium'>
-                          Product Name:
-                          <span className='text-gray-500'>
-                            {" "}
-                            Potato Chips Classic{" "}
+                          <span className='text-heading fw-medium'>
+                            {spec.split(':')[0]}:
+                            <span className='text-gray-500'>
+                              {spec.split(':')[1]}
+                            </span>
                           </span>
-                        </span>
-                      </li>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-heading fw-medium'>
-                          Brand:
-                          <span className='text-gray-500'> Lay's</span>
-                        </span>
-                      </li>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-heading fw-medium'>
-                          FSA Eligible:
-                          <span className='text-gray-500'> No</span>
-                        </span>
-                      </li>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-heading fw-medium'>
-                          Size/Count:
-                          <span className='text-gray-500'> 8.0oz</span>
-                        </span>
-                      </li>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-heading fw-medium'>
-                          Item Code:
-                          <span className='text-gray-500'> 331539</span>
-                        </span>
-                      </li>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-heading fw-medium'>
-                          Ingredients:
-                          <span className='text-gray-500'>
-                            {" "}
-                            Potatoes, Vegetable Oil, and Salt.
-                          </span>
-                        </span>
-                      </li>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                   <div className='mb-40'>
                     <h6 className='mb-24'>Nutrition Facts</h6>
                     <ul className='mt-32'>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-heading fw-medium'>
-                          {" "}
-                          Total Fat 10g 13%
-                        </span>
-                      </li>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-heading fw-medium'>
-                          {" "}
-                          Saturated Fat 1.5g 7%
-                        </span>
-                      </li>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-heading fw-medium'>
-                          {" "}
-                          Cholesterol 0mg 0%
-                        </span>
-                      </li>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-heading fw-medium'>
-                          {" "}
-                          Sodium 170mg 7%
-                        </span>
-                      </li>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-heading fw-medium'>
-                          {" "}
-                          Potassium 350mg 6%
-                        </span>
-                      </li>
+                      {product.nutritionFacts.map((fact, index) => (
+                        <li key={index} className='text-gray-400 mb-14 flex-align gap-14'>
+                          <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
+                            <i className='ph ph-check' />
+                          </span>
+                          <span className='text-heading fw-medium'>
+                            {fact}
+                          </span>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                   <div className='mb-0'>
                     <h6 className='mb-24'>More Details</h6>
                     <ul className='mt-32'>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-gray-500'>
-                          {" "}
-                          Lunarlon midsole delivers ultra-plush responsiveness
-                        </span>
-                      </li>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-gray-500'>
-                          {" "}
-                          Encapsulated Air-Sole heel unit for lightweight
-                          cushioning
-                        </span>
-                      </li>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-gray-500'>
-                          {" "}
-                          Colour Shown: Ale Brown/Black/Goldtone/Ale Brown
-                        </span>
-                      </li>
-                      <li className='text-gray-400 mb-14 flex-align gap-14'>
-                        <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
-                          <i className='ph ph-check' />
-                        </span>
-                        <span className='text-gray-500'>
-                          {" "}
-                          Style: 805899-202
-                        </span>
-                      </li>
+                      {product.moreDetails.map((detail, index) => (
+                        <li key={index} className='text-gray-400 mb-14 flex-align gap-14'>
+                          <span className='w-20 h-20 bg-main-50 text-main-600 text-xs flex-center rounded-circle'>
+                            <i className='ph ph-check' />
+                          </span>
+                          <span className='text-gray-500'>
+                            {detail}
+                          </span>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
@@ -700,117 +757,48 @@ const ProductDetailsOne = ({ productSlug }) => {
                 >
                   <div className='row g-4'>
                     <div className='col-lg-6'>
-                      <h6 className='mb-24'>Product Description</h6>
-                      <div className='d-flex align-items-start gap-24 pb-44 border-bottom border-gray-100 mb-44'>
-                        <img
-                          src='assets/images/thumbs/comment-img1.png'
-                          alt=''
-                          className='w-52 h-52 object-fit-cover rounded-circle flex-shrink-0'
-                        />
-                        <div className='flex-grow-1'>
-                          <div className='flex-between align-items-start gap-8 '>
-                            <div className=''>
-                              <h6 className='mb-12 text-md'>Nicolas cage</h6>
-                              <div className='flex-align gap-8'>
-                                <span className='text-15 fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-15 fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-15 fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-15 fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-15 fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
+                      <h6 className='mb-24'>Customer Reviews</h6>
+                      {product.productReviews.map((review) => (
+                        <div key={review.id} className='d-flex align-items-start gap-24 pb-44 border-bottom border-gray-100 mb-44'>
+                          <img
+                            src={review.avatar}
+                            alt={review.name}
+                            className='w-52 h-52 object-fit-cover rounded-circle flex-shrink-0'
+                          />
+                          <div className='flex-grow-1'>
+                            <div className='flex-between align-items-start gap-8 '>
+                              <div className=''>
+                                <h6 className='mb-12 text-md'>{review.name}</h6>
+                                <div className='flex-align gap-8'>
+                                  {renderStars(review.rating)}
+                                </div>
                               </div>
+                              <span className='text-gray-800 text-xs'>
+                                {review.date}
+                              </span>
                             </div>
-                            <span className='text-gray-800 text-xs'>
-                              3 Days ago
-                            </span>
-                          </div>
-                          <h6 className='mb-14 text-md mt-24'>
-                            Greate Product
-                          </h6>
-                          <p className='text-gray-700'>
-                            There are many variations of passages of Lorem Ipsum
-                            available, but the majority have suffered alteration
-                            in some form, by injected humour
-                          </p>
-                          <div className='flex-align gap-20 mt-44'>
-                            <button className='flex-align gap-12 text-gray-700 hover-text-main-600'>
-                              <i className='ph-bold ph-thumbs-up' />
-                              Like
-                            </button>
-                            <Link
-                              href='#comment-form'
-                              className='flex-align gap-12 text-gray-700 hover-text-main-600'
-                            >
-                              <i className='ph-bold ph-arrow-bend-up-left' />
-                              Replay
-                            </Link>
+                            <h6 className='mb-14 text-md mt-24'>
+                              {review.title}
+                            </h6>
+                            <p className='text-gray-700'>
+                              {review.comment}
+                            </p>
+                            <div className='flex-align gap-20 mt-44'>
+                              <button className='flex-align gap-12 text-gray-700 hover-text-main-600'>
+                                <i className='ph-bold ph-thumbs-up' />
+                                Like
+                              </button>
+                              <Link
+                                href='#comment-form'
+                                className='flex-align gap-12 text-gray-700 hover-text-main-600'
+                              >
+                                <i className='ph-bold ph-arrow-bend-up-left' />
+                                Replay
+                              </Link>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className='d-flex align-items-start gap-24'>
-                        <img
-                          src='assets/images/thumbs/comment-img1.png'
-                          alt=''
-                          className='w-52 h-52 object-fit-cover rounded-circle flex-shrink-0'
-                        />
-                        <div className='flex-grow-1'>
-                          <div className='flex-between align-items-start gap-8 '>
-                            <div className=''>
-                              <h6 className='mb-12 text-md'>Nicolas cage</h6>
-                              <div className='flex-align gap-8'>
-                                <span className='text-15 fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-15 fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-15 fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-15 fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-15 fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                              </div>
-                            </div>
-                            <span className='text-gray-800 text-xs'>
-                              3 Days ago
-                            </span>
-                          </div>
-                          <h6 className='mb-14 text-md mt-24'>
-                            Greate Product
-                          </h6>
-                          <p className='text-gray-700'>
-                            There are many variations of passages of Lorem Ipsum
-                            available, but the majority have suffered alteration
-                            in some form, by injected humour
-                          </p>
-                          <div className='flex-align gap-20 mt-44'>
-                            <button className='flex-align gap-12 text-gray-700 hover-text-main-600'>
-                              <i className='ph-bold ph-thumbs-up' />
-                              Like
-                            </button>
-                            <Link
-                              href='#comment-form'
-                              className='flex-align gap-12 text-gray-700 hover-text-main-600'
-                            >
-                              <i className='ph-bold ph-arrow-bend-up-left' />
-                              Replay
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
+                      ))}
                       <div className='mt-56'>
                         <div className=''>
                           <h6 className='mb-24'>Write a Review</h6>
@@ -818,21 +806,7 @@ const ProductDetailsOne = ({ productSlug }) => {
                             What is it like to Product?
                           </span>
                           <div className='flex-align gap-8'>
-                            <span className='text-15 fw-medium text-warning-600 d-flex'>
-                              <i className='ph-fill ph-star' />
-                            </span>
-                            <span className='text-15 fw-medium text-warning-600 d-flex'>
-                              <i className='ph-fill ph-star' />
-                            </span>
-                            <span className='text-15 fw-medium text-warning-600 d-flex'>
-                              <i className='ph-fill ph-star' />
-                            </span>
-                            <span className='text-15 fw-medium text-warning-600 d-flex'>
-                              <i className='ph-fill ph-star' />
-                            </span>
-                            <span className='text-15 fw-medium text-warning-600 d-flex'>
-                              <i className='ph-fill ph-star' />
-                            </span>
+                            {renderStars(5)}
                           </div>
                         </div>
                         <div className='mt-32'>
@@ -861,9 +835,8 @@ const ProductDetailsOne = ({ productSlug }) => {
                               <textarea
                                 className='common-input rounded-8'
                                 id='desc'
-                                defaultValue={
-                                  "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English."
-                                }
+                                placeholder='Share your experience with this product...'
+                                rows={5}
                               />
                             </div>
                             <button
@@ -881,219 +854,41 @@ const ProductDetailsOne = ({ productSlug }) => {
                         <h6 className='mb-24'>Customers Feedback</h6>
                         <div className='d-flex flex-wrap gap-44'>
                           <div className='border border-gray-100 rounded-8 px-40 py-52 flex-center flex-column flex-shrink-0 text-center'>
-                            <h2 className='mb-6 text-main-600'>4.8</h2>
+                            <h2 className='mb-6 text-main-600'>{product.ratingStats.average}</h2>
                             <div className='flex-center gap-8'>
-                              <span className='text-15 fw-medium text-warning-600 d-flex'>
-                                <i className='ph-fill ph-star' />
-                              </span>
-                              <span className='text-15 fw-medium text-warning-600 d-flex'>
-                                <i className='ph-fill ph-star' />
-                              </span>
-                              <span className='text-15 fw-medium text-warning-600 d-flex'>
-                                <i className='ph-fill ph-star' />
-                              </span>
-                              <span className='text-15 fw-medium text-warning-600 d-flex'>
-                                <i className='ph-fill ph-star' />
-                              </span>
-                              <span className='text-15 fw-medium text-warning-600 d-flex'>
-                                <i className='ph-fill ph-star' />
-                              </span>
+                              {renderStars(product.ratingStats.average)}
                             </div>
                             <span className='mt-16 text-gray-500'>
                               Average Product Rating
                             </span>
                           </div>
                           <div className='border border-gray-100 rounded-8 px-24 py-40 flex-grow-1'>
-                            <div className='flex-align gap-8 mb-20'>
-                              <span className='text-gray-900 flex-shrink-0'>
-                                5
-                              </span>
-                              <div
-                                className='progress w-100 bg-gray-100 rounded-pill h-8'
-                                role='progressbar'
-                                aria-label='Basic example'
-                                aria-valuenow={70}
-                                aria-valuemin={0}
-                                aria-valuemax={100}
-                              >
+                            {product.ratingStats.breakdown.map((item, index) => (
+                              <div key={index} className='flex-align gap-8 mb-20'>
+                                <span className='text-gray-900 flex-shrink-0'>
+                                  {item.stars}
+                                </span>
                                 <div
-                                  className='progress-bar bg-main-600 rounded-pill'
-                                  style={{ width: "70%" }}
-                                />
-                              </div>
-                              <div className='flex-align gap-4'>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
+                                  className='progress w-100 bg-gray-100 rounded-pill h-8'
+                                  role='progressbar'
+                                  aria-label='Basic example'
+                                  aria-valuenow={item.percentage}
+                                  aria-valuemin={0}
+                                  aria-valuemax={100}
+                                >
+                                  <div
+                                    className='progress-bar bg-main-600 rounded-pill'
+                                    style={{ width: `${item.percentage}%` }}
+                                  />
+                                </div>
+                                <div className='flex-align gap-4'>
+                                  {renderStars(item.stars)}
+                                </div>
+                                <span className='text-gray-900 flex-shrink-0'>
+                                  {item.count}
                                 </span>
                               </div>
-                              <span className='text-gray-900 flex-shrink-0'>
-                                124
-                              </span>
-                            </div>
-                            <div className='flex-align gap-8 mb-20'>
-                              <span className='text-gray-900 flex-shrink-0'>
-                                4
-                              </span>
-                              <div
-                                className='progress w-100 bg-gray-100 rounded-pill h-8'
-                                role='progressbar'
-                                aria-label='Basic example'
-                                aria-valuenow={50}
-                                aria-valuemin={0}
-                                aria-valuemax={100}
-                              >
-                                <div
-                                  className='progress-bar bg-main-600 rounded-pill'
-                                  style={{ width: "50%" }}
-                                />
-                              </div>
-                              <div className='flex-align gap-4'>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                              </div>
-                              <span className='text-gray-900 flex-shrink-0'>
-                                52
-                              </span>
-                            </div>
-                            <div className='flex-align gap-8 mb-20'>
-                              <span className='text-gray-900 flex-shrink-0'>
-                                3
-                              </span>
-                              <div
-                                className='progress w-100 bg-gray-100 rounded-pill h-8'
-                                role='progressbar'
-                                aria-label='Basic example'
-                                aria-valuenow={35}
-                                aria-valuemin={0}
-                                aria-valuemax={100}
-                              >
-                                <div
-                                  className='progress-bar bg-main-600 rounded-pill'
-                                  style={{ width: "35%" }}
-                                />
-                              </div>
-                              <div className='flex-align gap-4'>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                              </div>
-                              <span className='text-gray-900 flex-shrink-0'>
-                                12
-                              </span>
-                            </div>
-                            <div className='flex-align gap-8 mb-20'>
-                              <span className='text-gray-900 flex-shrink-0'>
-                                2
-                              </span>
-                              <div
-                                className='progress w-100 bg-gray-100 rounded-pill h-8'
-                                role='progressbar'
-                                aria-label='Basic example'
-                                aria-valuenow={20}
-                                aria-valuemin={0}
-                                aria-valuemax={100}
-                              >
-                                <div
-                                  className='progress-bar bg-main-600 rounded-pill'
-                                  style={{ width: "20%" }}
-                                />
-                              </div>
-                              <div className='flex-align gap-4'>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                              </div>
-                              <span className='text-gray-900 flex-shrink-0'>
-                                5
-                              </span>
-                            </div>
-                            <div className='flex-align gap-8 mb-0'>
-                              <span className='text-gray-900 flex-shrink-0'>
-                                1
-                              </span>
-                              <div
-                                className='progress w-100 bg-gray-100 rounded-pill h-8'
-                                role='progressbar'
-                                aria-label='Basic example'
-                                aria-valuenow={5}
-                                aria-valuemin={0}
-                                aria-valuemax={100}
-                              >
-                                <div
-                                  className='progress-bar bg-main-600 rounded-pill'
-                                  style={{ width: "5%" }}
-                                />
-                              </div>
-                              <div className='flex-align gap-4'>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                                <span className='text-xs fw-medium text-warning-600 d-flex'>
-                                  <i className='ph-fill ph-star' />
-                                </span>
-                              </div>
-                              <span className='text-gray-900 flex-shrink-0'>
-                                2
-                              </span>
-                            </div>
+                            ))}
                           </div>
                         </div>
                       </div>
