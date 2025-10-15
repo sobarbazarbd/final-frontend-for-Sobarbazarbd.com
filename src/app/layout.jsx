@@ -8,6 +8,7 @@ import FooterOne from "@/components/Footer/FooterOne";
 import NewsletterOne from "@/components/NewsletterOne";
 import BottomFooter from "@/components/BottomFooter";
 import ShippingOne from "@/components/ShippingOne";
+import  "./dashboard/dashboard.css"
 
 export const metadata = {
   title: "SobazarBd - Oniline Shopping Complex",
