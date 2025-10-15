@@ -204,7 +204,7 @@ const DashboardPage = () => {
   );
 };
 
-// Dashboard Tab Component
+// Dashboard Tab Components u can customised
 const DashboardTab = () => {
   const stats = [
     { label: 'Total Orders', value: '12', icon: <ShoppingCart />, color: '#4CAF50' },
