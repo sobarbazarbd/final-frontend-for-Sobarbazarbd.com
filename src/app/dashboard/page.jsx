@@ -967,7 +967,7 @@ const TrackOrderTab = () => {
 
                 <Box>
                   <Typography variant="body2" sx={{ color: '#666', mb: 0.5, fontSize: '0.85rem' }}>
-                    Delivery Address
+                    Delivery Adress
                   </Typography>
                   <Typography variant="body1" sx={{ fontSize: '0.9rem' }}>
                     House 12, Road 8, Uttara, Dhaka
