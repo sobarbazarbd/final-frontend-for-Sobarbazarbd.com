@@ -21,7 +21,7 @@ const TopVendorsOne = () => {
             <div className='vendor-card text-center px-16 pb-24'>
               <div className=''>
                 <img
-                  src='assets/images/thumbs/vendor-logo1.png'
+                  src='assets/images/thumbs/vendor-logo2.png'
                   alt=''
                   className='vendor-card__logo m-12'
                 />

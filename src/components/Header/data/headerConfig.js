@@ -1,6 +1,6 @@
 export const headerConfig = {
   logo: {
-    src: "assets/images/logo/logo.png",
+    src: "/assets/images/logo/logo.png",
     alt: "Logo",
   },
   topLinks: [

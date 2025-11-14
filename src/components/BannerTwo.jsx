@@ -28,7 +28,7 @@ const BannerTwo = () => {
               </button>
               <div className='logo px-16 d-lg-none d-block'>
                 <Link href='/' className='link'>
-                  <img src='assets/images/logo/logo.png' alt='Logo' />
+                  <img src='/assets/images/logo/logo.png' alt='Logo' />
                 </Link>
               </div>
               <ul className='responsive-dropdown__list scroll-sm p-0 py-8 overflow-y-auto '>
@@ -567,7 +567,7 @@ const BannerTwo = () => {
                     </Link>
                   </div>
                   <div className='banner-item-two__thumb position-absolute bottom-0'>
-                    <img src='assets/images/thumbs/banner-two-img.png' alt='' />
+                    <img src='/assets/images/thumbs/banner-two-img.png' alt='' />
                   </div>
                 </div>
                 <div className='banner-item-two'>
@@ -590,7 +590,7 @@ const BannerTwo = () => {
                   </div>
                   <div className='banner-item-two__thumb position-absolute bottom-0'>
                     <img
-                      src='assets/images/thumbs/banner-two-img.png'
+                      src='/assets/images/thumbs/banner-two-img.png'
                       alt=''
                     />
                   </div>

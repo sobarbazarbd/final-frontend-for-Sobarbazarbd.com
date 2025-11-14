@@ -30,7 +30,31 @@ const SamplePrevArrow = memo(function SamplePrevArrow(props) {
   );
 });
 
-const DealsOne = () => {
+// Helper to get countdown for a given end date or fallback to start_date + 24h
+function getCountdownTo(startDate, endDate) {
+  let end;
+  if (endDate) {
+    end = new Date(endDate);
+  } else if (startDate) {
+    end = new Date(new Date(startDate).getTime() + 24 * 60 * 60 * 1000);
+  } else {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+  }
+  const now = new Date();
+  let diff = Math.max(0, end - now);
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  diff -= days * (1000 * 60 * 60 * 24);
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  diff -= hours * (1000 * 60 * 60);
+  const minutes = Math.floor(diff / (1000 * 60));
+  diff -= minutes * (1000 * 60);
+  const seconds = Math.floor(diff / 1000);
+  return { days, hours, minutes, seconds };
+}
+
+const DealsOne = ({ section }) => {
+  const featuredDeal = section?.banner_items?.[0];
+
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -39,17 +63,14 @@ const DealsOne = () => {
   });
 
   useEffect(() => {
-    const loadCountdown = async () => {
-      const { getCountdown } = await import("../helper/Countdown");
-      setTimeLeft(getCountdown());
-    };
-    loadCountdown();
-    const interval = setInterval(() => {
-      loadCountdown();
-    }, 1000);
-
+    if (!featuredDeal) return;
+    function updateCountdown() {
+      setTimeLeft(getCountdownTo(featuredDeal.start_date, featuredDeal.end_date));
+    }
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [featuredDeal]);
 
   const settings = {
     dots: false,
@@ -106,41 +127,54 @@ const DealsOne = () => {
               </div>
             </div>
           </div>
+          {/* Dynamic featured deal box */}
           <div className='deal-week-box rounded-16 overflow-hidden flex-between position-relative z-1 mb-24'>
             <img
-              src='assets/images/bg/week-deal-bg.png'
-              alt=''
+              src={featuredDeal?.image || '/assets/images/bg/week-deal-bg.png'}
+              alt={featuredDeal?.title || ''}
               className='position-absolute inset-block-start-0 inset-block-start-0 w-100 h-100 z-n1 object-fit-cover'
             />
             <div className='d-lg-block d-none ps-32 flex-shrink-0'>
-              <img src='assets/images/thumbs/week-deal-img1.png' alt='' />
+              <img src='/assets/images/thumbs/week-deal-img1.png' alt='' />
             </div>
             <div className='deal-week-box__content px-sm-4 d-block w-100 text-center'>
-              <h6 className='mb-20'>Apple AirPods Max, Over Ear Headphones</h6>
-              <div className='countdown mt-20' id='countdown4'>
-                <ul className='countdown-list style-four flex-center flex-wrap'>
-                  <li className='countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600'>
-                    <span className='days' />
-                    {timeLeft.days} <br /> Days
-                  </li>
-                  <li className='countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600'>
-                    <span className='hours' />
-                    {timeLeft.hours} <br /> Hour
-                  </li>
-                  <li className='countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600'>
-                    <span className='minutes' />
-                    {timeLeft.minutes} <br /> Min
-                  </li>
-                  <li className='countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600'>
-                    <span className='seconds' />
-                    {timeLeft.seconds} <br /> Sec
-                  </li>
-                </ul>
-              </div>
+              <h6 className='mb-20'>{featuredDeal?.title || "Apple AirPods Max, Over Ear Headphones"}</h6>
+              {featuredDeal?.end_date && (
+                <div className='countdown mt-20' id={`countdown${featuredDeal.id}`}>
+                  <ul className='countdown-list style-four flex-center flex-wrap'>
+                    <li className='countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600'>
+                      <span className='days' />
+                      {timeLeft.days} <br /> Days
+                    </li>
+                    <li className='countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600'>
+                      <span className='hours' />
+                      {timeLeft.hours} <br /> Hour
+                    </li>
+                    <li className='countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600'>
+                      <span className='minutes' />
+                      {timeLeft.minutes} <br /> Min
+                    </li>
+                    <li className='countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600'>
+                      <span className='seconds' />
+                      {timeLeft.seconds} <br /> Sec
+                    </li>
+                  </ul>
+                </div>
+              )}
+              <Link
+                href={featuredDeal?.link_url || "/shop"}
+                target={featuredDeal?.link_target || "_self"}
+                className='mt-16 btn btn-main-two fw-medium d-inline-flex align-items-center rounded-pill gap-8'
+              >
+                {featuredDeal?.button_text || "Shop Now"}
+                <span className='icon text-xl d-flex'>
+                  <i className='ph ph-arrow-right' />
+                </span>
+              </Link>
             </div>
             <div className='d-lg-block d-none flex-shrink-0 pe-xl-5'>
               <div className='me-xxl-5'>
-                <img src='assets/images/thumbs/week-deal-img2.png' alt='' />
+                <img src='/assets/images/thumbs/week-deal-img2.png' alt='' />
               </div>
             </div>
           </div>
@@ -156,7 +190,7 @@ const DealsOne = () => {
                       Sold
                     </span>
                     <img
-                      src='assets/images/thumbs/product-two-img1.png'
+                      src='/assets/images/thumbs/product-two-img1.png'
                       alt=''
                       className='w-auto max-w-unset'
                     />
@@ -237,7 +271,7 @@ const DealsOne = () => {
                       Sale 50%{" "}
                     </span>
                     <img
-                      src='assets/images/thumbs/product-two-img2.png'
+                      src='/assets/images/thumbs/product-two-img2.png'
                       alt=''
                       className='w-auto max-w-unset'
                     />
@@ -318,7 +352,7 @@ const DealsOne = () => {
                       New
                     </span>
                     <img
-                      src='assets/images/thumbs/product-two-img3.png'
+                      src='/assets/images/thumbs/product-two-img3.png'
                       alt=''
                       className='w-auto max-w-unset'
                     />
@@ -399,7 +433,7 @@ const DealsOne = () => {
                       Best seller
                     </span>
                     <img
-                      src='assets/images/thumbs/product-two-img4.png'
+                      src='/assets/images/thumbs/product-two-img4.png'
                       alt=''
                       className='w-auto max-w-unset'
                     />
@@ -480,7 +514,7 @@ const DealsOne = () => {
                       Best Seller{" "}
                     </span>
                     <img
-                      src='assets/images/thumbs/product-two-img5.png'
+                      src='/assets/images/thumbs/product-two-img5.png'
                       alt=''
                       className='w-auto max-w-unset'
                     />
@@ -561,7 +595,7 @@ const DealsOne = () => {
                       Best seller
                     </span>
                     <img
-                      src='assets/images/thumbs/product-two-img6.png'
+                      src='/assets/images/thumbs/product-two-img6.png'
                       alt=''
                       className='w-auto max-w-unset'
                     />
@@ -642,7 +676,7 @@ const DealsOne = () => {
                       New
                     </span>
                     <img
-                      src='assets/images/thumbs/product-two-img9.png'
+                      src='/assets/images/thumbs/product-two-img9.png'
                       alt=''
                       className='w-auto max-w-unset'
                     />

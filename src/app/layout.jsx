@@ -8,27 +8,45 @@ import FooterOne from "@/components/Footer/FooterOne";
 import NewsletterOne from "@/components/NewsletterOne";
 import BottomFooter from "@/components/BottomFooter";
 import ShippingOne from "@/components/ShippingOne";
-import  "./dashboard/dashboard.css"
+import "./dashboard/dashboard.css";
+import NavFooterProvider from "@/context/NavFooterProvider";
 
 export const metadata = {
   title: "SobazarBd - Oniline Shopping Complex",
-  description:
-    "SobazarBd - Oniline Shopping Complex",
+  description: "SobazarBd - Oniline Shopping Complex",
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  let navData = null;
+  try {
+    const res = await fetch(
+      "http://localhost:8000/api/v1.0/base/navbar-data/",
+      {
+        cache: "force-cache",
+      }
+    );
+    if (res.ok) {
+      const json = await res.json();
+      navData = json?.data ?? null;
+    }
+  } catch (e) {
+    navData = null;
+  }
+
   return (
-    <html lang='en'>
+    <html lang="en">
       <body suppressHydrationWarning={true}>
         <BootstrapInit />
         <PhosphorIconInit />
         <RouteScrollToTop />
-        <HeaderOne />
-        {children}
-       <ShippingOne></ShippingOne>
-        <NewsletterOne />
-        <FooterOne />
-        <BottomFooter />
+        <NavFooterProvider initialData={navData}>
+          <HeaderOne />
+          {children}
+          <ShippingOne />
+          <NewsletterOne />
+          {/* <FooterOne /> */}
+          {/* <BottomFooter /> */}
+        </NavFooterProvider>
       </body>
     </html>
   );

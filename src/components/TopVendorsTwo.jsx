@@ -65,7 +65,7 @@ const TopVendorsTwo = () => {
               <div className='vendor-card text-center px-16 pb-24'>
                 <div className=''>
                   <img
-                    src='assets/images/thumbs/vendor-logo1.png'
+                    src='/assets/images/thumbs/vendor-logo2.png'
                     alt='marketpro'
                     className='vendor-card__logo m-12'
                   />
@@ -86,7 +86,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img1.png'
+                            src='/assets/images/thumbs/vendor-two-img1.png'
                             alt='marketpro'
                           />
                         </div>
@@ -94,7 +94,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img2.png'
+                            src='/assets/images/thumbs/vendor-two-img2.png'
                             alt='marketpro'
                           />
                         </div>
@@ -102,7 +102,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img3.png'
+                            src='/assets/images/thumbs/vendor-two-img3.png'
                             alt='marketpro'
                           />
                         </div>
@@ -110,7 +110,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img4.png'
+                            src='/assets/images/thumbs/vendor-two-img4.png'
                             alt='marketpro'
                           />
                         </div>
@@ -118,7 +118,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img5.png'
+                            src='/assets/images/thumbs/vendor-two-img5.png'
                             alt='marketpro'
                           />
                         </div>
@@ -126,7 +126,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img6.png'
+                            src='/assets/images/thumbs/vendor-two-img6.png'
                             alt='marketpro'
                           />
                         </div>
@@ -140,7 +140,7 @@ const TopVendorsTwo = () => {
               <div className='vendor-card text-center px-16 pb-24'>
                 <div className=''>
                   <img
-                    src='assets/images/thumbs/vendor-logo1.png'
+                    src='/assets/images/thumbs/vendor-logo2.png'
                     alt='marketpro'
                     className='vendor-card__logo m-12'
                   />
@@ -161,7 +161,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img6.png'
+                            src='/assets/images/thumbs/vendor-two-img6.png'
                             alt='marketpro'
                           />
                         </div>
@@ -169,7 +169,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img7.png'
+                            src='/assets/images/thumbs/vendor-two-img7.png'
                             alt='marketpro'
                           />
                         </div>
@@ -177,7 +177,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img8.png'
+                            src='/assets/images/thumbs/vendor-two-img8.png'
                             alt='marketpro'
                           />
                         </div>
@@ -185,7 +185,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img9.png'
+                            src='/assets/images/thumbs/vendor-two-img9.png'
                             alt='marketpro'
                           />
                         </div>
@@ -193,7 +193,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img10.png'
+                            src='/assets/images/thumbs/vendor-two-img10.png'
                             alt='marketpro'
                           />
                         </div>
@@ -201,7 +201,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img11.png'
+                            src='/assets/images/thumbs/vendor-two-img11.png'
                             alt='marketpro'
                           />
                         </div>
@@ -215,7 +215,7 @@ const TopVendorsTwo = () => {
               <div className='vendor-card text-center px-16 pb-24'>
                 <div className=''>
                   <img
-                    src='assets/images/thumbs/vendor-logo1.png'
+                    src='/assets/images/thumbs/vendor-logo2.png'
                     alt='marketpro'
                     className='vendor-card__logo m-12'
                   />
@@ -236,7 +236,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img1.png'
+                            src='/assets/images/thumbs/vendor-two-img1.png'
                             alt='marketpro'
                           />
                         </div>
@@ -244,7 +244,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img2.png'
+                            src='/assets/images/thumbs/vendor-two-img2.png'
                             alt='marketpro'
                           />
                         </div>
@@ -252,7 +252,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img3.png'
+                            src='/assets/images/thumbs/vendor-two-img3.png'
                             alt='marketpro'
                           />
                         </div>
@@ -260,7 +260,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img4.png'
+                            src='/assets/images/thumbs/vendor-two-img4.png'
                             alt='marketpro'
                           />
                         </div>
@@ -268,7 +268,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img5.png'
+                            src='/assets/images/thumbs/vendor-two-img5.png'
                             alt='marketpro'
                           />
                         </div>
@@ -276,7 +276,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img6.png'
+                            src='/assets/images/thumbs/vendor-two-img6.png'
                             alt='marketpro'
                           />
                         </div>
@@ -290,7 +290,7 @@ const TopVendorsTwo = () => {
               <div className='vendor-card text-center px-16 pb-24'>
                 <div className=''>
                   <img
-                    src='assets/images/thumbs/vendor-logo1.png'
+                    src='/assets/images/thumbs/vendor-logo2.png'
                     alt='marketpro'
                     className='vendor-card__logo m-12'
                   />
@@ -311,7 +311,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img6.png'
+                            src='/assets/images/thumbs/vendor-two-img6.png'
                             alt='marketpro'
                           />
                         </div>
@@ -319,7 +319,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img7.png'
+                            src='/assets/images/thumbs/vendor-two-img7.png'
                             alt='marketpro'
                           />
                         </div>
@@ -327,7 +327,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img8.png'
+                            src='/assets/images/thumbs/vendor-two-img8.png'
                             alt='marketpro'
                           />
                         </div>
@@ -335,7 +335,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img9.png'
+                            src='/assets/images/thumbs/vendor-two-img9.png'
                             alt='marketpro'
                           />
                         </div>
@@ -343,7 +343,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img10.png'
+                            src='/assets/images/thumbs/vendor-two-img10.png'
                             alt='marketpro'
                           />
                         </div>
@@ -351,7 +351,7 @@ const TopVendorsTwo = () => {
                       <div className=''>
                         <div className='vendor-card__item bg-white rounded-circle flex-center'>
                           <img
-                            src='assets/images/thumbs/vendor-two-img11.png'
+                            src='/assets/images/thumbs/vendor-two-img11.png'
                             alt='marketpro'
                           />
                         </div>

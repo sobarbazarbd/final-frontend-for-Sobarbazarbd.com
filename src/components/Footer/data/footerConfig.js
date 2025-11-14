@@ -1,7 +1,7 @@
 export const footerConfig = {
   companyInfo: {
     logo: {
-      src: "assets/images/logo/logo.png",
+      src: "/assets/images/logo/logo.png",
       alt: "Sobarbazar BD"
     },
     description: "We're Sobarbazar Bd, an innovative team of food suppliers.",

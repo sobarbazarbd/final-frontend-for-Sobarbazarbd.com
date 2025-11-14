@@ -2,11 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-
 import dynamic from "next/dynamic";
 const Slider = dynamic(() => import("react-slick"), { ssr: false });
 
-const ProductDetailsTwo = () => {
+const ProductDetailsTwo = ({ product, discountText }) => {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -26,21 +25,31 @@ const ProductDetailsTwo = () => {
 
     return () => clearInterval(interval);
   }, []);
-  const productImages = [
-    "assets/images/thumbs/product-details-two-thumb1.png",
-    "assets/images/thumbs/product-details-two-thumb2.png",
-    "assets/images/thumbs/product-details-two-thumb3.png",
-    "assets/images/thumbs/product-details-two-thumb1.png",
-    "assets/images/thumbs/product-details-two-thumb2.png",
-  ];
+  // Images
+  const productImages = product?.images?.length
+    ? product.images.map(img => img.image)
+    : ["/assets/images/thumbs/product-details-two-thumb1.png"];
 
-  // increment & decrement
-  const [quantity, setQuantity] = useState(1);
-  const incrementQuantity = () => setQuantity(quantity + 1);
-  const decrementQuantity = () =>
-    setQuantity(quantity > 1 ? quantity - 1 : quantity);
+  // Variant selection state
+  const [selectedVariantId, setSelectedVariantId] = useState(
+    product?.variants?.find(v => v.is_default)?.id || product?.variants?.[0]?.id
+  );
+  const selectedVariant = product?.variants?.find(v => v.id === selectedVariantId);
 
+  // Main image state
   const [mainImage, setMainImage] = useState(productImages[0]);
+
+  // Parse attributes if present
+  let attributes = {};
+  if (selectedVariant?.attributes) {
+    try {
+      attributes = JSON.parse(
+        selectedVariant.attributes.replace(/'/g, '"')
+      );
+    } catch {
+      attributes = {};
+    }
+  }
 
   const settingsThumbs = {
     dots: false,
@@ -90,7 +99,7 @@ const ProductDetailsTwo = () => {
                 <div className='product-details__content'>
                   <div className='flex-center mb-24 flex-wrap gap-16 bg-color-one rounded-8 py-16 px-24 position-relative z-1'>
                     <img
-                      src='assets/images/bg/details-offer-bg.png'
+                      src='/assets/images/bg/details-offer-bg.png'
                       alt=''
                       className='position-absolute inset-block-start-0 inset-inline-start-0 w-100 h-100 z-n1'
                     />
@@ -122,9 +131,40 @@ const ProductDetailsTwo = () => {
                     </span>
                   </div>
                   <h5 className='mb-12'>
-                    HP Chromebook With Intel Celeron, 4GB Memory &amp; 64GB eMMC
-                    - Modern Gray
+                    {product?.name}
                   </h5>
+                  {/* Variant Selector */}
+                  {product?.variants?.length > 1 && (
+                    <div className="mb-16">
+                      <label className="fw-semibold mb-8 d-block">Select Variant:</label>
+                      <div className="d-flex flex-wrap gap-12">
+                        {product.variants.map(variant => (
+                          <label key={variant.id} className="d-flex align-items-center gap-8 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="variant"
+                              checked={selectedVariantId === variant.id}
+                              onChange={() => setSelectedVariantId(variant.id)}
+                            />
+                            <span>
+                              {variant.name}
+                              {variant.attributes && (
+                                <span className="text-xs text-gray-500 ms-2">
+                                  {Object.entries(
+                                    (() => {
+                                      try {
+                                        return JSON.parse(variant.attributes.replace(/'/g, '"'));
+                                      } catch { return {}; }
+                                    })()
+                                  ).map(([k, v]) => `${k}: ${v}`).join(", ")}
+                                </span>
+                              )}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div className='flex-align flex-wrap gap-12'>
                     <div className='flex-align gap-12 flex-wrap'>
                       <div className='flex-align gap-8'>
@@ -153,35 +193,47 @@ const ProductDetailsTwo = () => {
                     </div>
                     <span className='text-sm fw-medium text-gray-500'>|</span>
                     <span className='text-gray-900'>
-                      {" "}
-                      <span className='text-gray-400'>SKU:</span>EB4DRP{" "}
+                      <span className='text-gray-400'>SKU:</span> {selectedVariant?.sku || ""}
                     </span>
                   </div>
                   <span className='mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block' />
                   <p className='text-gray-700'>
-                    Geared up and ready to roll: Get the responsive performance
-                    you're looking for with an Intel processor and 64 GB eMMC
-                    storage. Stay productive with compatible apps like Microsoft
-                    Office, Google Workspace, and more. The Chrome OS gives you
-                    a fast, simple, and secure online experience with built-in
-                    virus protection.
+                    {product?.description}
                   </p>
+                  {/* Show attributes if present */}
+                  {Object.keys(attributes).length > 0 && (
+                    <div className="mb-12">
+                      <span className="fw-semibold">Attributes:</span>{" "}
+                      {Object.entries(attributes).map(([k, v]) => (
+                        <span key={k} className="badge bg-light text-dark me-2">{k}: {v}</span>
+                      ))}
+                    </div>
+                  )}
                   <div className='my-32 flex-align gap-16 flex-wrap'>
                     <div className='flex-align gap-8'>
-                      <div className='flex-align gap-8 text-main-two-600'>
-                        <i className='ph-fill ph-seal-percent text-xl' />
-                        -10%
-                      </div>
-                      <h6 className='mb-0'>USD 320.99</h6>
+                      {/* Fix: Render discountText instead of object */}
+                      {discountText && (
+                        <div className='flex-align gap-8 text-main-two-600'>
+                          <i className='ph-fill ph-seal-percent text-xl' />
+                          {discountText}
+                        </div>
+                      )}
+                      <h6 className='mb-0'>৳{selectedVariant?.final_price}</h6>
                     </div>
                     <div className='flex-align gap-8'>
                       <span className='text-gray-700'>Regular Price</span>
                       <h6 className='text-xl text-gray-400 mb-0 fw-medium'>
-                        USD 452.99
+                        {selectedVariant?.price ? `৳${selectedVariant.price}` : ""}
                       </h6>
                     </div>
                   </div>
-                  <div className='my-32 flex-align flex-wrap gap-12'>
+                  {/* Stock info */}
+                  <div className="mb-8 text-sm text-gray-700">
+                    <span className="fw-medium">
+                      Stock: {selectedVariant?.stock} / {selectedVariant?.available_stock}
+                    </span>
+                  </div>
+                  <div className='my-32 flex-align gap-16 flex-wrap'>
                     <Link
                       href='#'
                       className='px-12 py-8 text-sm rounded-8 flex-align gap-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600'
@@ -211,7 +263,7 @@ const ProductDetailsTwo = () => {
                       <div>
                         <span className='text-gray-900 d-block mb-12'>
                           Color:
-                          <span className='fw-medium'>Mineral Silver</span>
+                          <span className='fw-medium'>{selectedVariant?.name}</span>
                         </span>
                         <div className='color-list flex-align gap-8'>
                           <button
@@ -239,7 +291,7 @@ const ProductDetailsTwo = () => {
                       <div>
                         <span className='text-gray-900 d-block mb-12'>
                           Pattern Name:
-                          <span className='fw-medium'>with offer</span>
+                          <span className='fw-medium'>{product?.name}</span>
                         </span>
                         <div className='flex-align gap-8 flex-wrap'>
                           <Link
@@ -277,7 +329,7 @@ const ProductDetailsTwo = () => {
                       100% Guarantee Safe Checkout
                     </span>
                     <div className='mt-10'>
-                      <img src='assets/images/thumbs/gateway-img.png' alt='' />
+                      <img src='/assets/images/thumbs/gateway-img.png' alt='' />
                     </div>
                   </div>
                 </div>
@@ -314,12 +366,12 @@ const ProductDetailsTwo = () => {
                   htmlFor='stock'
                   className='text-lg mb-8 text-heading fw-semibold d-block'
                 >
-                  Total Stock: 21
+                  Total Stock: {selectedVariant?.stock ?? 0}
                 </label>
                 <span className='text-xl d-flex'>
                   <i className='ph ph-location' />
                 </span>
-                <div className='d-flex rounded-4 overflow-hidden'>
+                {/* <div className='d-flex rounded-4 overflow-hidden'>
                   <button
                     onClick={decrementQuantity}
                     type='button'
@@ -341,12 +393,12 @@ const ProductDetailsTwo = () => {
                   >
                     <i className='ph ph-plus' />
                   </button>
-                </div>
+                </div> */}
               </div>
               <div className='mb-32'>
                 <div className='flex-between flex-wrap gap-8 border-bottom border-gray-100 pb-16 mb-16'>
                   <span className='text-gray-500'>Price</span>
-                  <h6 className='text-lg mb-0'>$150.00</h6>
+                  <h6 className='text-lg mb-0'>৳{selectedVariant?.final_price ?? ""}</h6>
                 </div>
                 <div className='flex-between flex-wrap gap-8'>
                   <span className='text-gray-500'>Shipping</span>
@@ -372,7 +424,7 @@ const ProductDetailsTwo = () => {
                     <i className='ph-fill ph-truck' />
                   </span>
                   <span className='text-sm text-neutral-600'>
-                    Ship from <span className='fw-semibold'>MarketPro</span>{" "}
+                    Ship from <span className='fw-semibold'>{product?.store?.name ?? "N/A"}</span>
                   </span>
                 </div>
                 <div className='px-16 py-8 bg-main-50 rounded-8 flex-between gap-24 mb-0'>
@@ -380,8 +432,25 @@ const ProductDetailsTwo = () => {
                     <i className='ph-fill ph-storefront' />
                   </span>
                   <span className='text-sm text-neutral-600'>
-                    Sold by:{" "}
-                    <span className='fw-semibold'>MR Distribution LLC</span>{" "}
+                    Sold by: <span className='fw-semibold'>{product?.store?.name ?? "N/A"}</span>
+                  </span>
+                </div>
+              </div>
+              <div className='mt-32'>
+                <div className='px-16 py-8 bg-main-50 rounded-8 flex-between gap-24 mb-14'>
+                  <span className='w-32 h-32 bg-white text-main-600 rounded-circle flex-center text-xl flex-shrink-0'>
+                    <i className='ph-fill ph-truck' />
+                  </span>
+                  <span className='text-sm text-neutral-600'>
+                    Ship from <span className='fw-semibold'>{product?.store?.name ?? "N/A"}</span>
+                  </span>
+                </div>
+                <div className='px-16 py-8 bg-main-50 rounded-8 flex-between gap-24 mb-0'>
+                  <span className='w-32 h-32 bg-white text-main-600 rounded-circle flex-center text-xl flex-shrink-0'>
+                    <i className='ph-fill ph-storefront' />
+                  </span>
+                  <span className='text-sm text-neutral-600'>
+                    Sold by: <span className='fw-semibold'>{product?.store?.name ?? "N/A"}</span>
                   </span>
                 </div>
               </div>
@@ -481,7 +550,7 @@ const ProductDetailsTwo = () => {
                 href='#'
                 className='btn bg-color-one rounded-16 flex-align gap-8 text-main-600 hover-bg-main-600 hover-text-white'
               >
-                <img src='assets/images/icon/satisfaction-icon.png' alt='' />
+                <img src='/assets/images/icon/satisfaction-icon.png' alt='' />
                 100% Satisfaction Guaranteed
               </Link>
             </div>
@@ -717,7 +786,7 @@ const ProductDetailsTwo = () => {
                       <h6 className='mb-24'>Product Description</h6>
                       <div className='d-flex align-items-start gap-24 pb-44 border-bottom border-gray-100 mb-44'>
                         <img
-                          src='assets/images/thumbs/comment-img1.png'
+                          src='/assets/images/thumbs/comment-img1.png'
                           alt=''
                           className='w-52 h-52 object-fit-cover rounded-circle flex-shrink-0'
                         />
@@ -772,7 +841,7 @@ const ProductDetailsTwo = () => {
                       </div>
                       <div className='d-flex align-items-start gap-24'>
                         <img
-                          src='assets/images/thumbs/comment-img1.png'
+                          src='/assets/images/thumbs/comment-img1.png'
                           alt=''
                           className='w-52 h-52 object-fit-cover rounded-circle flex-shrink-0'
                         />

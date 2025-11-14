@@ -1,38 +1,42 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import query from "jquery";
+import { NavFooterContext } from "@/context/NavFooterProvider";
 
-// Import data from separate files
 import { headerConfig } from "./data/headerConfig";
 import { navigation } from "./data/navigation";
-import { categories } from "./data/categories";
-import { categoryOptions, locationOptions } from "./data/selectOptions";
+import { locationOptions } from "./data/selectOptions";
 
 const HeaderOne = () => {
   let pathname = usePathname();
   const [scroll, setScroll] = useState(false);
-  
+
+  const navFooter = useContext(NavFooterContext);
+  const ownerInfo = navFooter?.ownerInfo ?? null;
+  const categoriesFromApi = navFooter?.categories ?? [];
+
+  const [showFallback, setShowFallback] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setShowFallback(true), 700);
+    return () => clearTimeout(t);
+  }, []);
+
+  const fallbackLogo = headerConfig.logo.src;
+  const fallbackPhone = headerConfig.contact?.phone ?? "01- 234 567 890";
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const handleScroll = () => {
         setScroll(window.pageYOffset > 150);
       };
-
-      // Attach the scroll event listener
       window.addEventListener("scroll", handleScroll);
 
-      // Initialize Select2
       const selectElement = query(".js-example-basic-single");
       selectElement.select2();
-
-      // Cleanup function
       return () => {
-        // Remove the scroll event listener
         window.removeEventListener("scroll", handleScroll);
-
-        // Destroy Select2 instance if it exists
         if (selectElement.data("select2")) {
           selectElement.select2("destroy");
         }
@@ -251,7 +255,14 @@ const HeaderOne = () => {
             {/* Logo Start */}
             <div className='logo'>
               <Link href='/' className='link'>
-                <img src={headerConfig.logo.src} alt={headerConfig.logo.alt} />
+                {ownerInfo?.logo ? (
+                  <img src={ownerInfo.logo} alt={ownerInfo.owner_name ?? "Logo"} />
+                ) : !showFallback ? (
+                  // skeleton logo
+                  <div style={{ width: 140, height: 40, background: "#eee", borderRadius: 8 }} />
+                ) : (
+                  <img src={fallbackLogo} alt='Logo' />
+                )}
               </Link>
             </div>
             {/* Logo End  */}
@@ -267,7 +278,12 @@ const HeaderOne = () => {
                   className='js-example-basic-single border border-gray-200 border-end-0'
                   name='state'
                 >
-                  {renderSelectOptions(categoryOptions)}
+                  <option value={1}>All Categories</option>
+                  {categoriesFromApi.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
                 </select>
                 <div className='search-form__wrapper position-relative'>
                   <input
@@ -387,49 +403,65 @@ const HeaderOne = () => {
                   {/* Logo Start */}
                   <div className='logo px-16 d-lg-none d-block'>
                     <Link href='/' className='link'>
-                      <img src={headerConfig.logo.src} alt={headerConfig.logo.alt} />
+                      {ownerInfo?.logo ? (
+                        <img src={ownerInfo.logo} alt={ownerInfo.owner_name ?? "Logo"} />
+                      ) : !showFallback ? (
+                        // skeleton logo
+                        <div style={{ width: 140, height: 40, background: "#eee", borderRadius: 8 }} />
+                      ) : (
+                        <img src={fallbackLogo} alt='Logo' />
+                      )}
                     </Link>
                   </div>
                   {/* Logo End */}
                   <ul className='scroll-sm p-0 py-8 w-300 max-h-400 overflow-y-auto'>
-                    {categories.map((category, index) => (
-                      <li
-                        key={index}
-                        onClick={() => handleCatClick(index)}
-                        className={`has-submenus-submenu ${
-                          activeIndexCat === index ? "active" : ""
-                        }`}
-                      >
-                        <Link
-                          href='#'
-                          className='text-gray-500 text-15 py-12 px-16 flex-align gap-8 rounded-0'
-                        >
-                          <span className='text-xl d-flex'>
-                            <i className={category.icon} />
-                          </span>
-                          <span>{category.title}</span>
-                          <span className='icon text-md d-flex ms-auto'>
-                            <i className='ph ph-caret-right' />
-                          </span>
-                        </Link>
-                        <div
-                          className={`submenus-submenu py-16 ${
-                            activeIndexCat === index ? "open" : ""
-                          }`}
-                        >
-                          <h6 className='text-lg px-16 submenus-submenu__title'>
-                            {category.title}
-                          </h6>
-                          <ul className='submenus-submenu__list max-h-300 overflow-y-auto scroll-sm'>
-                            {category.submenu.map((subItem, subIndex) => (
-                              <li key={subIndex}>
-                                <Link href={subItem.path}>{subItem.title}</Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </li>
-                    ))}
+                    {categoriesFromApi.length > 0 ? (
+                      categoriesFromApi.map((category, idx) => (
+                        <li key={category.id} onClick={() => handleCatClick(idx)} className={`has-submenus-submenu ${activeIndexCat === idx ? "active" : ""}`}>
+                          <Link href='#' className='text-gray-500 text-15 py-12 px-16 flex-align gap-8 rounded-0'>
+                            <span className='text-xl d-flex'>
+                              <i className='ph ph-brandy' />
+                            </span>
+                            <span>{category.name}</span>
+                            <span className='icon text-md d-flex ms-auto'>
+                              <i className='ph ph-caret-right' />
+                            </span>
+                          </Link>
+                          <div className={`submenus-submenu py-16 ${activeIndexCat === idx ? "open" : ""}`}>
+                            <h6 className='text-lg px-16 submenus-submenu__title'>{category.name}</h6>
+                            <ul className='submenus-submenu__list max-h-300 overflow-y-auto scroll-sm'>
+                              {Array.isArray(category.subcategories) && category.subcategories.map((sub) => (
+                                <li key={sub.id}>
+                                  <Link href={`/shop?subcategory=${sub.id}`}>{sub.name}</Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </li>
+                      ))
+                    ) : (
+                      // fallback static menu if API not available
+                      <>
+                        <li className='has-submenus-submenu'>
+                          <Link href='#' className='text-gray-500 text-15 py-12 px-16 flex-align gap-8 rounded-0'>
+                            <span className='text-xl d-flex'>
+                              <i className='ph ph-carrot' />
+                            </span>
+                            <span>Vegetables &amp; Fruit</span>
+                            <span className='icon text-md d-flex ms-auto'>
+                              <i className='ph ph-caret-right' />
+                            </span>
+                          </Link>
+                          <div className='submenus-submenu py-16'>
+                            <h6 className='text-lg px-16 submenus-submenu__title'>Vegetables &amp; Fruit</h6>
+                            <ul className='submenus-submenu__list max-h-300 overflow-y-auto scroll-sm'>
+                              <li><Link href='/shop'>Potato &amp; Tomato</Link></li>
+                              <li><Link href='/shop'>Cucumber &amp; Capsicum</Link></li>
+                            </ul>
+                          </div>
+                        </li>
+                      </>
+                    )}
                   </ul>
                 </div>
               </div>
@@ -475,13 +507,19 @@ const HeaderOne = () => {
             {/* Header Right start */}
             <div className='header-right flex-align'>
               <a
-                href={`tel:${headerConfig.contact.phone}`}
+                href={ownerInfo?.phone ? `tel:${ownerInfo.phone}` : `tel:${fallbackPhone}`}
                 className='bg-main-600 text-white p-12 h-100 hover-bg-main-800 flex-align gap-8 text-lg d-lg-flex d-none'
               >
                 <div className='d-flex text-32'>
-                  <i className={headerConfig.contact.icon} />
+                  <i className='ph ph-phone-call' />
                 </div>
-                {headerConfig.contact.phone}
+                {ownerInfo?.phone ? (
+                  ownerInfo.phone
+                ) : !showFallback ? (
+                  <span style={{ display: "inline-block", width: 120, height: 16, background: "#eee", borderRadius: 6 }} />
+                ) : (
+                  fallbackPhone
+                )}
               </a>
               <div className='me-16 d-lg-none d-block'>
                 <div className='flex-align flex-wrap gap-12'>

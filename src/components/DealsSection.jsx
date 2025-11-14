@@ -31,7 +31,7 @@ const DealsSection = () => {
       <div className='container container-lg'>
         <div
           className='bg-neutral-600 rounded-48 bg-img'
-          style={{ backgroundImage: "url(assets/images/bg/pattern-two.png)" }}
+          style={{ backgroundImage: "url(/assets/images/bg/pattern-two.png)" }}
         >
           <div className='row gy-4 align-items-center'>
             <div className='col-xl-6 d-md-block d-none'>
@@ -48,7 +48,7 @@ const DealsSection = () => {
                           className='w-100 h-100 flex-center'
                         >
                           <img
-                            src='assets/images/thumbs/trending-three-img3.png'
+                            src='/assets/images/thumbs/trending-three-img3.png'
                             alt=''
                             className='w-auto max-w-unset'
                           />
@@ -103,7 +103,7 @@ const DealsSection = () => {
                           className='w-100 h-100 flex-center'
                         >
                           <img
-                            src='assets/images/thumbs/trending-three-img4.png'
+                            src='/assets/images/thumbs/trending-three-img4.png'
                             alt=''
                             className='w-auto max-w-unset'
                           />
@@ -158,7 +158,7 @@ const DealsSection = () => {
                           className='w-100 h-100 flex-center'
                         >
                           <img
-                            src='assets/images/thumbs/trending-three-img2.png'
+                            src='/assets/images/thumbs/trending-three-img2.png'
                             alt=''
                             className='w-auto max-w-unset'
                           />
@@ -205,7 +205,7 @@ const DealsSection = () => {
                 </ul>
                 <div className='text-end'>
                   <img
-                    src='assets/images/thumbs/deals-img.png'
+                    src='/assets/images/thumbs/deals-img.png'
                     alt=''
                     className='pe-xxl-5 pe-lg-4 deals__img'
                   />

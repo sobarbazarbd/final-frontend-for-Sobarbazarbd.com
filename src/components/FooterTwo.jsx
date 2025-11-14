@@ -5,7 +5,7 @@ const FooterOne = () => {
   return (
     <footer className='footer py-120'>
       <img
-        src='assets/images/bg/body-bottom-bg.png'
+        src='/assets/images/bg/body-bottom-bg.png'
         alt='BG'
         className='body-bottom-bg'
       />
@@ -15,7 +15,7 @@ const FooterOne = () => {
             <div className='footer-item__logo'>
               <Link href='/'>
                 {" "}
-                <img src='assets/images/logo/logo.png' alt='' />
+                <img src='/assets/images/logo/logo.png' alt='' />
               </Link>
             </div>
             <p className='mb-24'>
@@ -277,20 +277,20 @@ const FooterOne = () => {
             <h6 className=''>Shop on The Go</h6>
             <p className='mb-16'>Sobarbazar Bd App is available. Get it now</p>
             <div className='flex-align gap-8 my-32'>
-              <Link href='/https://www.apple.com/store' className=''>
-                <img src='assets/images/thumbs/store-img1.png' alt='' />
+              <Link href='https://www.apple.com/store' className=''>
+                <img src='/assets/images/thumbs/store-img1.png' alt='' />
               </Link>
               <Link
-                href='/https://play.google.com/store/apps?hl=en'
+                href='https://play.google.com/store/apps?hl=en'
                 className=''
               >
-                <img src='assets/images/thumbs/store-img2.png' alt='' />
+                <img src='/assets/images/thumbs/store-img2.png' alt='' />
               </Link>
             </div>
             <ul className='flex-align gap-16'>
               <li>
                 <Link
-                  href='/https://www.facebook.com'
+                  href='https://www.facebook.com'
                   className='w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white'
                 >
                   <i className='ph-fill ph-facebook-logo' />
@@ -298,7 +298,7 @@ const FooterOne = () => {
               </li>
               <li>
                 <Link
-                  href='/https://www.twitter.com'
+                  href='https://www.twitter.com'
                   className='w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white'
                 >
                   <i className='ph-fill ph-twitter-logo' />
@@ -306,7 +306,7 @@ const FooterOne = () => {
               </li>
               <li>
                 <Link
-                  href='/https://www.linkedin.com'
+                  href='https://www.linkedin.com'
                   className='w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white'
                 >
                   <i className='ph-fill ph-instagram-logo' />
@@ -314,7 +314,7 @@ const FooterOne = () => {
               </li>
               <li>
                 <Link
-                  href='/https://www.pinterest.com'
+                  href='https://www.pinterest.com'
                   className='w-44 h-44 flex-center bg-main-100 text-main-600 text-xl rounded-circle hover-bg-main-600 hover-text-white'
                 >
                   <i className='ph-fill ph-linkedin-logo' />

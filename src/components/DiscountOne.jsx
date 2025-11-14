@@ -11,7 +11,7 @@ const DiscountOne = () => {
           <div className='col-xl-6'>
             <div className='discount-item rounded-16 overflow-hidden position-relative z-1 h-100 d-flex flex-column align-items-start justify-content-center'>
               <img
-                src='assets/images/bg/discount-bg1.jpg'
+                src='/assets/images/bg/discount-bg1.jpg'
                 alt='marketpro'
                 className='position-absolute inset-block-start-0 inset-inline-start-0 w-100 h-100 z-n1'
               />
@@ -32,7 +32,7 @@ const DiscountOne = () => {
                   </Link>
                 </div>
                 <img
-                  src='assets/images/thumbs/discount-img1.png'
+                  src='/assets/images/thumbs/discount-img1.png'
                   alt='marketpro'
                   className='d-sm-block d-none'
                 />
@@ -42,7 +42,7 @@ const DiscountOne = () => {
           <div className='col-xl-6'>
             <div className='discount-item rounded-16 overflow-hidden position-relative z-1 h-100 d-flex flex-column align-items-center justify-content-center'>
               <img
-                src='assets/images/bg/discount-bg2.jpg'
+                src='/assets/images/bg/discount-bg2.jpg'
                 alt='marketpro'
                 className='position-absolute inset-block-start-0 inset-inline-start-0 w-100 h-100 z-n1'
               />
@@ -63,7 +63,7 @@ const DiscountOne = () => {
                   </Link>
                 </div>
                 <img
-                  src='assets/images/thumbs/discount-img2.png'
+                  src='/assets/images/thumbs/discount-img2.png'
                   alt='marketpro'
                   className='d-sm-block d-none'
                 />

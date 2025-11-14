@@ -7,7 +7,7 @@ import query from "jquery";
 // Configuration objects for dynamic content
 const headerConfig = {
   logo: {
-    src: "assets/images/logo/logo.png",
+    src: "/assets/images/logo/logo.png",
     alt: "Logo",
   },
   topLinks: [
@@ -21,12 +21,12 @@ const headerConfig = {
     { icon: "ph ph-chat-circle-dots", text: "Live Chat", href: "#" },
   ],
   languages: [
-    { code: "Eng", name: "English", flag: "assets/images/thumbs/flag1.png" },
-    { code: "Bd", name: "Bangladesh", flag: "assets/images/thumbs/flag6.png" },
+    { code: "Eng", name: "English", flag: "/assets/images/thumbs/flag1.png" },
+    { code: "Bd", name: "Bangladesh", flag: "/assets/images/thumbs/flag6.png" },
    
   ],
   currencies: [
-    { code: "BDT", name: "BDT", flag: "assets/images/thumbs/flag6.png" },
+    { code: "BDT", name: "BDT", flag: "/assets/images/thumbs/flag6.png" },
   ],
   navigation: [
     {

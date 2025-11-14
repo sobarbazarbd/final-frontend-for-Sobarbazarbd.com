@@ -126,7 +126,7 @@ const HeaderThree = () => {
         </button>
         <div className='mobile-menu__inner'>
           <Link href='/' className='mobile-menu__logo'>
-            <img src='assets/images/logo/logo.png' alt='Logo' />
+            <img src='/assets/images/logo/logo.png' alt='Logo' />
           </Link>
           <div className='mobile-menu__menu'>
             {/* Nav Menu Start */}
@@ -395,7 +395,7 @@ const HeaderThree = () => {
             {/* Logo Start */}
             <div className='logo'>
               <Link href='/' className='link'>
-                <img src='assets/images/logo/logo-two.png' alt='Logo' />
+                <img src='/assets/images/logo/logo-two.png' alt='Logo' />
               </Link>
             </div>
             {/* Logo End  */}
@@ -419,7 +419,7 @@ const HeaderThree = () => {
                           onClick={() => handleLanguageChange("English")}
                         >
                           <img
-                            src='assets/images/thumbs/flag1.png'
+                            src='/assets/images/thumbs/flag1.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -433,7 +433,7 @@ const HeaderThree = () => {
                           onClick={() => handleLanguageChange("Japan")}
                         >
                           <img
-                            src='assets/images/thumbs/flag2.png'
+                            src='/assets/images/thumbs/flag2.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -447,7 +447,7 @@ const HeaderThree = () => {
                           onClick={() => handleLanguageChange("French")}
                         >
                           <img
-                            src='assets/images/thumbs/flag3.png'
+                            src='/assets/images/thumbs/flag3.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -461,7 +461,7 @@ const HeaderThree = () => {
                           onClick={() => handleLanguageChange("Germany")}
                         >
                           <img
-                            src='assets/images/thumbs/flag4.png'
+                            src='/assets/images/thumbs/flag4.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -475,7 +475,7 @@ const HeaderThree = () => {
                           onClick={() => handleLanguageChange("Bangladesh")}
                         >
                           <img
-                            src='assets/images/thumbs/flag6.png'
+                            src='/assets/images/thumbs/flag6.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -489,7 +489,7 @@ const HeaderThree = () => {
                           onClick={() => handleLanguageChange("South Korea")}
                         >
                           <img
-                            src='assets/images/thumbs/flag5.png'
+                            src='/assets/images/thumbs/flag5.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -513,7 +513,7 @@ const HeaderThree = () => {
                           onClick={() => handleCurrencyChange("USD")}
                         >
                           <img
-                            src='assets/images/thumbs/flag1.png'
+                            src='/assets/images/thumbs/flag1.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -527,7 +527,7 @@ const HeaderThree = () => {
                           onClick={() => handleCurrencyChange("Yen")}
                         >
                           <img
-                            src='assets/images/thumbs/flag2.png'
+                            src='/assets/images/thumbs/flag2.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -541,7 +541,7 @@ const HeaderThree = () => {
                           onClick={() => handleCurrencyChange("Franc")}
                         >
                           <img
-                            src='assets/images/thumbs/flag3.png'
+                            src='/assets/images/thumbs/flag3.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -555,7 +555,7 @@ const HeaderThree = () => {
                           onClick={() => handleCurrencyChange("EURO")}
                         >
                           <img
-                            src='assets/images/thumbs/flag4.png'
+                            src='/assets/images/thumbs/flag4.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -569,7 +569,7 @@ const HeaderThree = () => {
                           onClick={() => handleCurrencyChange("BDT")}
                         >
                           <img
-                            src='assets/images/thumbs/flag6.png'
+                            src='/assets/images/thumbs/flag6.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -583,7 +583,7 @@ const HeaderThree = () => {
                           onClick={() => handleCurrencyChange("WON")}
                         >
                           <img
-                            src='assets/images/thumbs/flag5.png'
+                            src='/assets/images/thumbs/flag5.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -745,7 +745,7 @@ const HeaderThree = () => {
                   </button>
                   <div className='logo px-16 d-lg-none d-block'>
                     <Link href='/' className='link'>
-                      <img src='assets/images/logo/logo.png' alt='Logo' />
+                      <img src='/assets/images/logo/logo.png' alt='Logo' />
                     </Link>
                   </div>
                   <ul className='scroll-sm p-0 py-8 w-300 max-h-400 overflow-y-auto'>
@@ -1406,7 +1406,7 @@ const HeaderThree = () => {
                   </button>
                   <div className='logo px-16 d-lg-none d-block'>
                     <Link href='/' className='link'>
-                      <img src='assets/images/logo/logo.png' alt='Logo' />
+                      <img src='/assets/images/logo/logo.png' alt='Logo' />
                     </Link>
                   </div>
                   <ul className='scroll-sm p-0 py-8 w-300 max-h-400 overflow-y-auto'>
@@ -1975,7 +1975,7 @@ const HeaderThree = () => {
                           onClick={() => handleLanguageChange("English")}
                         >
                           <img
-                            src='assets/images/thumbs/flag1.png'
+                            src='/assets/images/thumbs/flag1.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -1989,7 +1989,7 @@ const HeaderThree = () => {
                           onClick={() => handleLanguageChange("Japan")}
                         >
                           <img
-                            src='assets/images/thumbs/flag2.png'
+                            src='/assets/images/thumbs/flag2.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -2003,7 +2003,7 @@ const HeaderThree = () => {
                           onClick={() => handleLanguageChange("French")}
                         >
                           <img
-                            src='assets/images/thumbs/flag3.png'
+                            src='/assets/images/thumbs/flag3.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -2017,7 +2017,7 @@ const HeaderThree = () => {
                           onClick={() => handleLanguageChange("Germany")}
                         >
                           <img
-                            src='assets/images/thumbs/flag4.png'
+                            src='/assets/images/thumbs/flag4.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -2031,7 +2031,7 @@ const HeaderThree = () => {
                           onClick={() => handleLanguageChange("Bangladesh")}
                         >
                           <img
-                            src='assets/images/thumbs/flag6.png'
+                            src='/assets/images/thumbs/flag6.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -2045,7 +2045,7 @@ const HeaderThree = () => {
                           onClick={() => handleLanguageChange("South Korea")}
                         >
                           <img
-                            src='assets/images/thumbs/flag5.png'
+                            src='/assets/images/thumbs/flag5.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -2069,7 +2069,7 @@ const HeaderThree = () => {
                           onClick={() => handleCurrencyChange("USD")}
                         >
                           <img
-                            src='assets/images/thumbs/flag1.png'
+                            src='/assets/images/thumbs/flag1.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -2083,7 +2083,7 @@ const HeaderThree = () => {
                           onClick={() => handleCurrencyChange("Yen")}
                         >
                           <img
-                            src='assets/images/thumbs/flag2.png'
+                            src='/assets/images/thumbs/flag2.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -2097,7 +2097,7 @@ const HeaderThree = () => {
                           onClick={() => handleCurrencyChange("Franc")}
                         >
                           <img
-                            src='assets/images/thumbs/flag3.png'
+                            src='/assets/images/thumbs/flag3.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -2111,7 +2111,7 @@ const HeaderThree = () => {
                           onClick={() => handleCurrencyChange("EURO")}
                         >
                           <img
-                            src='assets/images/thumbs/flag4.png'
+                            src='/assets/images/thumbs/flag4.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -2125,7 +2125,7 @@ const HeaderThree = () => {
                           onClick={() => handleCurrencyChange("BDT")}
                         >
                           <img
-                            src='assets/images/thumbs/flag6.png'
+                            src='/assets/images/thumbs/flag6.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />
@@ -2139,7 +2139,7 @@ const HeaderThree = () => {
                           onClick={() => handleCurrencyChange("WON")}
                         >
                           <img
-                            src='assets/images/thumbs/flag5.png'
+                            src='/assets/images/thumbs/flag5.png'
                             alt=''
                             className='w-16 h-12 rounded-4 border border-gray-100'
                           />

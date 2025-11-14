@@ -43,7 +43,7 @@ const VendorsList = () => {
             <div className='vendor-card text-center px-16 pb-24'>
               <div className=''>
                 <img
-                  src='assets/images/thumbs/vendor-logo1.png'
+                  src='/assets/images/thumbs/vendor-logo2.png'
                   alt=''
                   className='vendor-card__logo m-12'
                 />
@@ -64,19 +64,19 @@ const VendorsList = () => {
               </div>
               <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img1.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img2.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img3.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img4.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img5.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
                 </div>
               </div>
             </div>
@@ -85,7 +85,7 @@ const VendorsList = () => {
             <div className='vendor-card text-center px-16 pb-24'>
               <div className=''>
                 <img
-                  src='assets/images/thumbs/vendor-logo2.png'
+                  src='/assets/images/thumbs/vendor-logo2.png'
                   alt=''
                   className='vendor-card__logo m-12'
                 />
@@ -106,19 +106,19 @@ const VendorsList = () => {
               </div>
               <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img1.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img2.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img3.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img4.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img5.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
                 </div>
               </div>
             </div>
@@ -127,7 +127,7 @@ const VendorsList = () => {
             <div className='vendor-card text-center px-16 pb-24'>
               <div className=''>
                 <img
-                  src='assets/images/thumbs/vendor-logo3.png'
+                  src='/assets/images/thumbs/vendor-logo3.png'
                   alt=''
                   className='vendor-card__logo m-12'
                 />
@@ -148,19 +148,19 @@ const VendorsList = () => {
               </div>
               <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img1.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img2.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img3.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img4.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img5.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
                 </div>
               </div>
             </div>
@@ -169,7 +169,7 @@ const VendorsList = () => {
             <div className='vendor-card text-center px-16 pb-24'>
               <div className=''>
                 <img
-                  src='assets/images/thumbs/vendor-logo4.png'
+                  src='/assets/images/thumbs/vendor-logo4.png'
                   alt=''
                   className='vendor-card__logo m-12'
                 />
@@ -190,19 +190,19 @@ const VendorsList = () => {
               </div>
               <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img1.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img2.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img3.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img4.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img5.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
                 </div>
               </div>
             </div>
@@ -211,7 +211,7 @@ const VendorsList = () => {
             <div className='vendor-card text-center px-16 pb-24'>
               <div className=''>
                 <img
-                  src='assets/images/thumbs/vendor-logo5.png'
+                  src='/assets/images/thumbs/vendor-logo5.png'
                   alt=''
                   className='vendor-card__logo m-12'
                 />
@@ -232,19 +232,19 @@ const VendorsList = () => {
               </div>
               <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img1.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img2.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img3.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img4.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img5.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
                 </div>
               </div>
             </div>
@@ -253,7 +253,7 @@ const VendorsList = () => {
             <div className='vendor-card text-center px-16 pb-24'>
               <div className=''>
                 <img
-                  src='assets/images/thumbs/vendor-logo6.png'
+                  src='/assets/images/thumbs/vendor-logo6.png'
                   alt=''
                   className='vendor-card__logo m-12'
                 />
@@ -274,19 +274,19 @@ const VendorsList = () => {
               </div>
               <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img1.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img2.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img3.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img4.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img5.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
                 </div>
               </div>
             </div>
@@ -295,7 +295,7 @@ const VendorsList = () => {
             <div className='vendor-card text-center px-16 pb-24'>
               <div className=''>
                 <img
-                  src='assets/images/thumbs/vendor-logo7.png'
+                  src='/assets/images/thumbs/vendor-logo7.png'
                   alt=''
                   className='vendor-card__logo m-12'
                 />
@@ -316,19 +316,19 @@ const VendorsList = () => {
               </div>
               <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img1.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img2.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img3.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img4.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img5.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
                 </div>
               </div>
             </div>
@@ -337,7 +337,7 @@ const VendorsList = () => {
             <div className='vendor-card text-center px-16 pb-24'>
               <div className=''>
                 <img
-                  src='assets/images/thumbs/vendor-logo8.png'
+                  src='/assets/images/thumbs/vendor-logo8.png'
                   alt=''
                   className='vendor-card__logo m-12'
                 />
@@ -358,19 +358,19 @@ const VendorsList = () => {
               </div>
               <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img1.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img2.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img3.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img4.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img5.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
                 </div>
               </div>
             </div>
@@ -379,7 +379,7 @@ const VendorsList = () => {
             <div className='vendor-card text-center px-16 pb-24'>
               <div className=''>
                 <img
-                  src='assets/images/thumbs/vendor-logo1.png'
+                  src='/assets/images/thumbs/vendor-logo2.png'
                   alt=''
                   className='vendor-card__logo m-12'
                 />
@@ -400,19 +400,19 @@ const VendorsList = () => {
               </div>
               <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img1.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img2.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img3.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img4.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img5.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
                 </div>
               </div>
             </div>
@@ -421,7 +421,7 @@ const VendorsList = () => {
             <div className='vendor-card text-center px-16 pb-24'>
               <div className=''>
                 <img
-                  src='assets/images/thumbs/vendor-logo2.png'
+                  src='/assets/images/thumbs/vendor-logo2.png'
                   alt=''
                   className='vendor-card__logo m-12'
                 />
@@ -442,19 +442,19 @@ const VendorsList = () => {
               </div>
               <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img1.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img2.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img3.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img4.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img5.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
                 </div>
               </div>
             </div>
@@ -463,7 +463,7 @@ const VendorsList = () => {
             <div className='vendor-card text-center px-16 pb-24'>
               <div className=''>
                 <img
-                  src='assets/images/thumbs/vendor-logo3.png'
+                  src='/assets/images/thumbs/vendor-logo3.png'
                   alt=''
                   className='vendor-card__logo m-12'
                 />
@@ -484,19 +484,19 @@ const VendorsList = () => {
               </div>
               <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img1.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img2.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img3.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img4.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img5.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
                 </div>
               </div>
             </div>
@@ -505,7 +505,7 @@ const VendorsList = () => {
             <div className='vendor-card text-center px-16 pb-24'>
               <div className=''>
                 <img
-                  src='assets/images/thumbs/vendor-logo4.png'
+                  src='/assets/images/thumbs/vendor-logo4.png'
                   alt=''
                   className='vendor-card__logo m-12'
                 />
@@ -526,19 +526,19 @@ const VendorsList = () => {
               </div>
               <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img1.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img2.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img3.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img4.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
                 </div>
                 <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='assets/images/thumbs/vendor-img5.png' alt='' />
+                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
                 </div>
               </div>
             </div>

@@ -5,7 +5,7 @@ const FooterOne = () => {
   return (
     <footer className='footer py-120'>
       <img
-        src='assets/images/bg/body-bottom-bg.png'
+        src='/assets/images/bg/body-bottom-bg.png'
         alt='BG'
         className='body-bottom-bg'
       />
@@ -15,7 +15,7 @@ const FooterOne = () => {
             <div className='footer-item__logo'>
               <Link href='/'>
                 {" "}
-                <img src='assets/images/logo/logo.png' alt='' />
+                <img src='/assets/images/logo/logo.png' alt='' />
               </Link>
             </div>
             <p className='mb-24'>
@@ -278,13 +278,13 @@ const FooterOne = () => {
             <p className='mb-16'>Sobarbazar Bd App is available. Get it now</p>
             <div className='flex-align gap-8 my-32'>
               <Link href='/https://www.apple.com/store' className=''>
-                <img src='assets/images/thumbs/store-img1.png' alt='' />
+                <img src='/assets/images/thumbs/store-img1.png' alt='' />
               </Link>
               <Link
                 href='/https://play.google.com/store/apps?hl=en'
                 className=''
               >
-                <img src='assets/images/thumbs/store-img2.png' alt='' />
+                <img src='/assets/images/thumbs/store-img2.png' alt='' />
               </Link>
             </div>
             <ul className='flex-align gap-16'>

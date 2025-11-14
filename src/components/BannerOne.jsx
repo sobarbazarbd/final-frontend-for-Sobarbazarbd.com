@@ -1,64 +1,50 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 
-// Import Slider dynamically, disable SSR to avoid hydration errors
 const Slider = dynamic(() => import("react-slick"), { ssr: false });
 
-const BannerOne = ({
-  banners = [],
+const defaultBanners = [
+  {
+    id: 1,
+    title: "Daily Grocery Order and Get Express Delivery",
+    image: "/assets/images/thumbs/banner-img1.png",
+    link: "/shop",
+    hasAnimation: true,
+  },
+  {
+    id: 2,
+    title: "Fresh Products Delivered to Your Doorstep",
+    image: "/assets/images/thumbs/banner-img3.png",
+    link: "/shop",
+    hasAnimation: false,
+  },
+];
+
+const HeroBanner = ({
+  section,
   scrollTarget = "#featureSection",
   exploreButtonText = "Explore Shop",
   slideDuration = 6500,
   transitionSpeed = 1500,
-  dataSource = "/data/banner.json",
 }) => {
-  const [bannerData, setBannerData] = useState(null); // Start with null
+  // Map API banner_items to local banner format
+  const banners =
+    section?.banner_items?.length > 0
+      ? section.banner_items.map((item, idx) => ({
+          id: item.id,
+          title: item.title,
+          image: item.image,
+          link: item.link_url || "/shop",
+          hasAnimation: idx === 0, // Example: animate first slide
+          alt: item.title,
+          button_text: item.button_text || exploreButtonText,
+        }))
+      : defaultBanners;
 
-  const defaultBanners = [
-    {
-      id: 1,
-      title: "Daily Grocery Order and Get Express Delivery",
-      image: "/assets/images/thumbs/banner-img1.png",
-      link: "/shop",
-      hasAnimation: true,
-    },
-    {
-      id: 2,
-      title: "Fresh Products Delivered to Your Doorstep",
-      image: "/assets/images/thumbs/banner-img3.png",
-      link: "/shop",
-      hasAnimation: false,
-    },
-  ];
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(dataSource);
-        if (!res.ok) throw new Error("Failed to fetch banner data");
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          setBannerData(data);
-        } else if (banners.length > 0) {
-          setBannerData(banners);
-        } else {
-          setBannerData(defaultBanners);
-        }
-      } catch (err) {
-        console.warn("⚠️ Using default banners", err);
-        setBannerData(banners.length > 0 ? banners : defaultBanners);
-      }
-    };
-    fetchData();
-  }, [banners, dataSource]);
-
-  // Return null on server (prevents hydration mismatch)
-  if (!bannerData) return null;
-
-  const SampleNextArrow = ({ className, onClick }) => (
+  const SampleNextArrow = ({ className = "", onClick }) => (
     <button
       type="button"
       onClick={onClick}
@@ -68,7 +54,7 @@ const BannerOne = ({
     </button>
   );
 
-  const SamplePrevArrow = ({ className, onClick }) => (
+  const SamplePrevArrow = ({ className = "", onClick }) => (
     <button
       type="button"
       onClick={onClick}
@@ -101,22 +87,24 @@ const BannerOne = ({
         <div className="banner-item rounded-24 overflow-hidden position-relative arrow-center">
           <a
             href={scrollTarget}
-            className="scroll-down w-84 h-84 text-center flex-center bg-main-600 rounded-circle border border-5 text-white border-white position-absolute start-50 translate-middle-x bottom-0 hover-bg-main-800"
+            className="scroll-down w-84 h-84 text-center flex-center bg-main-600 rounded-circle border  text-white border-white position-absolute start-50 translate-middle-x bottom-0 hover-bg-main-800"
           >
             <span className="icon line-height-0">
               <i className="ph ph-caret-double-down" />
             </span>
           </a>
 
+          {/* Background image */}
           <img
             src="/assets/images/bg/banner-bg.png"
             alt="Banner Background"
             className="banner-img position-absolute inset-block-start-0 inset-inline-start-0 w-100 h-100 z-n1 object-fit-cover rounded-24"
           />
 
+          {/* Slider */}
           <div className="banner-slider">
             <Slider {...settings}>
-              {bannerData.map((banner) => (
+              {banners.map((banner) => (
                 <div key={banner.id} className="banner-slider__item">
                   <div className="banner-slider__inner flex-between position-relative">
                     <div className="banner-item__content">
@@ -131,7 +119,7 @@ const BannerOne = ({
                         href={banner.link}
                         className="btn btn-main d-inline-flex align-items-center rounded-pill gap-8"
                       >
-                        {exploreButtonText}{" "}
+                        {banner.button_text || exploreButtonText}
                         <span className="icon text-xl d-flex">
                           <i className="ph ph-shopping-cart-simple" />
                         </span>
@@ -155,4 +143,4 @@ const BannerOne = ({
   );
 };
 
-export default BannerOne;
+export default HeroBanner;

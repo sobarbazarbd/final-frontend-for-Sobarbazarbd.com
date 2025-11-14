@@ -10,7 +10,7 @@ const OrganicOne = () => {
     {
       id: 1,
       title: "Taylor Farms Broccoli Florets Vegetables",
-      image: "assets/images/thumbs/product-img10.png",
+      image: "/assets/images/thumbs/product-img10.png",
       rating: 4.8,
       reviews: "17k",
       store: "Lucky Supermarket",
@@ -20,7 +20,7 @@ const OrganicOne = () => {
     {
       id: 2,
       title: "Fresh Organic Baby Spinach Leaves",
-      image: "assets/images/thumbs/product-img11.png",
+      image: "/assets/images/thumbs/product-img11.png",
       rating: 4.7,
       reviews: "8.2k",
       store: "Green Leaf Market",
@@ -30,7 +30,7 @@ const OrganicOne = () => {
     {
       id: 3,
       title: "Organic Red Apples Premium Quality",
-      image: "assets/images/thumbs/product-img12.png",
+      image: "/assets/images/thumbs/product-img12.png",
       rating: 4.9,
       reviews: "22k",
       store: "Fruit World",
@@ -40,7 +40,7 @@ const OrganicOne = () => {
     {
       id: 4,
       title: "Organic Sweet Bananas Fresh Harvest",
-      image: "assets/images/thumbs/product-img13.png",
+      image: "/assets/images/thumbs/product-img13.png",
       rating: 4.8,
       reviews: "10k",
       store: "Daily Fresh Mart",
@@ -50,7 +50,7 @@ const OrganicOne = () => {
     {
       id: 5,
       title: "Organic Strawberries Premium Pack",
-      image: "assets/images/thumbs/product-img14.png",
+      image: "/assets/images/thumbs/product-img14.png",
       rating: 4.6,
       reviews: "5.6k",
       store: "Berry Market",
@@ -60,7 +60,7 @@ const OrganicOne = () => {
     {
       id: 6,
       title: "Organic Carrots Farm Fresh",
-      image: "assets/images/thumbs/product-img15.png",
+      image: "/assets/images/thumbs/product-img15.png",
       rating: 4.5,
       reviews: "9.1k",
       store: "Healthy Veggie",
