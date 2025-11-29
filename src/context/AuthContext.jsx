@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 
 const AuthContext = createContext();
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_AUTH_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_AUTH_API_URL || 'https://api.hetdcl.com';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

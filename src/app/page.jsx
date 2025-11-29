@@ -27,7 +27,7 @@ export const metadata = {
 const getHomePageData = async () => {
   try {
     const res = await fetch(
-      "http://localhost:8000/api/v1.0/base/home-page-data/",
+      "https://api.hetdcl.com/api/v1.0/base/home-page-data/",
       {
         // cache: 'no-store', // or 'force-cache' for static data
         // next: {

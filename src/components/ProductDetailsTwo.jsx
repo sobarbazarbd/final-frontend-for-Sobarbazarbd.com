@@ -8,7 +8,7 @@ import { useAuth } from "@/context/AuthContext"; // add this import
 import toast from "react-hot-toast"; // <-- add this import
 const Slider = dynamic(() => import("react-slick"), { ssr: false });
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1.0";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.hetdcl.com/api/v1.0";
 
 const ProductDetailsTwo = ({ product, discountText }) => {
   const [timeLeft, setTimeLeft] = useState({

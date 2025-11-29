@@ -8,7 +8,7 @@ export const metadata = {
   description: "hello",
 };
 
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "https://api.hetdcl.com";
 
 async function getCategories() {
   const res = await fetch(
