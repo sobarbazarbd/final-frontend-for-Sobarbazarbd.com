@@ -1,5 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 import { 
   Person, ShoppingCart, Favorite, LocalShipping, 
   Headset, Logout, Edit, Visibility, Delete,
@@ -35,9 +37,28 @@ import {
   Container,
   Divider
 } from "@mui/material";
+import toast from "react-hot-toast";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1.0";
 
 const DashboardPage = () => {
+  const { user, loading: authLoading, logout } = useAuth();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("dashboard");
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, authLoading, router]);
+
+  if (authLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return null;
+  }
 
   const tabs = [
     { id: "dashboard", label: "Dashboard", icon: <DashboardIcon /> },
@@ -76,10 +97,10 @@ const DashboardPage = () => {
                     <Person sx={{ fontSize: 40 }} />
                   </Avatar>
                   <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                    John Doe
+                    {user?.username || 'Guest User'}
                   </Typography>
                   <Typography variant="body2" sx={{ opacity: 0.9, fontSize: '0.8rem' }}>
-                    john@example.com
+                    {user?.email || 'No email'}
                   </Typography>
                 </Box>
 
@@ -110,6 +131,7 @@ const DashboardPage = () => {
                   
                   <Button
                     startIcon={<Logout />}
+                    onClick={logout}
                     sx={{
                       justifyContent: 'flex-start',
                       color: 'rgba(255,255,255,0.8)',
@@ -129,56 +151,6 @@ const DashboardPage = () => {
               </CardContent>
             </Card>
 
-            {/* Quick Stats */}
-            <Card sx={{ borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
-              <CardContent sx={{ p: 2.5 }}>
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', fontSize: '1.1rem' }}>
-                  Quick Stats
-                </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                  {[
-                    { label: 'Total Orders', value: '12', color: '#4CAF50', icon: <ShoppingCart sx={{ fontSize: 18 }} /> },
-                    { label: 'Pending', value: '3', color: '#FF9800', icon: <Pending sx={{ fontSize: 18 }} /> },
-                    { label: 'Wishlist', value: '8', color: '#E91E63', icon: <Favorite sx={{ fontSize: 18 }} /> },
-                  ].map((stat, index) => (
-                    <Box key={index} sx={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'center',
-                      p: 1.5,
-                      borderRadius: 2,
-                      backgroundColor: '#f8f9fa'
-                    }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <Box sx={{ 
-                          backgroundColor: `${stat.color}15`, 
-                          borderRadius: '50%', 
-                          p: 1,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}>
-                          {React.cloneElement(stat.icon, { sx: { color: stat.color, fontSize: 18 } })}
-                        </Box>
-                        <Typography variant="body2" sx={{ fontWeight: '500' }}>
-                          {stat.label}
-                        </Typography>
-                      </Box>
-                      <Chip 
-                        label={stat.value} 
-                        size="small" 
-                        sx={{ 
-                          backgroundColor: stat.color, 
-                          color: 'white',
-                          fontWeight: 'bold',
-                          minWidth: '35px'
-                        }} 
-                      />
-                    </Box>
-                  ))}
-                </Box>
-              </CardContent>
-            </Card>
           </Grid>
 
           {/* Main Content */}
@@ -206,39 +178,89 @@ const DashboardPage = () => {
 
 // Dashboard Tab Components u can customised
 const DashboardTab = () => {
-  const stats = [
-    { label: 'Total Orders', value: '12', icon: <ShoppingCart />, color: '#4CAF50' },
-    { label: 'Pending Orders', value: '3', icon: <Pending />, color: '#FF9800' },
-    { label: 'Wishlist Items', value: '8', icon: <Favorite />, color: '#E91E63' },
-    { label: 'Delivered', value: '9', icon: <TaskAlt />, color: '#2196F3' },
-  ];
+  const [stats, setStats] = useState({
+    totalOrders: 0,
+    pendingOrders: 0,
+    wishlistItems: 0,
+    deliveredOrders: 0,
+  });
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
-  const recentOrders = [
-    { 
-      id: '#ORD-001', 
-      date: '15 Oct 2024', 
-      total: '৳ 1,250.00', 
-      status: 'Delivered',
-      items: 3,
-      statusColor: 'success'
-    },
-    { 
-      id: '#ORD-002', 
-      date: '12 Oct 2024', 
-      total: '৳ 2,450.00', 
-      status: 'Processing',
-      items: 5,
-      statusColor: 'warning'
-    },
-    { 
-      id: '#ORD-003', 
-      date: '10 Oct 2024', 
-      total: '৳ 850.00', 
-      status: 'Shipped',
-      items: 2,
-      statusColor: 'info'
-    },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem("access_token");
+        // Fetch orders
+        const ordersRes = await fetch(`${API_BASE_URL}/customers/orders/`, {
+          headers: {
+            "Authorization": `JWT ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const ordersData = await ordersRes.json();
+        const orders = Array.isArray(ordersData) ? ordersData : (ordersData.results || ordersData.data || []);
+        // Stats
+        const totalOrders = orders.length;
+        const pendingOrders = orders.filter(o => o.status === "Pending" || o.status === "Processing" || o.status === "Placed").length;
+        const deliveredOrders = orders.filter(o => o.status === "Delivered").length;
+        // Recent orders (latest 3)
+        const sortedOrders = [...orders].sort((a, b) => new Date(b.order_date) - new Date(a.order_date));
+        setRecentOrders(sortedOrders.slice(0, 3));
+        // Fetch wishlist
+        const wishlistRes = await fetch(`${API_BASE_URL}/customers/favorite-products/`, {
+          headers: {
+            "Authorization": `JWT ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const wishlistData = await wishlistRes.json();
+        const wishlistArr = Array.isArray(wishlistData) ? wishlistData : (wishlistData.results || wishlistData.data || []);
+        setWishlist(wishlistArr);
+        setStats({
+          totalOrders,
+          pendingOrders,
+          wishlistItems: wishlistArr.length,
+          deliveredOrders,
+        });
+      } catch (err) {
+        toast.error("Failed to load dashboard data");
+        setStats({
+          totalOrders: 0,
+          pendingOrders: 0,
+          wishlistItems: 0,
+          deliveredOrders: 0,
+        });
+        setRecentOrders([]);
+        setWishlist([]);
+      }
+      setLoading(false);
+    };
+    fetchDashboardData();
+  }, [user]);
+
+  const getStatusColor = (status) => {
+    if (status === "Delivered") return "success";
+    if (status === "Processing" || status === "Pending" || status === "Placed") return "warning";
+    if (status === "Shipped") return "info";
+    if (status === "Paid") return "success";
+    if (status === "Cancelled") return "error";
+    return "default";
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'Delivered': return <TaskAlt sx={{ fontSize: 16 }} />;
+      case 'Processing': case 'Pending': case 'Placed': return <Pending sx={{ fontSize: 16 }} />;
+      case 'Shipped': return <DirectionsCar sx={{ fontSize: 16 }} />;
+      case 'Paid': return <CheckCircle sx={{ fontSize: 16 }} />;
+      case 'Cancelled': return <Delete sx={{ fontSize: 16 }} />;
+      default: return <Pending sx={{ fontSize: 16 }} />;
+    }
+  };
 
   return (
     <Box>
@@ -251,10 +273,15 @@ const DashboardTab = () => {
 
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        {stats.map((stat, index) => (
+        {[
+          { label: 'Total Orders', value: stats.totalOrders, icon: <ShoppingCart />, color: '#4CAF50' },
+          { label: 'Pending Orders', value: stats.pendingOrders, icon: <Pending />, color: '#FF9800' },
+          { label: 'Wishlist Items', value: stats.wishlistItems, icon: <Favorite />, color: '#E91E63' },
+          { label: 'Delivered', value: stats.deliveredOrders, icon: <TaskAlt />, color: '#2196F3' },
+        ].map((stat, index) => (
           <Grid item xs={12} sm={6} md={3} key={index}>
-            <Card sx={{ 
-              borderRadius: 3, 
+            <Card sx={{
+              borderRadius: 3,
               boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
               background: `linear-gradient(135deg, ${stat.color}15 0%, ${stat.color}25 100%)`,
               border: `1px solid ${stat.color}20`,
@@ -268,13 +295,13 @@ const DashboardTab = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <Box>
                     <Typography variant="h4" sx={{ fontWeight: 'bold', color: stat.color, mb: 0.5 }}>
-                      {stat.value}
+                      {loading ? "..." : stat.value}
                     </Typography>
                     <Typography variant="body2" sx={{ color: '#666', fontSize: '0.9rem' }}>
                       {stat.label}
                     </Typography>
                   </Box>
-                  <Box sx={{ 
+                  <Box sx={{
                     backgroundColor: `${stat.color}20`,
                     borderRadius: '50%',
                     p: 1.5,
@@ -292,15 +319,12 @@ const DashboardTab = () => {
       </Grid>
 
       {/* Recent Orders */}
-      <Card sx={{ borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+      <Card sx={{ borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', mb: 4 }}>
         <CardContent sx={{ p: 3 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
               Recent Orders
             </Typography>
-            <Button variant="text" sx={{ color: '#667eea', fontWeight: '500' }}>
-              View All
-            </Button>
           </Box>
           <TableContainer>
             <Table sx={{ minWidth: 650 }}>
@@ -315,59 +339,180 @@ const DashboardTab = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {recentOrders.map((order, index) => (
-                  <TableRow 
-                    key={index} 
-                    sx={{ 
-                      '&:last-child td, &:last-child th': { border: 0 },
-                      '&:hover': { backgroundColor: '#f8f9fa' }
-                    }}
-                  >
-                    <TableCell>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#667eea' }}>
-                        {order.id}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={{ fontSize: '0.9rem' }}>{order.date}</TableCell>
-                    <TableCell>
-                      <Chip 
-                        label={`${order.items} items`} 
-                        size="small" 
-                        variant="outlined" 
-                        sx={{ fontSize: '0.75rem' }}
-                      />
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', color: '#2e7d32', fontSize: '0.9rem' }}>
-                      {order.total}
-                    </TableCell>
-                    <TableCell>
-                      <Chip 
-                        label={order.status}
-                        color={order.statusColor}
-                        variant="filled"
-                        size="small"
-                        sx={{ fontSize: '0.75rem', fontWeight: '500' }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="outlined" 
-                        size="small"
-                        endIcon={<ArrowForward sx={{ fontSize: 16 }} />}
-                        sx={{ 
-                          borderRadius: 2,
-                          fontSize: '0.8rem',
-                          textTransform: 'none'
-                        }}
-                      >
-                        Details
-                      </Button>
-                    </TableCell>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">Loading...</TableCell>
                   </TableRow>
-                ))}
+                ) : recentOrders.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">No recent orders found.</TableCell>
+                  </TableRow>
+                ) : (
+                  recentOrders.map((order, index) => (
+                    <TableRow
+                      key={order.id || index}
+                      sx={{
+                        '&:last-child td, &:last-child th': { border: 0 },
+                        '&:hover': { backgroundColor: '#f8f9fa' }
+                      }}
+                    >
+                      <TableCell>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#667eea' }}>
+                          {order.order_number || order.id}
+                        </Typography>
+                      </TableCell>
+                      <TableCell sx={{ fontSize: '0.9rem' }}>
+                        {order.order_date ? new Date(order.order_date).toLocaleDateString() : ""}
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          label={`${order.items ? order.items.length : 0} items`}
+                          size="small"
+                          variant="outlined"
+                          sx={{ fontSize: '0.75rem' }}
+                        />
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: '#2e7d32', fontSize: '0.9rem' }}>
+                        {order.total_amount
+                          ? `৳ ${order.total_amount}`
+                          : order.total_price
+                          ? `৳ ${order.total_price}`
+                          : ""}
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          icon={getStatusIcon(order.status)}
+                          label={order.status}
+                          color={getStatusColor(order.status)}
+                          variant="filled"
+                          size="small"
+                          sx={{ fontSize: '0.75rem', fontWeight: '500' }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          endIcon={<ArrowForward sx={{ fontSize: 16 }} />}
+                          sx={{
+                            borderRadius: 2,
+                            fontSize: '0.8rem',
+                            textTransform: 'none'
+                          }}
+                        >
+                          View Details
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </TableContainer>
+        </CardContent>
+      </Card>
+
+      {/* Wishlist */}
+      <Card sx={{ borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+        <CardContent sx={{ p: 3 }}>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 3 }}>
+            My Wishlist
+          </Typography>
+          <Grid container spacing={3}>
+            {loading ? (
+              <Grid item xs={12}><Typography>Loading...</Typography></Grid>
+            ) : wishlist.length === 0 ? (
+              <Grid item xs={12}><Typography>No wishlist items found.</Typography></Grid>
+            ) : (
+              wishlist.map((item) => {
+                const prod = item.product;
+                return (
+                  <Grid item xs={12} sm={6} md={4} key={item.id}>
+                    <Card sx={{
+                      borderRadius: 3,
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-5px)',
+                        boxShadow: '0 8px 30px rgba(0,0,0,0.15)'
+                      },
+                      position: 'relative',
+                      overflow: 'visible'
+                    }}>
+                      <CardContent sx={{ p: 0 }}>
+                        <Box sx={{
+                          height: 120,
+                          background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          borderRadius: '12px 12px 0 0',
+                          position: 'relative'
+                        }}>
+                          <Box sx={{
+                            width: 60,
+                            height: 60,
+                            borderRadius: '50%',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}>
+                            <Favorite sx={{ fontSize: 28, color: '#667eea' }} />
+                          </Box>
+                        </Box>
+                        <Box sx={{ p: 2.5 }}>
+                          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, fontSize: '1rem' }}>
+                            {prod?.supplier_product?.name || prod?.name || "Product"}
+                          </Typography>
+                          {/* Optionally show rating if available */}
+                          {/* <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                              {renderStars(prod?.rating || 0)}
+                            </Box>
+                            <Typography variant="body2" sx={{ color: '#666', fontSize: '0.8rem' }}>
+                              ({prod?.rating || 0})
+                            </Typography>
+                          </Box> */}
+                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
+                            <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
+                              ৳{prod?.variants?.[0]?.price || "N/A"}
+                            </Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', gap: 1 }}>
+                            <Button
+                              variant="contained"
+                              fullWidth
+                              sx={{
+                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                borderRadius: 2,
+                                py: 0.8,
+                                fontSize: '0.8rem',
+                                fontWeight: '500',
+                                textTransform: 'none'
+                              }}
+                            >
+                              Add to Cart
+                            </Button>
+                            <IconButton
+                              sx={{
+                                border: '1px solid #ff4444',
+                                color: '#ff4444',
+                                borderRadius: 2,
+                                '&:hover': { backgroundColor: 'rgba(255,68,68,0.1)' }
+                              }}
+                            >
+                              <Delete sx={{ fontSize: 20 }} />
+                            </IconButton>
+                          </Box>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                );
+              })
+            )}
+          </Grid>
         </CardContent>
       </Card>
     </Box>
@@ -376,178 +521,199 @@ const DashboardTab = () => {
 
 // Profile Tab Component - Fixed to match screenshot structure
 const ProfileTab = () => {
+  const { user, updateProfile } = useAuth();
+  const [formData, setFormData] = useState({
+    email: "",
+    name: "",
+    phone: "",
+    shipping_address: "",
+    gender: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        email: user?.customer?.email || user?.email || "",
+        name: user?.customer?.name || "",
+        phone: user?.customer?.phone || "",
+        shipping_address: user?.customer?.shipping_address || "",
+        gender: user?.customer?.gender || "",
+      });
+    }
+  }, [user]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    // Send as { customer: { ...fields } }
+    await updateProfile({ customer: formData });
+    setLoading(false);
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   return (
     <Box>
-      <Typography variant="h4" sx={{ mb: 1, fontWeight: 'bold', color: '#333' }}>
+      <Typography variant="h4" sx={{ mb: 1, fontWeight: "bold", color: "#333" }}>
         Profile Settings
       </Typography>
-      <Typography variant="body1" sx={{ mb: 4, color: '#666' }}>
+      <Typography variant="body1" sx={{ mb: 4, color: "#666" }}>
         Manage your account information and preferences
       </Typography>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
-          <Card sx={{ borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" sx={{ mb: 3, fontWeight: 'bold', fontSize: '1.1rem' }}>
-                Personal Information
-              </Typography>
-              
-              {/* Personal Info Table-like Layout */}
-              <Box sx={{ mb: 3 }}>
-                <Grid container spacing={2} sx={{ mb: 2 }}>
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="body2" sx={{ color: '#666', fontWeight: '500', mb: 0.5 }}>
-                      First Name
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      defaultValue="John"
-                      variant="outlined"
-                      size="small"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="body2" sx={{ color: '#666', fontWeight: '500', mb: 0.5 }}>
-                      Last Name
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      defaultValue="Doe"
-                      variant="outlined"
-                      size="small"
-                    />
-                  </Grid>
-                </Grid>
-
-                <Grid container spacing={2} sx={{ mb: 2 }}>
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="body2" sx={{ color: '#666', fontWeight: '500', mb: 0.5 }}>
-                      Email
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      type="email"
-                      defaultValue="john@example.com"
-                      variant="outlined"
-                      size="small"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="body2" sx={{ color: '#666', fontWeight: '500', mb: 0.5 }}>
-                      Phone
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      defaultValue="+880 1234 567890"
-                      variant="outlined"
-                      size="small"
-                    />
-                  </Grid>
-                </Grid>
-
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" sx={{ color: '#666', fontWeight: '500', mb: 0.5 }}>
-                    Address
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    multiline
-                    rows={2}
-                    defaultValue="Uttara, Dhaka, Bangladesh"
-                    variant="outlined"
-                    size="small"
-                  />
-                </Box>
-              </Box>
-
-              <Button 
-                variant="contained" 
-                startIcon={<Edit />}
-                sx={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  borderRadius: 2,
-                  px: 4,
-                  py: 1,
-                  fontWeight: 'bold',
-                  textTransform: 'none'
-                }}
-              >
-                UPDATE PROFILE
-              </Button>
-            </CardContent>
-          </Card>
+      <form onSubmit={handleSubmit}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="body2" sx={{ color: "#666", fontWeight: "500", mb: 0.5 }}>
+              Username
+            </Typography>
+            <TextField
+              fullWidth
+              value={user?.username || ""}
+              variant="outlined"
+              size="small"
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="body2" sx={{ color: "#666", fontWeight: "500", mb: 0.5 }}>
+              Email
+            </Typography>
+            <TextField
+              fullWidth
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="body2" sx={{ color: "#666", fontWeight: "500", mb: 0.5 }}>
+              Full Name
+            </Typography>
+            <TextField
+              fullWidth
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="body2" sx={{ color: "#666", fontWeight: "500", mb: 0.5 }}>
+              Phone
+            </Typography>
+            <TextField
+              fullWidth
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="body2" sx={{ color: "#666", fontWeight: "500", mb: 0.5 }}>
+              Shipping Address
+            </Typography>
+            <TextField
+              fullWidth
+              name="shipping_address"
+              value={formData.shipping_address}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Typography variant="body2" sx={{ color: "#666", fontWeight: "500", mb: 0.5 }}>
+              Gender
+            </Typography>
+            <TextField
+              fullWidth
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
+              select
+              SelectProps={{ native: true }}
+            >
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </TextField>
+          </Grid>
         </Grid>
 
-        <Grid item xs={12} md={4}>
-          <Card sx={{ borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-            <CardContent sx={{ p: 3, textAlign: 'center' }}>
-              <Avatar
-                sx={{
-                  width: 120,
-                  height: 120,
-                  mx: 'auto',
-                  mb: 3,
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  border: '4px solid #f0f0f0'
-                }}
-              >
-                <Person sx={{ fontSize: 50 }} />
-              </Avatar>
-              <Button 
-                variant="outlined" 
-                fullWidth
-                sx={{
-                  borderRadius: 2,
-                  py: 1,
-                  fontWeight: '500',
-                  textTransform: 'none'
-                }}
-              >
-                CHANGE PHOTO
-              </Button>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+        <Button
+          type="submit"
+          variant="contained"
+          startIcon={<Edit />}
+          disabled={loading}
+          sx={{
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            borderRadius: 2,
+            px: 4,
+            py: 1,
+            fontWeight: "bold",
+            textTransform: "none",
+            mt: 2,
+          }}
+        >
+          {loading ? "UPDATING..." : "UPDATE PROFILE"}
+        </Button>
+      </form>
     </Box>
   );
 };
 
 // Orders Tab Component
 const OrdersTab = () => {
-  const orders = [
-    { 
-      id: '#ORD-001', 
-      date: '15 Oct 2024', 
-      total: '৳ 1,250.00', 
-      status: 'Delivered',
-      items: 3,
-      statusColor: 'success'
-    },
-    { 
-      id: '#ORD-002', 
-      date: '12 Oct 2024', 
-      total: '৳ 2,450.00', 
-      status: 'Processing',
-      items: 5,
-      statusColor: 'warning'
-    },
-    { 
-      id: '#ORD-003', 
-      date: '10 Oct 2024', 
-      total: '৳ 850.00', 
-      status: 'Shipped',
-      items: 2,
-      statusColor: 'info'
-    },
-  ];
+  const [orders, setOrders] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      setLoadingOrders(true);
+      try {
+        const token = localStorage.getItem("access_token");
+        const res = await fetch(`${API_BASE_URL}/customers/orders/`, {
+          headers: {
+            "Authorization": `JWT ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await res.json();
+        // If paginated, data.results; else data
+        let orderList = Array.isArray(data) ? data : (data.results || data.data || []);
+        setOrders(orderList);
+      } catch (err) {
+        setOrders([]);
+      }
+      setLoadingOrders(false);
+    };
+    fetchOrders();
+  }, [user]);
 
   const getStatusIcon = (status) => {
     switch (status) {
       case 'Delivered': return <TaskAlt sx={{ fontSize: 16 }} />;
       case 'Processing': return <Pending sx={{ fontSize: 16 }} />;
       case 'Shipped': return <DirectionsCar sx={{ fontSize: 16 }} />;
+      case 'Paid': return <CheckCircle sx={{ fontSize: 16 }} />;
+      case 'Cancelled': return <Delete sx={{ fontSize: 16 }} />;
       default: return <Pending sx={{ fontSize: 16 }} />;
     }
   };
@@ -561,124 +727,150 @@ const OrdersTab = () => {
         View and manage your recent orders
       </Typography>
 
-      <TableContainer component={Paper} sx={{ borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-        <Table sx={{ minWidth: 650 }}>
-          <TableHead sx={{ backgroundColor: '#f8f9fa' }}>
-            <TableRow>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Order ID</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Date</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Items</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Total</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Action</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {orders.map((order, index) => (
-              <TableRow 
-                key={index} 
-                sx={{ 
-                  '&:last-child td, &:last-child th': { border: 0 },
-                  '&:hover': { backgroundColor: '#f8f9fa' }
-                }}
-              >
-                <TableCell>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#667eea' }}>
-                    {order.id}
-                  </Typography>
-                </TableCell>
-                <TableCell sx={{ fontSize: '0.9rem' }}>{order.date}</TableCell>
-                <TableCell>
-                  <Chip 
-                    label={`${order.items} items`} 
-                    size="small" 
-                    variant="outlined" 
-                    sx={{ fontSize: '0.75rem' }}
-                  />
-                </TableCell>
-                <TableCell sx={{ fontWeight: 'bold', color: '#2e7d32', fontSize: '0.9rem' }}>
-                  {order.total}
-                </TableCell>
-                <TableCell>
-                  <Chip 
-                    icon={getStatusIcon(order.status)}
-                    label={order.status}
-                    color={order.statusColor}
-                    variant="filled"
-                    size="small"
-                    sx={{ fontSize: '0.75rem', fontWeight: '500' }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Button 
-                    variant="outlined" 
-                    size="small"
-                    endIcon={<ArrowForward sx={{ fontSize: 16 }} />}
-                    sx={{ 
-                      borderRadius: 2,
-                      fontSize: '0.8rem',
-                      textTransform: 'none'
+      {loadingOrders ? (
+        <Typography>Loading orders...</Typography>
+      ) : (
+        <TableContainer component={Paper} sx={{ borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+          <Table sx={{ minWidth: 650 }}>
+            <TableHead sx={{ backgroundColor: '#f8f9fa' }}>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Order ID</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Date</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Items</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Total</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Status</TableCell>
+                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {orders.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    No orders found.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                orders.map((order, index) => (
+                  <TableRow
+                    key={order.id || index}
+                    sx={{
+                      '&:last-child td, &:last-child th': { border: 0 },
+                      '&:hover': { backgroundColor: '#f8f9fa' }
                     }}
                   >
-                    View Details
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                    <TableCell>
+                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#667eea' }}>
+                        {order.order_number || order.id}
+                      </Typography>
+                    </TableCell>
+                    <TableCell sx={{ fontSize: '0.9rem' }}>
+                      {order.order_date ? new Date(order.order_date).toLocaleDateString() : ""}
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={`${order.items ? order.items.length : 0} items`}
+                        size="small"
+                        variant="outlined"
+                        sx={{ fontSize: '0.75rem' }}
+                      />
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', color: '#2e7d32', fontSize: '0.9rem' }}>
+                      {order.total_amount
+                        ? `৳ ${order.total_amount}`
+                        : order.total_price
+                        ? `৳ ${order.total_price}`
+                        : ""}
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        icon={getStatusIcon(order.status)}
+                        label={order.status}
+                        color={
+                          order.status === "Delivered"
+                            ? "success"
+                            : order.status === "Processing"
+                            ? "warning"
+                            : order.status === "Shipped"
+                            ? "info"
+                            : order.status === "Paid"
+                            ? "success"
+                            : order.status === "Cancelled"
+                            ? "error"
+                            : "default"
+                        }
+                        variant="filled"
+                        size="small"
+                        sx={{ fontSize: '0.75rem', fontWeight: '500' }}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        endIcon={<ArrowForward sx={{ fontSize: 16 }} />}
+                        sx={{
+                          borderRadius: 2,
+                          fontSize: '0.8rem',
+                          textTransform: 'none'
+                        }}
+                        // onClick={() => ...} // Add order details navigation if needed
+                      >
+                        View Details
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Box>
   );
 };
 
 // Wishlist Tab Component
 const WishlistTab = () => {
-  const wishlistItems = [
-    { 
-      id: 1, 
-      name: 'Fresh Organic Apples', 
-      price: '৳ 120.00', 
-      originalPrice: '৳ 150.00',
-      rating: 4.5,
-      discount: '20% OFF'
-    },
-    { 
-      id: 2, 
-      name: 'Organic Banana Bundle', 
-      price: '৳ 80.00', 
-      originalPrice: '৳ 100.00',
-      rating: 4.2,
-      discount: '20% OFF'
-    },
-    { 
-      id: 3, 
-      name: 'Fresh Pure Milk', 
-      price: '৳ 65.00', 
-      originalPrice: '৳ 75.00',
-      rating: 4.8,
-      discount: '13% OFF'
-    },
-  ];
+  const [wishlist, setWishlist] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem("access_token");
+        const res = await fetch(`${API_BASE_URL}/customers/favorite-products/`, {
+          headers: {
+            "Authorization": `JWT ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await res.json();
+        const wishlistArr = Array.isArray(data) ? data : (data.results || data.data || []);
+        setWishlist(wishlistArr);
+      } catch (err) {
+        setWishlist([]);
+      }
+      setLoading(false);
+    };
+    if (user) fetchWishlist();
+  }, [user]);
 
   const renderStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 !== 0;
-
     for (let i = 0; i < fullStars; i++) {
       stars.push(<Star key={`full-${i}`} sx={{ fontSize: 16, color: '#ffc107' }} />);
     }
-
     if (hasHalfStar) {
       stars.push(<StarHalf key="half" sx={{ fontSize: 16, color: '#ffc107' }} />);
     }
-
     const emptyStars = 5 - stars.length;
     for (let i = 0; i < emptyStars; i++) {
       stars.push(<Star key={`empty-${i}`} sx={{ fontSize: 16, color: '#e0e0e0' }} />);
     }
-
     return stars;
   };
 
@@ -690,119 +882,100 @@ const WishlistTab = () => {
       <Typography variant="body1" sx={{ mb: 4, color: '#666' }}>
         Your favorite products saved for later
       </Typography>
-
       <Grid container spacing={3}>
-        {wishlistItems.map((item) => (
-          <Grid item xs={12} sm={6} md={4} key={item.id}>
-            <Card sx={{ 
-              borderRadius: 3, 
-              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-              '&:hover': {
-                transform: 'translateY(-5px)',
-                boxShadow: '0 8px 30px rgba(0,0,0,0.15)'
-              },
-              position: 'relative',
-              overflow: 'visible'
-            }}>
-              {/* Discount Badge */}
-              <Chip
-                label={item.discount}
-                size="small"
-                sx={{
-                  position: 'absolute',
-                  top: 12,
-                  right: 12,
-                  backgroundColor: '#ff4444',
-                  color: 'white',
-                  fontWeight: 'bold',
-                  fontSize: '0.7rem',
-                  zIndex: 2
-                }}
-              />
-
-              <CardContent sx={{ p: 0 }}>
-                {/* Product Image */}
-                <Box sx={{ 
-                  height: 160, 
-                  background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderRadius: '12px 12px 0 0',
-                  position: 'relative'
+        {loading ? (
+          <Grid item xs={12}><Typography>Loading...</Typography></Grid>
+        ) : wishlist.length === 0 ? (
+          <Grid item xs={12}><Typography>No wishlist items found.</Typography></Grid>
+        ) : (
+          wishlist.map((item) => {
+            const prod = item.product;
+            return (
+              <Grid item xs={12} sm={6} md={4} key={item.id}>
+                <Card sx={{
+                  borderRadius: 3,
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-5px)',
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.15)'
+                  },
+                  position: 'relative',
+                  overflow: 'visible'
                 }}>
-                  <Box sx={{ 
-                    width: 70, 
-                    height: 70, 
-                    borderRadius: '50%', 
-                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <Favorite sx={{ fontSize: 32, color: '#667eea' }} />
-                  </Box>
-                </Box>
-
-                {/* Product Info */}
-                <Box sx={{ p: 2.5 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, fontSize: '1rem' }}>
-                    {item.name}
-                  </Typography>
-                  
-                  {/* Rating */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      {renderStars(item.rating)}
+                  <CardContent sx={{ p: 0 }}>
+                    <Box sx={{
+                      height: 120,
+                      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: '12px 12px 0 0',
+                      position: 'relative'
+                    }}>
+                      <Box sx={{
+                        width: 60,
+                        height: 60,
+                        borderRadius: '50%',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <Favorite sx={{ fontSize: 28, color: '#667eea' }} />
+                      </Box>
                     </Box>
-                    <Typography variant="body2" sx={{ color: '#666', fontSize: '0.8rem' }}>
-                      ({item.rating})
-                    </Typography>
-                  </Box>
-
-                  {/* Price */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
-                    <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
-                      {item.price}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#999', textDecoration: 'line-through', fontSize: '0.9rem' }}>
-                      {item.originalPrice}
-                    </Typography>
-                  </Box>
-
-                  {/* Actions */}
-                  <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button 
-                      variant="contained" 
-                      fullWidth
-                      sx={{
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        borderRadius: 2,
-                        py: 0.8,
-                        fontSize: '0.8rem',
-                        fontWeight: '500',
-                        textTransform: 'none'
-                      }}
-                    >
-                      Add to Cart
-                    </Button>
-                    <IconButton 
-                      sx={{ 
-                        border: '1px solid #ff4444',
-                        color: '#ff4444',
-                        borderRadius: 2,
-                        '&:hover': { backgroundColor: 'rgba(255,68,68,0.1)' }
-                      }}
-                    >
-                      <Delete sx={{ fontSize: 20 }} />
-                    </IconButton>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+                    <Box sx={{ p: 2.5 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, fontSize: '1rem' }}>
+                        {prod?.supplier_product?.name || prod?.name || "Product"}
+                      </Typography>
+                      {/* Optionally show rating if available */}
+                      {/* <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          {renderStars(prod?.rating || 0)}
+                        </Box>
+                        <Typography variant="body2" sx={{ color: '#666', fontSize: '0.8rem' }}>
+                          ({prod?.rating || 0})
+                        </Typography>
+                      </Box> */}
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
+                        <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
+                          ৳{prod?.variants?.[0]?.price || "N/A"}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Button
+                          variant="contained"
+                          fullWidth
+                          sx={{
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            borderRadius: 2,
+                            py: 0.8,
+                            fontSize: '0.8rem',
+                            fontWeight: '500',
+                            textTransform: 'none'
+                          }}
+                        >
+                          Add to Cart
+                        </Button>
+                        <IconButton
+                          sx={{
+                            border: '1px solid #ff4444',
+                            color: '#ff4444',
+                            borderRadius: 2,
+                            '&:hover': { backgroundColor: 'rgba(255,68,68,0.1)' }
+                          }}
+                        >
+                          <Delete sx={{ fontSize: 20 }} />
+                        </IconButton>
+                      </Box>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            );
+          })
+        )}
       </Grid>
     </Box>
   );

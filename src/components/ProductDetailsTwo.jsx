@@ -3,14 +3,19 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext"; // add this import
+import toast from "react-hot-toast"; // <-- add this import
 const Slider = dynamic(() => import("react-slick"), { ssr: false });
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1.0";
 
 const ProductDetailsTwo = ({ product, discountText }) => {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
     minutes: 0,
-    seconds: 0,
+    seconds: 0, 
   });
 
   useEffect(() => {
@@ -59,6 +64,81 @@ const ProductDetailsTwo = ({ product, discountText }) => {
     slidesToScroll: 1,
     focusOnSelect: true,
   };
+
+  const { addToCart, loading: cartLoading } = useCart();
+  const { user } = useAuth(); // add this line
+  const [quantity, setQuantity] = useState(1);
+  const [addingToCart, setAddingToCart] = useState(false);
+
+  const handleAddToCart = async () => {
+    if (!selectedVariant) { 
+      toast.error("Please select a variant"); // changed from alert
+      return;
+    }
+
+    if (quantity > selectedVariant.available_stock) {
+      toast.error(`Only ${selectedVariant.available_stock} items available in stock`); // changed from alert
+      return;
+    }
+
+    setAddingToCart(true);
+    const result = await addToCart(selectedVariant.id, quantity);
+    setAddingToCart(false);
+
+    if (result.success) {
+      toast.success("Item added to cart successfully!"); // changed from alert
+      setQuantity(1);
+    } else {
+      toast.error(result.error || "Failed to add item to cart"); // changed from alert
+    }
+  };
+
+  // Add to wishlist handler
+  const handleAddToWishlist = async () => {
+    if (!user) {
+      toast.error("Please login to add to wishlist");
+      return;
+    }
+    if (!product?.id) {
+      toast.error("Invalid product");
+      return;
+    }
+    try {
+      const token = localStorage.getItem("access_token");
+      const res = await fetch(`${API_BASE_URL}/customers/favorite-products/`, {
+        method: "POST",
+        headers: {
+          "Authorization": `JWT ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          product: product.id,
+          is_favorite: true,
+        }),
+      });
+      if (res.ok) {
+        toast.success("Added to wishlist!");
+      } else {
+        const data = await res.json();
+        toast.error(data?.product?.[0] || data?.detail || "Already in wishlist or failed");
+      }
+    } catch (err) {
+      toast.error("Failed to add to wishlist");
+    }
+  };
+
+  const incrementQuantity = () => {
+    if (selectedVariant && quantity < selectedVariant.available_stock) {
+      setQuantity(quantity + 1);
+    }
+  };
+
+  const decrementQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+
   return (
     <section className='product-details py-80'>
       <div className='container container-lg'>
@@ -238,100 +318,11 @@ const ProductDetailsTwo = ({ product, discountText }) => {
                       href='#'
                       className='px-12 py-8 text-sm rounded-8 flex-align gap-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600'
                     >
-                      Monthyly EMI USD 15.00
-                      <i className='ph ph-caret-right' />
-                    </Link>
-                    <Link
-                      href='#'
-                      className='px-12 py-8 text-sm rounded-8 flex-align gap-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600'
-                    >
-                      Shipping Charge
-                      <i className='ph ph-caret-right' />
-                    </Link>
-                    <Link
-                      href='#'
-                      className='px-12 py-8 text-sm rounded-8 flex-align gap-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600'
-                    >
                       Security &amp; Privacy
                       <i className='ph ph-caret-right' />
                     </Link>
                   </div>
-                  <span className='mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block' />
-                  <div className='mt-32'>
-                    <h6 className='mb-16'>Quick Overview</h6>
-                    <div className='flex-between align-items-start flex-wrap gap-16'>
-                      <div>
-                        <span className='text-gray-900 d-block mb-12'>
-                          Color:
-                          <span className='fw-medium'>{selectedVariant?.name}</span>
-                        </span>
-                        <div className='color-list flex-align gap-8'>
-                          <button
-                            type='button'
-                            className='color-list__button w-20 h-20 border border-2 border-gray-50 rounded-circle bg-info-600'
-                          />
-                          <button
-                            type='button'
-                            className='color-list__button w-20 h-20 border border-2 border-gray-50 rounded-circle bg-warning-600'
-                          />
-                          <button
-                            type='button'
-                            className='color-list__button w-20 h-20 border border-2 border-gray-50 rounded-circle bg-tertiary-600'
-                          />
-                          <button
-                            type='button'
-                            className='color-list__button w-20 h-20 border border-2 border-gray-50 rounded-circle bg-main-600'
-                          />
-                          <button
-                            type='button'
-                            className='color-list__button w-20 h-20 border border-2 border-gray-50 rounded-circle bg-gray-100'
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <span className='text-gray-900 d-block mb-12'>
-                          Pattern Name:
-                          <span className='fw-medium'>{product?.name}</span>
-                        </span>
-                        <div className='flex-align gap-8 flex-wrap'>
-                          <Link
-                            href='#'
-                            className='px-12 py-8 text-sm rounded-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600'
-                          >
-                            with offer{" "}
-                          </Link>
-                          <Link
-                            href='#'
-                            className='px-12 py-8 text-sm rounded-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600'
-                          >
-                            12th Gen Laptop
-                          </Link>
-                          <Link
-                            href='#'
-                            className='px-12 py-8 text-sm rounded-8 text-gray-900 border border-gray-200 hover-border-main-600 hover-text-main-600'
-                          >
-                            without offer
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <span className='mt-32 pt-32 text-gray-700 border-top border-gray-100 d-block' />
-                  <Link
-                    href='/https://www.whatsapp.com'
-                    className='btn btn-black flex-center gap-8 rounded-8 py-16'
-                  >
-                    <i className='ph ph-whatsapp-logo text-lg' />
-                    Request More Information
-                  </Link>
-                  <div className='mt-32'>
-                    <span className='fw-medium text-gray-900'>
-                      100% Guarantee Safe Checkout
-                    </span>
-                    <div className='mt-10'>
-                      <img src='/assets/images/thumbs/gateway-img.png' alt='' />
-                    </div>
-                  </div>
+             
                 </div>
               </div>
             </div>
@@ -405,36 +396,35 @@ const ProductDetailsTwo = ({ product, discountText }) => {
                   <h6 className='text-lg mb-0'>From $10.00</h6>
                 </div>
               </div>
-              <Link
-                href='#'
+              <button
+                onClick={handleAddToCart}
+                disabled={addingToCart || cartLoading || !selectedVariant || selectedVariant.available_stock === 0}
                 className='btn btn-main flex-center gap-8 rounded-8 py-16 fw-normal mt-48'
               >
-                <i className='ph ph-shopping-cart-simple text-lg' />
-                Add To Cart
-              </Link>
-              <Link
-                href='#'
-                className='btn btn-outline-main rounded-8 py-16 fw-normal mt-16 w-100'
+                {addingToCart ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm" role="status"></span>
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <i className='ph ph-shopping-cart-simple text-lg' />
+                    Add To Cart
+                  </>
+                )}
+              </button>
+              {/* Add to Wishlist button */}
+              <button
+                onClick={handleAddToWishlist}
+                disabled={!user}
+                className='btn btn-secondary flex-center gap-8 rounded-8 py-12 fw-normal mt-16 w-100'
+                style={{ opacity: user ? 1 : 0.6 }}
               >
-                Buy Now
-              </Link>
+                <i className='ph ph-heart text-lg' />
+                Add to Wishlist
+              </button>
+
               <div className='mt-32'>
-                <div className='px-16 py-8 bg-main-50 rounded-8 flex-between gap-24 mb-14'>
-                  <span className='w-32 h-32 bg-white text-main-600 rounded-circle flex-center text-xl flex-shrink-0'>
-                    <i className='ph-fill ph-truck' />
-                  </span>
-                  <span className='text-sm text-neutral-600'>
-                    Ship from <span className='fw-semibold'>{product?.store?.name ?? "N/A"}</span>
-                  </span>
-                </div>
-                <div className='px-16 py-8 bg-main-50 rounded-8 flex-between gap-24 mb-0'>
-                  <span className='w-32 h-32 bg-white text-main-600 rounded-circle flex-center text-xl flex-shrink-0'>
-                    <i className='ph-fill ph-storefront' />
-                  </span>
-                  <span className='text-sm text-neutral-600'>
-                    Sold by: <span className='fw-semibold'>{product?.store?.name ?? "N/A"}</span>
-                  </span>
-                </div>
               </div>
               <div className='mt-32'>
                 <div className='px-16 py-8 bg-main-50 rounded-8 flex-between gap-24 mb-14'>
@@ -509,7 +499,7 @@ const ProductDetailsTwo = ({ product, discountText }) => {
             </div>
           </div>
         </div>
-        <div className='pt-80'>
+        <div className='pt-12'>
           <div className='product-dContent border rounded-24'>
             <div className='product-dContent__header border-bottom border-gray-100 flex-between flex-wrap gap-16'>
               <ul

@@ -1,7 +1,8 @@
 /* ======================= Checkout Css Start ============================= */
 .payment-item {
     &__content {
-        display: none;
+        display: none; // Hidden by default
+        margin-top: 12px;
         &::before {
             position: absolute;
             content: "";
@@ -14,4 +15,6 @@
         }
     }
 }
+
+/* Show content when payment is selected - handled by React inline style */
 /* ======================= Checkout Css End ============================= */

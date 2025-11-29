@@ -4,16 +4,17 @@ import "./font.css";
 import "./globals.scss";
 import PhosphorIconInit from "@/helper/PhosphorIconInit";
 import HeaderOne from "@/components/Header/HeaderOne";
-import FooterOne from "@/components/Footer/FooterOne";
 import NewsletterOne from "@/components/NewsletterOne";
-import BottomFooter from "@/components/BottomFooter";
 import ShippingOne from "@/components/ShippingOne";
 import "./dashboard/dashboard.css";
 import NavFooterProvider from "@/context/NavFooterProvider";
+import { CartProvider } from "@/context/CartContext";
+import { AuthProvider } from "@/context/AuthContext";
+import { Toaster } from "react-hot-toast";
 
 export const metadata = {
-  title: "SobazarBd - Oniline Shopping Complex",
-  description: "SobazarBd - Oniline Shopping Complex",
+  title: "SobazarBd - Online Shopping Complex",
+  description: "SobazarBd - Online Shopping Complex",
 };
 
 export default async function RootLayout({ children }) {
@@ -37,15 +38,18 @@ export default async function RootLayout({ children }) {
     <html lang="en">
       <body suppressHydrationWarning={true}>
         <BootstrapInit />
+        <Toaster position="top-right" />
         <PhosphorIconInit />
         <RouteScrollToTop />
         <NavFooterProvider initialData={navData}>
-          <HeaderOne />
-          {children}
-          <ShippingOne />
-          <NewsletterOne />
-          {/* <FooterOne /> */}
-          {/* <BottomFooter /> */}
+          <AuthProvider>
+            <CartProvider>
+              <HeaderOne />
+              {children}
+              <ShippingOne />
+              <NewsletterOne />
+            </CartProvider>
+          </AuthProvider>
         </NavFooterProvider>
       </body>
     </html>

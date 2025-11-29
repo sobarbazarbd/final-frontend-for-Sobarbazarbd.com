@@ -3,7 +3,6 @@ import BestSellsOne from "@/components/BestSellsOne";
 import BrandOne from "@/components/BrandOne";
 import DealsOne from "@/components/DealsOne";
 import FeatureOne from "@/components/FeatureOne";
-import FeatureThree from "@/components/FeatureThree";
 import FlashSalesOne from "@/components/FlashSalesOne";
 import HotDealsOne from "@/components/HotDealsOne";
 import NewArrivalOne from "@/components/NewArrivalOne";
@@ -14,9 +13,8 @@ import PromotionalOne from "@/components/PromotionalOne";
 import PromotionalThree from "@/components/PromotionalThree";
 import RecommendedOne from "@/components/RecommendedOne";
 import ShortProductOne from "@/components/ShortProductOne";
-import TextSlider from "@/components/TextSlider";
 import TopVendorsOne from "@/components/TopVendorsOne";
-import TrendingOne from "@/components/TrendingOne";
+import Trending from "@/components/Trending";
 import ColorInit from "@/helper/ColorInit";
 import ScrollToTopInit from "@/helper/ScrollToTopInit";
 
@@ -71,17 +69,17 @@ const Page = async () => {
       <FeatureOne data={homeData?.data?.subcategories || []} />
       <PromotionalOne section={bannerMap?.Promotional} />
       <FlashSalesOne section={bannerMap?.FlashSales} />
-      <RecommendedOne data={homeData?.data?.recommended_products} />
+      <RecommendedOne data={homeData?.data?.recommended_products} categories={homeData?.data?.categories}  />
       <PopularProductsOne categories={homeData?.data?.categories} section={bannerMap?.PopularProducts} />
-      <TrendingOne section={bannerMap?.Trending} />
-      <DealsOne section={bannerMap?.Deals} />
+      <Trending data={homeData?.data?.recommended_products} />
+      <DealsOne section={bannerMap?.Deals}  data={homeData?.data?.recommended_products} />
       <PromotionalThree section={bannerMap?.PromotionalTwo} />
       <OfferOne section={bannerMap?.Offer} />
-      <HotDealsOne section={bannerMap?.HotDeals} />
-      <TopVendorsOne />
-      <BestSellsOne />
-      <OrganicOne />
-      <ShortProductOne />
+      <HotDealsOne section={bannerMap?.Deals}  data={homeData?.data?.recommended_products} />
+      <TopVendorsOne data={homeData?.data?.stores}/>
+      <BestSellsOne section={bannerMap?.Deals} data={homeData?.data?.recommended_products} />
+      <OrganicOne section={bannerMap?.Deals}  data={homeData?.data?.recommended_products} />
+      {/* <ShortProductOne /> */}
       <BrandOne data={homeData?.data?.brands || []} />
       <NewArrivalOne data={homeData?.data?.newly_arrived_products} />
     </>

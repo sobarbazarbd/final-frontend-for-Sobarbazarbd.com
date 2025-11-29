@@ -1,105 +1,82 @@
 "use client";
 
-import React from "react";
+import React, { memo, useEffect, useState } from "react";
 import Link from "next/link";
 import Slider from "react-slick";
+import { ProductCard } from "./ProductTabSection";
 
-const OrganicOne = () => {
-  // Dynamic product data
-  const products = [
-    {
-      id: 1,
-      title: "Taylor Farms Broccoli Florets Vegetables",
-      image: "/assets/images/thumbs/product-img10.png",
-      rating: 4.8,
-      reviews: "17k",
-      store: "Lucky Supermarket",
-      oldPrice: 28.99,
-      price: 14.99,
-    },
-    {
-      id: 2,
-      title: "Fresh Organic Baby Spinach Leaves",
-      image: "/assets/images/thumbs/product-img11.png",
-      rating: 4.7,
-      reviews: "8.2k",
-      store: "Green Leaf Market",
-      oldPrice: 19.99,
-      price: 11.49,
-    },
-    {
-      id: 3,
-      title: "Organic Red Apples Premium Quality",
-      image: "/assets/images/thumbs/product-img12.png",
-      rating: 4.9,
-      reviews: "22k",
-      store: "Fruit World",
-      oldPrice: 15.99,
-      price: 9.99,
-    },
-    {
-      id: 4,
-      title: "Organic Sweet Bananas Fresh Harvest",
-      image: "/assets/images/thumbs/product-img13.png",
-      rating: 4.8,
-      reviews: "10k",
-      store: "Daily Fresh Mart",
-      oldPrice: 12.99,
-      price: 6.99,
-    },
-    {
-      id: 5,
-      title: "Organic Strawberries Premium Pack",
-      image: "/assets/images/thumbs/product-img14.png",
-      rating: 4.6,
-      reviews: "5.6k",
-      store: "Berry Market",
-      oldPrice: 18.99,
-      price: 12.49,
-    },
-    {
-      id: 6,
-      title: "Organic Carrots Farm Fresh",
-      image: "/assets/images/thumbs/product-img15.png",
-      rating: 4.5,
-      reviews: "9.1k",
-      store: "Healthy Veggie",
-      oldPrice: 9.99,
-      price: 5.49,
-    },
-  ];
+const SampleNextArrow = memo(function SampleNextArrow(props) {
+  const { className, onClick } = props;
+  return (
+    <button
+      type='button'
+      onClick={onClick}
+      className={` ${className} slick-next slick-arrow flex-center rounded-circle border border-gray-100 hover-border-neutral-600 text-xl hover-bg-neutral-600 hover-text-white transition-1`}
+    >
+      <i className='ph ph-caret-right' />
+    </button>
+  );
+});
 
-  function SampleNextArrow(props) {
-    const { className, onClick } = props;
-    return (
-      <button
-        type="button"
-        onClick={onClick}
-        className={` ${className} slick-next slick-arrow flex-center rounded-circle border border-gray-100 hover-border-main-600 text-xl hover-bg-main-600 hover-text-white transition-1`}
-      >
-        <i className="ph ph-caret-right" />
-      </button>
-    );
+const SamplePrevArrow = memo(function SamplePrevArrow(props) {
+  const { className, onClick } = props;
+  return (
+    <button
+      type='button'
+      onClick={onClick}
+      className={`${className} slick-prev slick-arrow flex-center rounded-circle border border-gray-100 hover-border-neutral-600 text-xl hover-bg-neutral-600 hover-text-white transition-1`}
+    >
+      <i className='ph ph-caret-left' />
+    </button>
+  );
+});
+
+function getCountdownTo(startDate, endDate) {
+  let end;
+  if (endDate) {
+    end = new Date(endDate);
+  } else if (startDate) {
+    end = new Date(new Date(startDate).getTime() + 24 * 60 * 60 * 1000);
+  } else {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
   }
+  const now = new Date();
+  let diff = Math.max(0, end - now);
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  diff -= days * (1000 * 60 * 60 * 24);
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  diff -= hours * (1000 * 60 * 60);
+  const minutes = Math.floor(diff / (1000 * 60));
+  diff -= minutes * (1000 * 60);
+  const seconds = Math.floor(diff / 1000);
+  return { days, hours, minutes, seconds };
+}
 
-  function SamplePrevArrow(props) {
-    const { className, onClick } = props;
-    return (
-      <button
-        type="button"
-        onClick={onClick}
-        className={`${className} slick-prev slick-arrow flex-center rounded-circle border border-gray-100 hover-border-main-600 text-xl hover-bg-main-600 hover-text-white transition-1`}
-      >
-        <i className="ph ph-caret-left" />
-      </button>
-    );
-  }
+const OrganicOne = ({ section, data = [] }) => {
+  const featuredDeal = section?.banner_items?.[0];
+
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+
+  useEffect(() => {
+    if (!featuredDeal) return;
+    function updateCountdown() {
+      setTimeLeft(getCountdownTo(featuredDeal.start_date, featuredDeal.end_date));
+    }
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, [featuredDeal]);
 
   const settings = {
     dots: false,
     arrows: true,
     infinite: true,
-    speed: 1500,
+    speed: 1000,
     slidesToShow: 6,
     slidesToScroll: 1,
     initialSlide: 0,
@@ -110,29 +87,23 @@ const OrganicOne = () => {
       {
         breakpoint: 1599,
         settings: {
-          slidesToShow: 6,
+          slidesToShow: 5,
         },
       },
       {
         breakpoint: 1399,
         settings: {
-          slidesToShow: 4,
-        },
-      },
-      {
-        breakpoint: 992,
-        settings: {
           slidesToShow: 3,
         },
       },
       {
-        breakpoint: 575,
+        breakpoint: 1199,
         settings: {
           slidesToShow: 2,
         },
       },
       {
-        breakpoint: 424,
+        breakpoint: 575,
         settings: {
           slidesToShow: 1,
         },
@@ -141,82 +112,90 @@ const OrganicOne = () => {
   };
 
   return (
-    <section className="organic-food py-80">
-      <div className="container container-lg">
-        <div className="section-heading">
-          <div className="flex-between flex-wrap gap-8">
-            <h5 className="mb-0">Organic Food</h5>
-            <div className="flex-align mr-point gap-16">
-              <Link
-                href="/shop"
-                className="text-sm fw-medium text-gray-700 hover-text-main-600 hover-text-decoration-underline"
-              >
-                All Categories
-              </Link>
+    <section className='deals-weeek pt-80'>
+      <div className='container container-lg'>
+        <div className='border border-gray-100 p-24 rounded-16'>
+          <div className='section-heading mb-24'>
+            <div className='flex-between flex-wrap gap-8'>
+              <h5 className='mb-0'>Organic Food</h5>
+              <div className='flex-align mr-point gap-16'>
+                <Link
+                  href='/shop'
+                  className='text-sm fw-medium text-gray-700 hover-text-main-600 hover-text-decoration-underline'
+                >
+                  View All Food
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="organic-food__slider arrow-style-two">
-          <Slider {...settings}>
-            {products.map((product) => (
-              <div key={product.id}>
-                <div className="product-card px-8 py-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
-                  <Link
-                    href="/product-details"
-                    className="product-card__thumb flex-center"
-                  >
-                    <img src={product.image} alt={product.title} />
-                  </Link>
-                  <div className="product-card__content mt-12">
-                    <div className="flex-align gap-6">
-                      <span className="text-xs fw-bold text-gray-500">
-                        {product.rating}
-                      </span>
-                      <span className="text-15 fw-bold text-warning-600 d-flex">
-                        <i className="ph-fill ph-star" />
-                      </span>
-                      <span className="text-xs fw-bold text-gray-500">
-                        ({product.reviews})
-                      </span>
-                    </div>
-                    <h6 className="title text-lg fw-semibold mt-12 mb-8">
-                      <Link
-                        href="/product-details"
-                        className="link text-line-2"
-                      >
-                        {product.title}
-                      </Link>
-                    </h6>
-                    <div className="flex-align gap-4">
-                      <span className="text-main-600 text-md d-flex">
-                        <i className="ph-fill ph-storefront" />
-                      </span>
-                      <span className="text-gray-500 text-xs">
-                        By {product.store}
-                      </span>
-                    </div>
-                    <div className="flex-between gap-8 mt-24 flex-wrap">
-                      <div className="product-card__price">
-                        <span className="text-gray-400 text-md fw-semibold text-decoration-line-through d-block">
-                          ${product.oldPrice}
-                        </span>
-                        <span className="text-heading text-md fw-semibold ">
-                          ${product.price}{" "}
-                          <span className="text-gray-500 fw-normal">/Qty</span>{" "}
-                        </span>
-                      </div>
-                      <Link
-                        href="/cart"
-                        className="product-card__cart btn bg-main-50 text-main-600 hover-bg-main-600 hover-text-white py-11 px-24 rounded-pill flex-align gap-8"
-                      >
-                        Add <i className="ph ph-shopping-cart" />
-                      </Link>
-                    </div>
+          {/* Dynamic featured deal box */}
+          <div className='deal-week-box rounded-16 overflow-hidden flex-between position-relative z-1 mb-24'>
+            <img
+              src={featuredDeal?.image || '/assets/images/bg/week-deal-bg.png'}
+              alt={featuredDeal?.title || ''}
+              className='position-absolute inset-block-start-0 inset-block-start-0 w-100 h-100 z-n1 object-fit-cover'
+            />
+            <div className='d-lg-block d-none ps-32 flex-shrink-0'>
+              <img src='/assets/images/thumbs/week-deal-img1.png' alt='' />
+            </div>
+            <div className='deal-week-box__content px-sm-4 d-block w-100 text-center'>
+              <h6 className='mb-20'>{featuredDeal?.title || "Apple AirPods Max, Over Ear Headphones"}</h6>
+              {featuredDeal?.end_date && (
+                <div className='countdown mt-20' id={`countdown${featuredDeal.id}`}>
+                  <ul className='countdown-list style-four flex-center flex-wrap'>
+                    <li className='countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600'>
+                      <span className='days' />
+                      {timeLeft.days} <br /> Days
+                    </li>
+                    <li className='countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600'>
+                      <span className='hours' />
+                      {timeLeft.hours} <br /> Hour
+                    </li>
+                    <li className='countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600'>
+                      <span className='minutes' />
+                      {timeLeft.minutes} <br /> Min
+                    </li>
+                    <li className='countdown-list__item flex-align flex-column text-sm fw-medium text-white rounded-circle bg-neutral-600'>
+                      <span className='seconds' />
+                      {timeLeft.seconds} <br /> Sec
+                    </li>
+                  </ul>
+                </div>
+              )}
+              <Link
+                href={featuredDeal?.link_url || "/shop"}
+                target={featuredDeal?.link_target || "_self"}
+                className='mt-16 btn btn-main-two fw-medium d-inline-flex align-items-center rounded-pill gap-8'
+              >
+                {featuredDeal?.button_text || "Shop Now"}
+                <span className='icon text-xl d-flex'>
+                  <i className='ph ph-arrow-right' />
+                </span>
+              </Link>
+            </div>
+            <div className='d-lg-block d-none flex-shrink-0 pe-xl-5'>
+              <div className='me-xxl-5'>
+                <img src='/assets/images/thumbs/week-deal-img2.png' alt='' />
+              </div>
+            </div>
+          </div>
+          <div className='deals-week-slider arrow-style-two'>
+            <Slider {...settings}>
+              {data && data.length > 0 ? (
+                data.map((product) => (
+                  <div key={product.id}>
+                    <ProductCard product={product} color="main-600" />
+                  </div>
+                ))
+              ) : (
+                <div>
+                  <div className="text-center w-100 py-5 text-gray-500">
+                    No deals available.
                   </div>
                 </div>
-              </div>
-            ))}
-          </Slider>
+              )}
+            </Slider>
+          </div>
         </div>
       </div>
     </section>

@@ -1,16 +1,21 @@
 "use client";
 import React, { useEffect, useState, useContext } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import query from "jquery";
 import { NavFooterContext } from "@/context/NavFooterProvider";
+import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 
 import { headerConfig } from "./data/headerConfig";
 import { navigation } from "./data/navigation";
 import { locationOptions } from "./data/selectOptions";
 
 const HeaderOne = () => {
+  const { cartCount } = useCart();
+  const { user, logout } = useAuth();
   let pathname = usePathname();
+  const router = useRouter();
   const [scroll, setScroll] = useState(false);
 
   const navFooter = useContext(NavFooterContext);
@@ -70,7 +75,17 @@ const HeaderOne = () => {
     setActiveIndexCat(activeIndexCat === index ? null : index);
   };
 
-  // Helper function to check if a path is active
+  // Header search state
+  const [headerSearch, setHeaderSearch] = useState("");
+
+  const handleHeaderSearchSubmit = (e) => {
+    e.preventDefault();
+    if (headerSearch && headerSearch.trim().length > 0) {
+      router.push(`/shop?search=${encodeURIComponent(headerSearch.trim())}`);
+      setActiveSearch(false);
+    }
+  };
+
   const isActivePath = (path) => {
     return pathname === path;
   };
@@ -85,7 +100,6 @@ const HeaderOne = () => {
     );
   };
 
-  // Helper function to render select options
   const renderSelectOptions = (options) => {
     return options.map((option) => (
       <option key={option.value} value={option.value}>
@@ -93,6 +107,8 @@ const HeaderOne = () => {
       </option>
     ));
   };
+
+  console.log("selected category", activeCategory)
 
   return (
     <>
@@ -102,7 +118,10 @@ const HeaderOne = () => {
       />
       
       {/* ==================== Search Box Start Here ==================== */}
-      <form action='#' className={`search-box ${activeSearch && "active"}`}>
+      <form
+        onSubmit={handleHeaderSearchSubmit}
+        className={`search-box ${activeSearch && "active"}`}
+      >
         <button
           onClick={handleSearchToggle}
           type='button'
@@ -116,6 +135,8 @@ const HeaderOne = () => {
               type='text'
               className='form-control py-16 px-24 text-xl rounded-pill pe-64'
               placeholder='Search for a product or brand'
+              value={headerSearch}
+              onChange={e => setHeaderSearch(e.target.value)}
             />
             <button
               type='submit'
@@ -229,18 +250,46 @@ const HeaderOne = () => {
                 </ul>
               </li>
               <li className='border-right-item'>
-                <Link
-                  href='/account'
-                  className='text-white text-sm py-8 flex-align gap-6'
-                >
-                  <span className='icon text-md d-flex'>
-                    {" "}
-                    <i className='ph ph-user-circle' />{" "}
-                  </span>
-                  <span className='hover-text-decoration-underline'>
-                    My Account
-                  </span>
-                </Link>
+                {user ? (
+                  <div className="dropdown">
+                    <Link
+                      href='#'
+                      className='text-white text-sm py-8 flex-align gap-6 dropdown-toggle'
+                      data-bs-toggle="dropdown"
+                    >
+                      <span className='icon text-md d-flex'>
+                        <i className='ph ph-user-circle' />
+                      </span>
+                      <span className='hover-text-decoration-underline'>
+                        {user.username}
+                      </span>
+                    </Link>
+                    <ul className="dropdown-menu">
+                      <li>
+                        <Link className="dropdown-item" href="/dashboard">
+                          Dashboard
+                        </Link>
+                      </li>
+                      <li>
+                        <button className="dropdown-item" onClick={logout}>
+                          Logout
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                ) : (
+                  <Link
+                    href='/login'
+                    className='text-white text-sm py-8 flex-align gap-6'
+                  >
+                    <span className='icon text-md d-flex'>
+                      <i className='ph ph-user-circle' />
+                    </span>
+                    <span className='hover-text-decoration-underline'>
+                      Login / Register
+                    </span>
+                  </Link>
+                )}
               </li>
             </ul>
           </div>
@@ -269,7 +318,7 @@ const HeaderOne = () => {
             
             {/* form location Start */}
             <form
-              action='#'
+              onSubmit={handleHeaderSearchSubmit}
               className='flex-align flex-wrap form-location-wrapper'
             >
               <div className='search-category d-flex h-48 select-border-end-0 radius-end-0 search-form d-sm-flex d-none'>
@@ -290,6 +339,8 @@ const HeaderOne = () => {
                     type='text'
                     className='search-form__input common-input py-13 ps-16 pe-18 rounded-end-pill pe-44'
                     placeholder='Search for a product or brand'
+                    value={headerSearch}
+                    onChange={e => setHeaderSearch(e.target.value)}
                   />
                   <button
                     type='submit'
@@ -334,7 +385,7 @@ const HeaderOne = () => {
                   <span className='text-2xl text-gray-700 d-flex position-relative me-6 mt-6 item-hover__text'>
                     <i className='ph ph-heart' />
                     <span className='w-16 h-16 flex-center rounded-circle bg-main-600 text-white text-xs position-absolute top-n6 end-n4'>
-                      2
+                      0
                     </span>
                   </span>
                   <span className='text-md text-gray-500 item-hover__text d-none d-lg-flex'>
@@ -344,9 +395,11 @@ const HeaderOne = () => {
                 <Link href='/cart' className='flex-align gap-4 item-hover'>
                   <span className='text-2xl text-gray-700 d-flex position-relative me-6 mt-6 item-hover__text'>
                     <i className='ph ph-shopping-cart-simple' />
-                    <span className='w-16 h-16 flex-center rounded-circle bg-main-600 text-white text-xs position-absolute top-n6 end-n4'>
-                      2
-                    </span>
+                    {cartCount > 0 && (
+                      <span className='w-16 h-16 flex-center rounded-circle bg-main-600 text-white text-xs position-absolute top-n6 end-n4'>
+                        {cartCount}
+                      </span>
+                    )}
                   </span>
                   <span className='text-md text-gray-500 item-hover__text d-none d-lg-flex'>
                     Cart
@@ -549,9 +602,11 @@ const HeaderOne = () => {
                   <Link href='/cart' className='flex-align gap-4 item-hover'>
                     <span className='text-2xl text-gray-700 d-flex position-relative me-6 mt-6 item-hover__text'>
                       <i className='ph ph-shopping-cart-simple' />
-                      <span className='w-16 h-16 flex-center rounded-circle bg-main-600 text-white text-xs position-absolute top-n6 end-n4'>
-                        2
-                      </span>
+                      {cartCount > 0 && (
+                        <span className='w-16 h-16 flex-center rounded-circle bg-main-600 text-white text-xs position-absolute top-n6 end-n4'>
+                          {cartCount}
+                        </span>
+                      )}
                     </span>
                     <span className='text-md text-gray-500 item-hover__text d-none d-lg-flex'>
                       Cart
@@ -588,9 +643,11 @@ const HeaderOne = () => {
           <Link href="/cart" className="flex-fill text-decoration-none text-dark py-2 position-relative">
             <i className="ph ph-shopping-cart-simple fs-4 d-block"></i>
             <small className="d-block">Cart</small>
-            <span className="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger">
-              2
-            </span>
+            {cartCount > 0 && (
+              <span className="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger">
+                {cartCount}
+              </span>
+            )}
           </Link>
           <Link href="/wishlist" className="flex-fill text-decoration-none text-dark py-2 position-relative">
             <i className="ph ph-heart fs-4 d-block"></i>

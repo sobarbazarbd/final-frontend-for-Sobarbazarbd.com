@@ -3,6 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import Slider from "react-slick";
+import { useCart } from "@/context/CartContext";
+import toast from "react-hot-toast";
 
 // Arrow Components
 function SampleNextArrow(props) {
@@ -32,6 +34,10 @@ function SamplePrevArrow(props) {
 }
 
 const NewArrivalOne = ({ data }) => {
+  const { addToCart, refreshCart } = useCart();
+  const [addingId, setAddingId] = React.useState(null);
+  const router = typeof window !== "undefined" ? require("next/navigation").useRouter() : null;
+
   const settings = {
     dots: false,
     arrows: true,
@@ -82,6 +88,43 @@ const NewArrivalOne = ({ data }) => {
                 ? price + product.default_variant.discount
                 : null;
 
+              // --- Add to Cart handler ---
+              const handleAddToCart = async (e) => {
+                e.preventDefault();
+                if (!product.default_variant?.id) {
+                  toast.error("No variant available for this product.");
+                  return;
+                }
+                setAddingId(product.id);
+                const result = await addToCart(product.default_variant.id, 1);
+                setAddingId(null);
+                if (result.success) {
+                  refreshCart();
+                  toast.success(
+                    <span>
+                      Added to cart!{" "}
+                      <button
+                        style={{
+                          color: "#FA6400",
+                          textDecoration: "underline",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          marginLeft: 8,
+                          fontWeight: 500,
+                        }}
+                        onClick={() => window.location.href = "/cart"}
+                      >
+                        View Cart
+                      </button>
+                    </span>,
+                    { duration: 4000 }
+                  );
+                } else {
+                  toast.error(result.error || "Failed to add to cart");
+                }
+              };
+
               return (
                 <div key={product.id}>
                   <div className="product-card px-8 py-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
@@ -128,12 +171,22 @@ const NewArrivalOne = ({ data }) => {
                             <span className="text-gray-500 fw-normal">/Qty</span>
                           </span>
                         </div>
-                        <Link
-                          href="/cart"
+                        <button
+                          type="button"
                           className="product-card__cart btn btn-main py-11 px-24 rounded-pill flex-align gap-8"
+                          onClick={handleAddToCart}
+                          disabled={addingId === product.id}
+                          style={{
+                            pointerEvents: addingId === product.id ? "none" : "auto",
+                            opacity: addingId === product.id ? 0.7 : 1,
+                          }}
                         >
-                          Add <i className="ph ph-shopping-cart" />
-                        </Link>
+                          {addingId === product.id ? (
+                            "Adding..."
+                          ) : (
+                            <>Add <i className="ph ph-shopping-cart" /></>
+                          )}
+                        </button>
                       </div>
                     </div>
                   </div>

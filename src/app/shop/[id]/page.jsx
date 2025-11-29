@@ -1,7 +1,6 @@
 import ColorInit from "@/helper/ColorInit";
 import ScrollToTopInit from "@/helper/ScrollToTopInit";
 import Breadcrumb from "@/components/Breadcrumb";
-import Link from "next/link";
 import ProductDetailsTwo from "@/components/ProductDetailsTwo";
 
 const BASE_URL = "http://localhost:8000";

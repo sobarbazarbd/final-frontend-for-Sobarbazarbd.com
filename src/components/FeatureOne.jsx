@@ -69,7 +69,7 @@ const FeatureOne = ({
                   <div key={item.id} className="feature-item text-center">
                     <div className="feature-item__thumb rounded-circle">
                       <Link
-                        href={`/category/${slug}`}
+                        href={`/shop/?subcategories=${item.id}`}
                         className="w-100 h-100 flex-center"
                       >
                         <img
@@ -86,7 +86,7 @@ const FeatureOne = ({
                     <div className="feature-item__content mt-16">
                       <h6 className="text-lg mb-8">
                         <Link
-                          href={`/category/${slug}`}
+                          href={`/shop/?subcategories=${item.id}`}
                           className="text-inherit hover-text-main-600"
                         >
                           {item.name}

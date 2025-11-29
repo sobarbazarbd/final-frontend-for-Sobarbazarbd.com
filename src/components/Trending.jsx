@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import ProductTabSection from "./ProductTabSection";
 
-const RecommendedOne = ({ data = [] }) => {
+const Trending = ({ data = [] }) => {
   const subcategories = useMemo(() => {
     const subs = [];
     data.forEach((product) => {
@@ -23,12 +23,12 @@ const RecommendedOne = ({ data = [] }) => {
 
   return (
     <ProductTabSection
-      sectionTitle="Recommended for you"
+      sectionTitle="Trending Product"
       categories={subcategories}
       data={productsWithCategories}
-      tabClassName="common-tab nav-pills"
+      tabClassName="common-tab style-two nav-pills"
     />
   );
 };
 
-export default RecommendedOne;
+export default Trending;

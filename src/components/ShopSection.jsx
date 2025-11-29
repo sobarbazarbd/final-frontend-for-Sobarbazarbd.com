@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import ReactSlider from "react-slider";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useCart } from "@/context/CartContext";
+import toast from "react-hot-toast";
 
 const ShopSection = ({
   categories,
@@ -16,7 +18,17 @@ const ShopSection = ({
 }) => {
   let [grid, setGrid] = useState(false);
   let [active, setActive] = useState(false);
+  let [addingId, setAddingId] = useState(null);
+  let [searchValue, setSearchValue] = useState(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("search") || "";
+    }
+    return "";
+  });
   let sidebarController = () => setActive(!active);
+
+  const { addToCart, refreshCart } = useCart();
 
   // SSR: use props for products and pagination
   const products = productsData?.results || [];
@@ -31,6 +43,7 @@ const ShopSection = ({
   const categoryParam = searchParams.get("category");
   const brandParam = searchParams.get("brand");
   const pageParam = searchParams.get("page");
+  const searchParam = searchParams.get("search") || "";
 
   // Use searchParams for current category/page if present
   const currentCategory = categoryParam || selectedCategory;
@@ -58,6 +71,19 @@ const ShopSection = ({
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", page);
     if (currentCategory) params.set("category", currentCategory);
+    router.push(`/shop?${params.toString()}`);
+  };
+
+  // handle search submit
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    const params = new URLSearchParams(searchParams.toString());
+    if (searchValue) {
+      params.set("search", searchValue);
+    } else {
+      params.delete("search");
+    }
+    params.delete("page"); // reset to first page on search
     router.push(`/shop?${params.toString()}`);
   };
 
@@ -125,145 +151,189 @@ const ShopSection = ({
   // Helper for rendering products
   const renderProducts = () => {
     if (!products || products.length === 0) return null;
-    return products.map((product) => (
-      <div
-        key={product.id}
-        className='product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2'
-      >
-        {/* Store info */}
-        {product.store && (
-          <div className="d-flex align-items-center mb-8">
-            {product.store.logo ? (
-              <img
-                src={product.store.logo}
-                alt={product.store.name}
+    return products.map((product) => {
+      // --- Add to Cart handler ---
+      const handleAddToCart = async (e) => {
+        e.preventDefault();
+        if (!product.default_variant?.id) {
+          toast.error("No variant available for this product.");
+          return;
+        }
+        setAddingId(product.id);
+        const result = await addToCart(product.default_variant.id, 1);
+        setAddingId(null);
+        if (result.success) {
+          refreshCart();
+          toast.success(
+            <span>
+              Added to cart!{" "}
+              <button
                 style={{
-                  width: 28,
-                  height: 28,
-                  objectFit: "cover",
-                  borderRadius: "50%",
-                  marginRight: 8,
+                  color: "#FA6400",
+                  textDecoration: "underline",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  marginLeft: 8,
+                  fontWeight: 500,
                 }}
-              />
-            ) : (
-              <span
-                style={{
-                  width: 28,
-                  height: 28,
-                  display: "inline-block",
-                  background: "#eee",
-                  borderRadius: "50%",
-                  marginRight: 8,
-                  textAlign: "center",
-                  lineHeight: "28px",
-                  fontSize: 16,
-                  color: "#888",
-                }}
+                onClick={() => window.location.href = "/cart"}
               >
-                <i className="ph ph-storefront" />
-              </span>
-            )}
-            <span className="fw-semibold text-main-600" style={{fontSize:15}}>
-              {product.store.name}
-            </span>
-          </div>
-        )}
-        <Link
-          href={`/shop/${product.id}`}
-          className='product-card__thumb flex-center rounded-8 bg-gray-50 position-relative'
+                View Cart
+              </button>
+            </span>,
+            { duration: 4000 }
+          );
+        } else {
+          toast.error(result.error || "Failed to add to cart");
+        }
+      };
+
+      return (
+        <div
+          key={product.id}
+          className='product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2'
         >
-          <img
-            src={
-              product.images?.[0]?.image ||
-              "/assets/images/thumbs/product-two-img1.png"
-            }
-            alt={product.images?.[0]?.alt_text || ""}
-            className='w-auto max-w-unset'
-          />
-          {/* Example badge, you can adjust logic later */}
-          {product.default_variant?.discount && (
-            <span className='product-card__badge bg-danger-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0'>
-              Sale
-            </span>
-          )}
-        </Link>
-        <div className='product-card__content mt-16'>
-          <h6 className='title text-lg fw-semibold mt-12 mb-8'>
-            <Link
-              href={`/shop/${product.id}`}
-              className='link text-line-2'
-              tabIndex={0}
-            >
-              {product.name}
-            </Link>
-          </h6>
-          {/* Default variant name and stock */}
-          {product.default_variant && (
-            <div className="mb-8 text-sm text-gray-700">
-              <span className="fw-medium">
-                Variant: {product.default_variant.name}
-              </span>
-              {" | "}
-              <span>
-                Stock: {product.default_variant.stock} / {product.default_variant.available_stock}
+          {/* Store info */}
+          {product.store && (
+            <div className="d-flex align-items-center mb-8">
+              {product.store.logo ? (
+                <img
+                  src={product.store.logo}
+                  alt={product.store.name}
+                  style={{
+                    width: 28,
+                    height: 28,
+                    objectFit: "cover",
+                    borderRadius: "50%",
+                    marginRight: 8,
+                  }}
+                />
+              ) : (
+                <span
+                  style={{
+                    width: 28,
+                    height: 28,
+                    display: "inline-block",
+                    background: "#eee",
+                    borderRadius: "50%",
+                    marginRight: 8,
+                    textAlign: "center",
+                    lineHeight: "28px",
+                    fontSize: 16,
+                    color: "#888",
+                  }}
+                >
+                  <i className="ph ph-storefront" />
+                </span>
+              )}
+              <span className="fw-semibold text-main-600" style={{fontSize:15}}>
+                {product.store.name}
               </span>
             </div>
           )}
-          <div className='flex-align mb-20 mt-16 gap-6'>
-            <span className='text-xs fw-medium text-gray-500'>
-              {product.default_variant?.discount ? "4.8" : null}
-            </span>
-            <span className='text-15 fw-medium text-warning-600 d-flex'>
-              <i className='ph-fill ph-star' />
-            </span>
-            <span className='text-xs fw-medium text-gray-500'>
-              {product.default_variant?.discount ? "(17k)" : null}
-            </span>
-          </div>
-          <div className='mt-8'>
-            <div
-              className='progress w-100 bg-color-three rounded-pill h-4'
-              role='progressbar'
-              aria-label='Basic example'
-              aria-valuenow={35}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              <div
-                className='progress-bar bg-main-two-600 rounded-pill'
-                style={{ width: "35%" }}
-              />
-            </div>
-            <span className='text-gray-900 text-xs fw-medium mt-8'>
-              Sold:{" "}
-              {product.default_variant?.stock || 0}/
-              {product.default_variant?.available_stock || 0}
-            </span>
-          </div>
-          {/* Price section */}
-          <div className='product-card__price my-20'>
-            {/* Original price (strikethrough if discounted) */}
+          <Link
+            href={`/shop/${product.id}`}
+            className='product-card__thumb flex-center rounded-8 bg-gray-50 position-relative'
+          >
+            <img
+              src={
+                product.images?.[0]?.image ||
+                "/assets/images/thumbs/product-two-img1.png"
+              }
+              alt={product.images?.[0]?.alt_text || ""}
+              className='w-auto max-w-unset'
+            />
+            {/* Example badge, you can adjust logic later */}
             {product.default_variant?.discount && (
-              <span className='text-gray-400 text-md fw-semibold text-decoration-line-through me-8'>
-                ৳{product.default_variant.price}
+              <span className='product-card__badge bg-danger-600 px-8 py-4 text-sm text-white position-absolute inset-inline-start-0 inset-block-start-0'>
+                Sale
               </span>
             )}
-            {/* Final price */}
-            <span className='text-heading text-md fw-semibold'>
-              Net Price: ৳{product.default_variant?.final_price ?? "null"}
-              <span className='text-gray-500 fw-normal'> /Qty</span>
-            </span>
-          </div>
-          <Link
-            href='/cart'
-            className='product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium'
-            tabIndex={0}
-          >
-            Add To Cart <i className='ph ph-shopping-cart' />
           </Link>
+          <div className='product-card__content mt-16'>
+            <h6 className='title text-lg fw-semibold mt-12 mb-8'>
+              <Link
+                href={`/shop/${product.id}`}
+                className='link text-line-2'
+                tabIndex={0}
+              >
+                {product.name}
+              </Link>
+            </h6>
+            {/* Default variant name and stock */}
+            {product.default_variant && (
+              <div className="mb-8 text-sm text-gray-700">
+                <span className="fw-medium">
+                  Variant: {product.default_variant.name}
+                </span>
+                {" | "}
+                <span>
+                  Stock: {product.default_variant.stock} / {product.default_variant.available_stock}
+                </span>
+              </div>
+            )}
+            <div className='flex-align mb-20 mt-16 gap-6'>
+              <span className='text-xs fw-medium text-gray-500'>
+                {product.default_variant?.discount ? "4.8" : null}
+              </span>
+              <span className='text-15 fw-medium text-warning-600 d-flex'>
+                <i className='ph-fill ph-star' />
+              </span>
+              <span className='text-xs fw-medium text-gray-500'>
+                {product.default_variant?.discount ? "(17k)" : null}
+              </span>
+            </div>
+            <div className='mt-8'>
+              <div
+                className='progress w-100 bg-color-three rounded-pill h-4'
+                role='progressbar'
+                aria-label='Basic example'
+                aria-valuenow={35}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              >
+                <div
+                  className='progress-bar bg-main-two-600 rounded-pill'
+                  style={{ width: "35%" }}
+                />
+              </div>
+              <span className='text-gray-900 text-xs fw-medium mt-8'>
+                Sold:{" "}
+                {product.default_variant?.stock || 0}/
+                {product.default_variant?.available_stock || 0}
+              </span>
+            </div>
+            {/* Price section */}
+            <div className='product-card__price my-20'>
+              {/* Original price (strikethrough if discounted) */}
+              {product.default_variant?.discount && (
+                <span className='text-gray-400 text-md fw-semibold text-decoration-line-through me-8'>
+                  ৳{product.default_variant.price}
+                </span>
+              )}
+              {/* Final price */}
+              <span className='text-heading text-md fw-semibold'>
+                Net Price: ৳{product.default_variant?.final_price ?? "null"}
+                <span className='text-gray-500 fw-normal'> /Qty</span>
+              </span>
+            </div>
+            <button
+              type="button"
+              className='product-card__cart btn bg-gray-50 text-heading hover-bg-main-600 hover-text-white py-11 px-24 rounded-8 flex-center gap-8 fw-medium'
+              onClick={handleAddToCart}
+              disabled={addingId === product.id}
+              style={{
+                pointerEvents: addingId === product.id ? "none" : "auto",
+                opacity: addingId === product.id ? 0.7 : 1,
+              }}
+            >
+              {addingId === product.id ? "Adding..." : <>Add To Cart <i className='ph ph-shopping-cart' /></>}
+            </button>
+          </div>
         </div>
-      </div>
-    ));
+      );
+    });
   };
 
   return (
@@ -680,6 +750,28 @@ const ShopSection = ({
             <div className='flex-between gap-16 flex-wrap mb-40 '>
               <span className='text-gray-900'>Showing 1-20 of 85 result</span>
               <div className='position-relative flex-align gap-16 flex-wrap'>
+                {/* --- Search Box --- */}
+                <form
+                  onSubmit={handleSearchSubmit}
+                  className="d-flex align-items-center"
+                  style={{ minWidth: 220, marginRight: 16 }}
+                >
+                  <input
+                    type="text"
+                    className="form-control common-input px-14 py-14 text-inherit rounded-6 w-auto"
+                    placeholder="Search products..."
+                    value={searchValue}
+                    onChange={e => setSearchValue(e.target.value)}
+                    style={{ minWidth: 140 }}
+                  />
+                  <button
+                    type="submit"
+                    className="btn btn-main ms-2"
+                    style={{ minWidth: 40 }}
+                  >
+                    <i className="ph ph-magnifying-glass" />
+                  </button>
+                </form>
                 <div className='list-grid-btns flex-align gap-16'>
                   <button
                     onClick={() => setGrid(true)}

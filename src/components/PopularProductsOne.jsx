@@ -141,7 +141,7 @@ const PopularProductsOne = ({ section, categories = [] }) => {
                     <ul className="text-gray-600 text-sm mb-4">
                       {category.subcategories.map((sub) => (
                         <li key={sub.id} className="mb-3">
-                          <Link href={`/shop?subcategory=${sub.id}`} className="hover-text-main-600">
+                          <Link href={`/shop?subcategories=${sub.id}`} className="hover-text-main-600">
                      <span className=" text-gray-600">  {sub.name}</span>     
                           </Link>
                         </li>

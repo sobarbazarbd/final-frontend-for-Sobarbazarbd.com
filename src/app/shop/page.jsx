@@ -30,12 +30,22 @@ async function getBrands() {
   return json?.data ?? null;
 }
 
-async function getProducts({ category, brand, page, page_size }) {
-  // Use correct backend params for category and brand filtering
+async function getProducts({ category, brand, page, page_size, subcategories, search }) {
   const params = [];
   if (category)
     params.push(`supplier_product__subcategories__category=${category}`);
+  // --- Fix: support multiple subcategories ---
+  if (subcategories) {
+    if (Array.isArray(subcategories)) {
+      subcategories.forEach((sub) => {
+        params.push(`supplier_product__subcategories=${encodeURIComponent(sub)}`);
+      });
+    } else {
+      params.push(`supplier_product__subcategories=${encodeURIComponent(subcategories)}`);
+    }
+  }
   if (brand) params.push(`supplier_product__brand_or_company=${brand}`);
+  if (search) params.push(`search=${encodeURIComponent(search)}`);
   params.push(`pagination=1`);
   params.push(`page_size=${page_size || 20}`);
   if (page) params.push(`page=${page}`);
@@ -54,17 +64,21 @@ const Page = async ({ searchParams }) => {
   // Await the searchParams promise
   const params = await searchParams;
   const selectedCategory = params?.category || null;
+  const subCategory = params?.subcategories || null;
   const selectedBrand = params?.brand || null;
   const currentPage = params?.page ? parseInt(params.page) : 1;
   const pageSize = 20;
+  const search = params?.search || "";
 
   const categories = await getCategories();
   const brands = await getBrands();
   const productsData = await getProducts({
     category: selectedCategory,
+    subcategories: subCategory,
     brand: selectedBrand,
     page: currentPage,
     page_size: pageSize,
+    search,
   });
 
   // SSR loading/error handling
