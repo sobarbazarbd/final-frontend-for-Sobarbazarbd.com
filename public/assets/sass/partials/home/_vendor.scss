@@ -1,0 +1,113 @@
+/* ===================================== Vendor Css Start ================================== */
+.vendor-card {
+  background-color: var(--main-100);
+  -webkit-mask-image: url("~/public/assets/images/shape/box-shape2.png");
+  mask-image: url("~/public/assets/images/shape/box-shape2.png");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  background: #f4f6e6;
+  mask-position: top;
+  mask-size: 100% 100%;
+
+  /* ensure consistent height and vertical layout */
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+
+  &__logo {
+    max-width: 66px;
+  }
+
+  /* keep product items sizing */
+  &__item {
+    max-width: 64px;
+    max-height: 64px;
+    aspect-ratio: 1;
+    width: 100%;
+    height: 100%;
+  }
+
+  .vendor-card__list {
+    &.style-two {
+      .vendor-card__item {
+        max-width: 88px;
+        max-height: 88px;
+        border-radius: 8px !important;
+      }
+      .slick-slide {
+        margin: 0 4px !important;
+      }
+    }
+  }
+}
+
+/* new grid layout for cards with gap equal to gap-5 (1.25rem) */
+.vendor-card-wrapper.vendor-grid {
+  display: grid;
+  gap: 1.25rem; /* gap-5 */
+  grid-template-columns: repeat(1, 1fr);
+  align-items: start;
+}
+
+@media (min-width: 640px) {
+  .vendor-card-wrapper.vendor-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 992px) {
+  .vendor-card-wrapper.vendor-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (min-width: 1200px) {
+  .vendor-card-wrapper.vendor-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* grid child wrapper for each card */
+.vendor-card-wrapper .vendor-card-col {
+  display: block;
+}
+
+/* colored circular accent behind logo */
+.vendor-accent {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 12px auto 0;
+}
+
+/* Apply the existing per-card background palette using nth-child on wrapper children.
+   This works whether the wrapper uses columns or grid. Colors kept the same as before. */
+.vendor-card-wrapper > *:nth-child(8n + 1) .vendor-card {
+  background: #f4f6e6;
+}
+.vendor-card-wrapper > *:nth-child(8n + 2) .vendor-card {
+  background: #e6f6f6;
+}
+.vendor-card-wrapper > *:nth-child(8n + 3) .vendor-card {
+  background: #f6e6f6;
+}
+.vendor-card-wrapper > *:nth-child(8n + 4) .vendor-card {
+  background: #f8eae4;
+}
+.vendor-card-wrapper > *:nth-child(8n + 5) .vendor-card {
+  background: #f8eae4;
+}
+.vendor-card-wrapper > *:nth-child(8n + 6) .vendor-card {
+  background: #dee6f3;
+}
+.vendor-card-wrapper > *:nth-child(8n + 7) .vendor-card {
+  background: #daf2db;
+}
+.vendor-card-wrapper > *:nth-child(8n + 8) .vendor-card {
+  background: #ebf1da;
+}
+
+/* ===================================== Vendor Css End ================================== */

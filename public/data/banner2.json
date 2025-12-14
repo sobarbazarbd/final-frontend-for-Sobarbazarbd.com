@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "tagline": "Starting at only $250",
+    "title": "Get The Sound You Love For Less",
+    "shopLink": "/shop",
+    "buttonText": "Shop Now",
+    "thumb": "/assets/images/thumbs/banner-two-img.png"
+  },
+  {
+    "id": 2,
+    "tagline": "Starting at only $250",
+    "title": "Get The Sound You Love For Less",
+    "shopLink": "/shop",
+    "buttonText": "Shop Now",
+    "thumb": "/assets/images/thumbs/banner-two-img.png"
+  }
+]

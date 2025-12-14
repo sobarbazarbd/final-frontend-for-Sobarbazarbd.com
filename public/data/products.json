@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "Headphone & Earphone",
+    "categories": ["Wired Headphones", "Over-Ear Headphone", "Sports Headphone", "Earbud Headphone"],
+    "img": "/assets/images/thumbs/popular-img1.png"
+  },
+  {
+    "id": 2,
+    "name": "TV & Smart Home",
+    "categories": ["Wired Headphones", "Over-Ear Headphone", "Sports Headphone", "Earbud Headphone"],
+    "img": "/assets/images/thumbs/popular-img2.png"
+  },
+  {
+    "id": 3,
+    "name": "Video Games",
+    "categories": ["Wired Headphones", "Over-Ear Headphone", "Sports Headphone", "Earbud Headphone"],
+    "img": "/assets/images/thumbs/popular-img3.png"
+  },
+  {
+    "id": 4,
+    "name": "Computer & Tablets",
+    "categories": ["Wired Headphones", "Over-Ear Headphone", "Sports Headphone", "Earbud Headphone"],
+    "img": "/assets/images/thumbs/popular-img4.png"
+  },
+  {
+    "id": 5,
+    "name": "Car & GPS",
+    "categories": ["Wired Headphones", "Over-Ear Headphone", "Sports Headphone", "Earbud Headphone"],
+    "img": "/assets/images/thumbs/popular-img5.png"
+  },
+  {
+    "id": 6,
+    "name": "Camera & Video",
+    "categories": ["Wired Headphones", "Over-Ear Headphone", "Sports Headphone", "Earbud Headphone"],
+    "img": "/assets/images/thumbs/popular-img6.png"
+  },
+  {
+    "id": 7,
+    "name": "Kitchen Appliance",
+    "categories": ["Wired Headphones", "Over-Ear Headphone", "Sports Headphone", "Earbud Headphone"],
+    "img": "/assets/images/thumbs/popular-img7.png"
+  },
+  {
+    "id": 8,
+    "name": "Phone & Accessories",
+    "categories": ["Wired Headphones", "Over-Ear Headphone", "Sports Headphone", "Earbud Headphone"],
+    "img": "/assets/images/thumbs/popular-img8.png"
+  }
+]

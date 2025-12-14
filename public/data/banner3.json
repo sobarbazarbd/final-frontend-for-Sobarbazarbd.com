@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "tagline": "UP TO 50% OFF",
+    "title": "New",
+    "highlight": "Style",
+    "description": "You appear ordinary if you dress simply. We are able to help you.",
+    "image": "/assets/images/thumbs/banner-three-img1.png",
+    "shopLink": "/shop"
+  },
+  {
+    "id": 2,
+    "tagline": "UP TO 50% OFF",
+    "title": "New",
+    "highlight": "Style",
+    "description": "You appear ordinary if you dress simply. We are able to help you.",
+    "image": "/assets/images/thumbs/banner-three-img2.png",
+    "shopLink": "/shop"
+  },
+  {
+    "id": 3,
+    "tagline": "UP TO 50% OFF",
+    "title": "New",
+    "highlight": "Style",
+    "description": "You appear ordinary if you dress simply. We are able to help you.",
+    "image": "/assets/images/thumbs/banner-three-img3.png",
+    "shopLink": "/shop"
+  }
+]

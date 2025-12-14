@@ -1,0 +1,65 @@
+// Plugin CSS
+@import "/public/assets/css/slick.css";
+@import "/public/assets/css/animate.css";
+@import "/public/assets/css/aos.css";
+@import "/public/assets/css/select2.min.css";
+@import "/public/assets/css/jquery-ui.css";
+@import "~/public/assets/css/bootstrap.min.css";
+
+@import "~animate.css";
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
+@import "select2/dist/css/select2.min.css";
+@import "/public/assets/sass/main.scss";
+
+// Smooth transitions for all elements
+* {
+  transition: all 0.3s ease;
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 120px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+// Card hover effects
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15) !important;
+  }
+}
+
+// Gradient text
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// Pulse animation for notifications
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
