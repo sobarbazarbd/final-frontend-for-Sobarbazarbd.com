@@ -48,6 +48,14 @@ const TopVendorsOne = ({ data }) => {
                     <div className='vendor-card__item bg-white rounded-circle flex-center'>
                       <img src='assets/images/thumbs/vendor-img5.png' alt='' />
                     </div>
+                    <div className='vendor-card__item bg-white rounded-circle flex-center'>
+                      <img src='assets/images/thumbs/vendor-img5.png' alt='' />
+                    </div>
+                    <div className='vendor-card__item bg-white rounded-circle flex-center'>
+                      <img src='assets/images/thumbs/vendor-img5.png' alt='' />
+                    </div>
+                    
+                   
                   </div>
                 </div>
               </Link>
