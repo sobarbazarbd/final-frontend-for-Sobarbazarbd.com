@@ -488,7 +488,7 @@ const ShopSection = ({
                 {renderCategories()}
               </div>
 
-              {/* Price Filter - আগের ডিজাইনের মতো */}
+              {/* Price Filter - */}
               <div className='shop-sidebar__box border border-gray-100 rounded-8 p-32 mb-32'>
                 <h6 className='text-xl border-bottom border-gray-100 pb-24 mb-24'>
                   Filter by Price
@@ -522,7 +522,7 @@ const ShopSection = ({
                 </div>
               </div>
 
-              {/* Rating Filter - আগের ডিজাইনের মতো */}
+              {/* Rating Filter -  */}
               <div className='shop-sidebar__box border border-gray-100 rounded-8 p-32 mb-32'>
                 <h6 className='text-xl border-bottom border-gray-100 pb-24 mb-24'>
                   Filter by Rating
@@ -530,7 +530,7 @@ const ShopSection = ({
                 {renderRatingFilter()}
               </div>
 
-              {/* Color Filter - আগের ডিজাইনের মতো */}
+              {/* Color Filter -  */}
               <div className='shop-sidebar__box border border-gray-100 rounded-8 p-32 mb-32'>
                 <h6 className='text-xl border-bottom border-gray-100 pb-24 mb-24'>
                   Filter by Color
@@ -646,7 +646,7 @@ const ShopSection = ({
               </div>
             </div>
 
-            {/* Pagination - আগের ডিজাইনের মতো */}
+            {/* Pagination -  */}
             {totalPages > 1 && (
               <div className="mt-60">
                 <ul className='pagination flex-center flex-wrap gap-16'>
