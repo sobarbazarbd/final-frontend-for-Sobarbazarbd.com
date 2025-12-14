@@ -6,6 +6,8 @@ import FeatureOne from "@/components/FeatureOne";
 import FlashSalesOne from "@/components/FlashSalesOne";
 import HotDealsOne from "@/components/HotDealsOne";
 import NewArrivalOne from "@/components/NewArrivalOne";
+// NewArrivalThree ইম্পোর্ট করুন
+import NewArrivalThree from "@/components/NewArrivalThree";
 import OfferOne from "@/components/OfferOne";
 import OrganicOne from "@/components/OrganicOne";
 import PopularProductsOne from "@/components/PopularProductsOne";
@@ -82,6 +84,15 @@ const Page = async () => {
       {/* <ShortProductOne /> */}
       <BrandOne data={homeData?.data?.brands || []} />
       <NewArrivalOne data={homeData?.data?.newly_arrived_products} />
+      
+      {/* NewArrivalThree যোগ করুন - আপনার API ডেটা অনুযায়ী */}
+      <NewArrivalThree 
+        sectionTitle="New Arrivals"
+        categories={homeData?.data?.categories || []}
+        products={homeData?.data?.newly_arrived_products || homeData?.data?.recommended_products || []}
+        // যদি আপনার API-তে প্রোমো সেকশন থাকে
+        // promos={homeData?.data?.promo_sections || []}
+      />
     </>
   );
 };

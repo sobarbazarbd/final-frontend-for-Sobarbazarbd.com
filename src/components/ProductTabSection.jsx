@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import toast from "react-hot-toast";
@@ -114,7 +114,6 @@ export const ProductCard = ({ product, color = "main-600", badgeColors }) => {
             By {store?.name || "Unknown Store"}
           </span>
         </div>
-        {/* Optional: progress bar, sold info, etc. */}
         <div className="product-card__price my-20">
           <span className="text-gray-400 text-md fw-semibold text-decoration-line-through">
             ${originalPrice}
@@ -156,18 +155,49 @@ const ProductTabSection = ({
     "Sold": "bg-success-600",
     "Default": "bg-main-600"
   },
-  tabClassName = "common-tab nav-pills", // <-- add default
+  tabClassName = "common-tab nav-pills",
 }) => {
   const router = useRouter();
-  const [activeCategory, setActiveCategory] = useState(
-    categories[0]?.id || "all"
-  );
+  
+  // All ট্যাবকে ডিফল্ট হিসেবে সেট করুন
+  const [activeCategory, setActiveCategory] = useState("all");
+  
+  // Filtered products with useMemo
   const filteredProducts = useMemo(() => {
-    if (activeCategory === "all") return data;
-    return data.filter((product) =>
-      product.categories?.some((cat) => cat.id === activeCategory)
-    );
+    if (activeCategory === "all") {
+      return data; // All ট্যাবের জন্য সব প্রোডাক্ট
+    }
+    
+    // নির্দিষ্ট ক্যাটাগরির প্রোডাক্ট ফিল্টার করুন
+    return data.filter((product) => {
+      // যদি product.categories array থাকে
+      if (Array.isArray(product.categories)) {
+        return product.categories.some(cat => cat.id === activeCategory);
+      }
+      
+      // যদি product.category_id থাকে
+      if (product.category_id) {
+        return product.category_id === activeCategory;
+      }
+      
+      // যদি product.subcategories array থাকে
+      if (Array.isArray(product.subcategories)) {
+        return product.subcategories.some(sub => sub.id === activeCategory);
+      }
+      
+      // যদি product.subcategory_id থাকে
+      if (product.subcategory_id) {
+        return product.subcategory_id === activeCategory;
+      }
+      
+      return false;
+    });
   }, [data, activeCategory]);
+
+  // Handle tab click
+  const handleTabClick = (categoryId) => {
+    setActiveCategory(categoryId);
+  };
 
   return (
     <section className="trending-productss pt-80">
@@ -181,25 +211,26 @@ const ProductTabSection = ({
                 id="pills-tab"
                 role="tablist"
               >
+                {/* All ট্যাব - ডিফল্টভাবে active */}
                 <li className="nav-item" role="presentation">
                   <button
-                    className={`nav-link ${
-                      activeCategory === "all" ? "active" : ""
-                    }`}
-                    onClick={() => setActiveCategory("all")}
+                    className={`nav-link ${activeCategory === "all" ? "active" : ""}`}
+                    onClick={() => handleTabClick("all")}
                     type="button"
+                    aria-selected={activeCategory === "all"}
                   >
                     All
                   </button>
                 </li>
+                
+                {/* অন্যান্য ক্যাটাগরি ট্যাব */}
                 {categories.map((cat) => (
                   <li key={cat.id} className="nav-item" role="presentation">
                     <button
-                      className={`nav-link ${
-                        activeCategory === cat.id ? "active" : ""
-                      }`}
-                      onClick={() => setActiveCategory(cat.id)}
+                      className={`nav-link ${activeCategory === cat.id ? "active" : ""}`}
+                      onClick={() => handleTabClick(cat.id)}
                       type="button"
+                      aria-selected={activeCategory === cat.id}
                     >
                       {cat.name}
                     </button>
@@ -208,8 +239,14 @@ const ProductTabSection = ({
               </ul>
             </div>
           </div>
+          
           <div className="tab-content" id="pills-tabContent">
-            <div className="tab-pane fade show active">
+            <div 
+              className={`tab-pane fade ${activeCategory === "all" ? "show active" : ""}`}
+              id="all"
+              role="tabpanel"
+              aria-labelledby="all-tab"
+            >
               <div className="row g-12">
                 {filteredProducts.length > 0 ? (
                   filteredProducts.map((product) => (
@@ -231,6 +268,38 @@ const ProductTabSection = ({
                 )}
               </div>
             </div>
+            
+            {/* অন্যান্য ক্যাটাগরির জন্য ট্যাব প্যানেল */}
+            {categories.map((cat) => (
+              <div
+                key={cat.id}
+                className={`tab-pane fade ${activeCategory === cat.id ? "show active" : ""}`}
+                id={`cat-${cat.id}`}
+                role="tabpanel"
+                aria-labelledby={`cat-${cat.id}-tab`}
+              >
+                <div className="row g-12">
+                  {filteredProducts.length > 0 ? (
+                    filteredProducts.map((product) => (
+                      <div
+                        className="col-xxl-2 col-lg-3 col-sm-4 col-6"
+                        key={product.id}
+                      >
+                        <ProductCard
+                          product={product}
+                          color={color}
+                          badgeColors={badgeColors}
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center w-100 py-5 text-gray-500">
+                      No products available in {cat.name} category.
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
