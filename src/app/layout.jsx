@@ -11,6 +11,7 @@ import NavFooterProvider from "@/context/NavFooterProvider";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "react-hot-toast";
+import FooterOne from "@/components/FooterTwo";
 
 export const metadata = {
   title: "SobazarBd - Online Shopping Complex",
@@ -48,6 +49,7 @@ export default async function RootLayout({ children }) {
               {children}
               <ShippingOne />
               <NewsletterOne />
+              <FooterOne />
             </CartProvider>
           </AuthProvider>
         </NavFooterProvider>

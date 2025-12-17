@@ -4,18 +4,16 @@ export const navigation = [
     path: "/",
   },
   {
-    title: "Shop",
+    title: "All Products",
     path: "/shop",
   },
   {
-    title: "Vendors",
+    title: "Stores",
     path: "#",
     badge: { text: "New", color: "tertiary" },
     submenu: [
-      { title: "Vendors", path: "/vendor" },
-      { title: "Vendor Details", path: "/vendor-details" },
-      { title: "Vendors Two", path: "/vendor-two" },
-      { title: "Vendors Two Details", path: "/vendor-two-details" },
+      { title: "Store List", path: "/vendor" },
+      { title: "Store Details", path: "/vendor-details" },
     ],
   },
   {
