@@ -163,11 +163,11 @@ const NewArrivalOne = ({ data }) => {
                         <div className="product-card__price">
                           {oldPrice && (
                             <span className="text-gray-400 text-md fw-semibold text-decoration-line-through d-block">
-                              ${oldPrice}
+                              ৳{oldPrice}
                             </span>
                           )}
                           <span className="text-heading text-md fw-semibold">
-                            ${price}{" "}
+                            ৳{price}{" "}
                             <span className="text-gray-500 fw-normal">/Qty</span>
                           </span>
                         </div>

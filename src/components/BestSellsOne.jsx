@@ -117,10 +117,10 @@ const BestSellsOne = ({ section, data = [] }) => {
                         <div className='product-card__content'>
                           <div className='product-card__price mb-16'>
                             <span className='text-gray-400 text-md fw-semibold text-decoration-line-through'>
-                              ${originalPrice}
+                              ৳{originalPrice}
                             </span>
                             <span className='text-heading text-md fw-semibold '>
-                              ${price}{" "}
+                              ৳{price}{" "}
                               <span className='text-gray-500 fw-normal'>/Qty</span>{" "}
                             </span>
                           </div>
