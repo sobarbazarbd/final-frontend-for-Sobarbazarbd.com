@@ -53,7 +53,11 @@ const HeaderOne = () => {
   const [menuActive, setMenuActive] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null);
   const handleMenuClick = (index) => {
-    setActiveIndex(activeIndex === index ? null : index);
+    // Only allow dropdown toggle for items that actually have submenus
+    const item = navigation[index];
+    if (item && item.submenu) {
+      setActiveIndex(activeIndex === index ? null : index);
+    }
   };
   const handleMenuToggle = () => {
     setMenuActive(!menuActive);
@@ -524,33 +528,39 @@ const HeaderOne = () => {
               <div className='header-menu d-lg-block d-none'>
                 {/* Nav Menu Start */}
                 <ul className='nav-menu flex-align '>
-                  {navigation.map((item, index) => (
-                    <li key={index} className='on-hover-item nav-menu__item has-submenu'>
-                      {item.badge && renderBadge(item.badge)}
-                      <Link 
-                        href={item.path} 
-                        className={`nav-menu__link ${isActivePath(item.path) && "activePage"}`}
-                      >
-                        {item.title}
-                      </Link>
-                      {item.submenu && (
-                        <ul className='on-hover-dropdown common-dropdown nav-submenu scroll-sm'>
-                          {item.submenu.map((subItem, subIndex) => (
-                            <li key={subIndex} className='common-dropdown__item nav-submenu__item'>
-                              <Link
-                                href={subItem.path}
-                                className={`common-dropdown__link nav-submenu__link hover-bg-neutral-100 ${
-                                  isActivePath(subItem.path) && "activePage"
-                                }`}
-                              >
-                                {subItem.title}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </li>
-                  ))}
+                  {navigation.map((item, index) => {
+                    // Identify items that should not have dropdown
+                    const noDropdownItems = ['Home', 'All Products', 'Store', 'Contact Us'];
+                    const hasDropdown = item.submenu && !noDropdownItems.includes(item.title);
+                    
+                    return (
+                      <li key={index} className={`on-hover-item nav-menu__item ${hasDropdown ? 'has-submenu' : ''}`}>
+                        {item.badge && renderBadge(item.badge)}
+                        <Link 
+                          href={item.path} 
+                          className={`nav-menu__link ${isActivePath(item.path) && "activePage"}`}
+                        >
+                          {item.title}
+                        </Link>
+                        {hasDropdown && (
+                          <ul className='on-hover-dropdown common-dropdown nav-submenu scroll-sm'>
+                            {item.submenu.map((subItem, subIndex) => (
+                              <li key={subIndex} className='common-dropdown__item nav-submenu__item'>
+                                <Link
+                                  href={subItem.path}
+                                  className={`common-dropdown__link nav-submenu__link hover-bg-neutral-100 ${
+                                    isActivePath(subItem.path) && "activePage"
+                                  }`}
+                                >
+                                  {subItem.title}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
                 {/* Nav Menu End */}
               </div>
