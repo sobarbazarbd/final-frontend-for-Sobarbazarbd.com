@@ -130,7 +130,7 @@ const NewArrivalOne = ({ data }) => {
                   <div className="product-card px-8 py-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
                     {/* Product Image */}
                     <Link
-                      href={`/product-details/${product.id}`}
+                      href={`/shop/${product.id}`}
                       className="product-card__thumb flex-center"
                     >
                       <img src={image} alt={product.name} />
@@ -141,7 +141,7 @@ const NewArrivalOne = ({ data }) => {
                       {/* Title */}
                       <h6 className="title text-lg fw-semibold mt-12 mb-8">
                         <Link
-                          href={`/product-details/${product.id}`}
+                          href={`/shop/${product.id}`}
                           className="link text-line-2"
                         >
                           {product.name}
