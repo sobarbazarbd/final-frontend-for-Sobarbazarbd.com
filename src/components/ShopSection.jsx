@@ -13,6 +13,7 @@ const ShopSection = ({
   productsData,
   selectedCategory,
   selectedBrand,
+  selectedStore,
   currentPage,
   pageSize,
 }) => {
@@ -47,10 +48,12 @@ const ShopSection = ({
   // URL params
   const categoryParam = searchParams.get("category");
   const brandParam = searchParams.get("brand");
+  const storeParam = searchParams.get("store");
   const pageParam = searchParams.get("page");
   
   const currentCategory = categoryParam || selectedCategory;
   const currentBrand = brandParam || selectedBrand;
+  const currentStore = storeParam || selectedStore;
   const currentPg = pageParam ? parseInt(pageParam) : currentPage;
 
   // Calculate showing text
@@ -68,6 +71,13 @@ const ShopSection = ({
   const handleBrandChange = (brandId) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("brand", brandId);
+    params.delete("page");
+    router.push(`/shop?${params.toString()}`);
+  };
+
+  const handleClearStoreFilter = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("store");
     params.delete("page");
     router.push(`/shop?${params.toString()}`);
   };
@@ -558,6 +568,30 @@ const ShopSection = ({
                 </h6>
                 {renderColorFilter()}
               </div>
+
+              {/* Store Filter - Show only if a store is selected */}
+              {currentStore && (
+                <div className='shop-sidebar__box border border-main-100 bg-main-50 rounded-8 p-32 mb-32'>
+                  <div className='d-flex justify-content-between align-items-center border-bottom border-main-200 pb-24 mb-24'>
+                    <h6 className='text-xl text-main-600 mb-0'>
+                      <i className='ph ph-storefront me-2'></i>
+                      Filtered by Store
+                    </h6>
+                    <button
+                      onClick={handleClearStoreFilter}
+                      className='btn btn-sm btn-outline-main-600 rounded-pill px-16 py-4'
+                      title='Clear store filter'
+                    >
+                      <i className='ph ph-x me-1'></i>
+                      Clear
+                    </button>
+                  </div>
+                  <p className='text-gray-700 mb-0'>
+                    <i className='ph ph-info me-2'></i>
+                    Showing products from a specific store
+                  </p>
+                </div>
+              )}
 
               {/* Brand Filter */}
               <div className='shop-sidebar__box border border-gray-100 rounded-8 p-32 mb-32'>

@@ -52,7 +52,7 @@ function getCountdownTo(startDate, endDate) {
   return { days, hours, minutes, seconds };
 }
 
-const FlashSalesOne = ({ section }) => {
+const FlashSalesOne = ({ section={} }) => {
   const settings = {
     dots: false,
     arrows: true,
@@ -76,6 +76,11 @@ const FlashSalesOne = ({ section }) => {
 
   // Store countdowns for each item by id
   const [countdowns, setCountdowns] = useState({});
+
+  // if emty banner_items, return null
+  if (!section?.banner_items || section.banner_items.length === 0) {
+    return null;
+  }
 
   useEffect(() => {
     function updateCountdowns() {

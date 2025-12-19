@@ -155,12 +155,26 @@ const Checkout = () => {
 
       const paymentMethod = paymentMethodMap[selectedPayment] || "COD";
 
+      // Always pass all form fields for guest checkout, and for authenticated users, merge with userData if needed
+      let customerData = null;
+      if (!isAuthenticated) {
+        customerData = { ...formData };
+      } else if (userData && userData.customer) {
+        customerData = {
+          name: formData.name || userData.customer.name || "",
+          email: formData.email || userData.customer.email || "",
+          phone: formData.phone || userData.customer.phone || "",
+          address: formData.address || userData.customer.shipping_address || "",
+          notes: formData.notes || "",
+        };
+      }
+
       const result = await checkout(
         cartId,
         paymentMethod,
         selectedArea,
         formData.address,
-        isAuthenticated ? null : formData // Pass guest data if not authenticated
+        customerData
       );
 
       if (result.success) {

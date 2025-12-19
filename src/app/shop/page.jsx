@@ -30,7 +30,7 @@ async function getBrands() {
   return json?.data ?? null;
 }
 
-async function getProducts({ category, brand, page, page_size, subcategories, search }) {
+async function getProducts({ category, brand, page, page_size, subcategories, search, store }) {
   const params = [];
   if (category)
     params.push(`supplier_product__subcategories__category=${category}`);
@@ -45,6 +45,7 @@ async function getProducts({ category, brand, page, page_size, subcategories, se
     }
   }
   if (brand) params.push(`supplier_product__brand_or_company=${brand}`);
+  if (store) params.push(`supplier_product__store=${store}`);
   if (search) params.push(`search=${encodeURIComponent(search)}`);
   params.push(`pagination=1`);
   params.push(`page_size=${page_size || 20}`);
@@ -66,6 +67,7 @@ const Page = async ({ searchParams }) => {
   const selectedCategory = params?.category || null;
   const subCategory = params?.subcategories || null;
   const selectedBrand = params?.brand || null;
+  const selectedStore = params?.store || null;
   const currentPage = params?.page ? parseInt(params.page) : 1;
   const pageSize = 20;
   const search = params?.search || "";
@@ -76,6 +78,7 @@ const Page = async ({ searchParams }) => {
     category: selectedCategory,
     subcategories: subCategory,
     brand: selectedBrand,
+    store: selectedStore,
     page: currentPage,
     page_size: pageSize,
     search,
@@ -103,6 +106,7 @@ const Page = async ({ searchParams }) => {
         productsData={productsData}
         selectedCategory={selectedCategory}
         selectedBrand={selectedBrand}
+        selectedStore={selectedStore}
         currentPage={currentPage}
         pageSize={pageSize}
       />

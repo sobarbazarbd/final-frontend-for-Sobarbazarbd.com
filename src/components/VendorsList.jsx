@@ -1,23 +1,77 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
+const BASE_URL = "https://api.hetdcl.com";
+
 const VendorsList = () => {
+  const [stores, setStores] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("latest");
+
+  useEffect(() => {
+    const fetchStores = async () => {
+      try {
+        const response = await fetch(
+          `${BASE_URL}/api/v1.0/stores/public/`,
+          { cache: "no-store" }
+        );
+        if (!response.ok) throw new Error("Failed to fetch stores");
+        const data = await response.json();
+        setStores(data?.data || []);
+      } catch (error) {
+        console.error("Error fetching stores:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStores();
+  }, []);
+
+  const filteredStores = stores
+    .filter((store) =>
+      store.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      store.code?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortBy === "latest") {
+        return b.id - a.id;
+      } else {
+        return a.id - b.id;
+      }
+    });
+
+  if (loading) {
+    return (
+      <section className='vendors-list py-80'>
+        <div className='container container-lg'>
+          <div className='text-center'>Loading stores...</div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className='vendors-list py-80'>
       <div className='container container-lg'>
         <div className='flex-between flex-wrap gap-8 mb-40'>
           <span className='text-neutral-600 fw-medium px-40 py-12 rounded-pill border border-neutral-100'>
-            Showing 1-20 of 85 results
+            Showing {filteredStores.length} of {stores.length} stores
           </span>
           <div className='flex-align gap-16'>
             <form
               action='#'
               className='search-form__wrapper position-relative d-block'
+              onSubmit={(e) => e.preventDefault()}
             >
               <input
                 type='text'
                 className='search-form__input common-input py-13 ps-16 pe-18 rounded-pill pe-44'
-                placeholder='Search vendors by name or ID...'
+                placeholder='Search stores by name or code...'
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
               <button
                 type='submit'
@@ -30,594 +84,70 @@ const VendorsList = () => {
               <span className='text-gray-900 flex-shrink-0'>Sort by:</span>
               <select
                 className='common-input form-select rounded-pill border border-gray-100 d-inline-block ps-20 pe-36 h-48 py-0 fw-medium'
-                defaultValue={1}
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
               >
-                <option value={1}>Latest</option>
-                <option value={1}>Old</option>
+                <option value='latest'>Latest</option>
+                <option value='old'>Old</option>
               </select>
             </div>
           </div>
         </div>
         <div className='row gy-4 vendor-card-wrapper'>
-          <div className='col-xxl-3 col-lg-4 col-sm-6'>
-            <div className='vendor-card text-center px-16 pb-24'>
-              <div className=''>
-                <img
-                  src='/assets/images/thumbs/vendor-logo2.png'
-                  alt=''
-                  className='vendor-card__logo m-12'
-                />
-                <h6 className='title mt-32'>
-                  <Link href='/vendor-details' className=''>
-                    Organic Market
-                  </Link>
-                </h6>
-                <span className='text-heading text-sm d-block'>
-                  Delivery by 6:15am
-                </span>
-                <Link
-                  href='/shop'
-                  className='bg-white text-neutral-600 hover-bg-main-600 hover-text-white rounded-pill py-6 px-16 text-12 mt-8'
-                >
-                  $5 off Snack &amp; Candy
-                </Link>
-              </div>
-              <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
-                </div>
-              </div>
+          {filteredStores.length === 0 ? (
+            <div className='col-12 text-center py-5'>
+              <p className='text-neutral-600'>No stores found.</p>
             </div>
-          </div>
-          <div className='col-xxl-3 col-lg-4 col-sm-6'>
-            <div className='vendor-card text-center px-16 pb-24'>
-              <div className=''>
-                <img
-                  src='/assets/images/thumbs/vendor-logo2.png'
-                  alt=''
-                  className='vendor-card__logo m-12'
-                />
-                <h6 className='title mt-32'>
-                  <Link href='/vendor-details' className=''>
-                    Safeway
-                  </Link>
-                </h6>
-                <span className='text-heading text-sm d-block'>
-                  Delivery by 6:15am
-                </span>
-                <Link
-                  href='/shop'
-                  className='bg-white text-neutral-600 hover-bg-main-600 hover-text-white rounded-pill py-6 px-16 text-12 mt-8'
-                >
-                  $5 off Snack &amp; Candy
-                </Link>
-              </div>
-              <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col-xxl-3 col-lg-4 col-sm-6'>
-            <div className='vendor-card text-center px-16 pb-24'>
-              <div className=''>
-                <img
-                  src='/assets/images/thumbs/vendor-logo3.png'
-                  alt=''
-                  className='vendor-card__logo m-12'
-                />
-                <h6 className='title mt-32'>
-                  <Link href='/vendor-details' className=''>
-                    Food Max
-                  </Link>
-                </h6>
-                <span className='text-heading text-sm d-block'>
-                  Delivery by 6:15am
-                </span>
-                <Link
-                  href='/shop'
-                  className='bg-white text-neutral-600 hover-bg-main-600 hover-text-white rounded-pill py-6 px-16 text-12 mt-8'
-                >
-                  $5 off Snack &amp; Candy
-                </Link>
-              </div>
-              <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
+          ) : (
+            filteredStores.map((store) => (
+              <div className='col-xxl-3 col-lg-4 col-sm-6' key={store.id}>
+                <div className='vendor-card text-center px-16 pb-24'>
+                  <div className=''>
+                    <img
+                        src={store.logo || '/assets/images/thumbs/vendor-logo2.png'}
+                        alt={store.name}
+                        className='vendor-card__logo m-12'
+                        style={{width: 64, height: 64, objectFit: 'contain', borderRadius: '50%', background: '#fff'}}
+                    />
+                    <h6 className='title mt-32'>
+                      <Link
+                        href={`/shop?store=${store.id}`}
+                        className='text-inherit'
+                      >
+                        {store.name}
+                      </Link>
+                    </h6>
+                     <div className='mb-8'>
+                       {store.website_url && (
+                         <a href={store.website_url} target='_blank' rel='noopener noreferrer' className='text-xs text-main-600 d-inline-block'>
+                           <i className='ph ph-globe me-1'></i> Website
+                         </a>
+                       )}
+                     </div>
+                    <span className='text-heading text-sm d-block'>
+                      {store.city || "Location not specified"}
+                    </span>
+                    <span className='text-neutral-600 text-xs d-block mt-2'>
+                      Store Code: {store.code}
+                    </span>
+                     {store.description && (
+                       <div className='text-xs text-gray-700 mt-2' style={{whiteSpace: 'pre-line'}}>
+                        {/* truncate description if too long */}
+                         {store?.description.length > 100 ? store?.description.substring(0, 100) + "..." : store?.description}
+                       </div>
+                     )}
+                    <Link
+                      href={`/shop?store=${store.id}`}
+                      className='bg-white text-neutral-600 hover-bg-main-600 hover-text-white rounded-pill py-6 px-16 text-12 mt-8 d-inline-block'
+                    >
+                      View Products
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div className='col-xxl-3 col-lg-4 col-sm-6'>
-            <div className='vendor-card text-center px-16 pb-24'>
-              <div className=''>
-                <img
-                  src='/assets/images/thumbs/vendor-logo4.png'
-                  alt=''
-                  className='vendor-card__logo m-12'
-                />
-                <h6 className='title mt-32'>
-                  <Link href='/vendor-details' className=''>
-                    HRmart
-                  </Link>
-                </h6>
-                <span className='text-heading text-sm d-block'>
-                  Delivery by 6:15am
-                </span>
-                <Link
-                  href='/shop'
-                  className='bg-white text-neutral-600 hover-bg-main-600 hover-text-white rounded-pill py-6 px-16 text-12 mt-8'
-                >
-                  $5 off Snack &amp; Candy
-                </Link>
-              </div>
-              <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col-xxl-3 col-lg-4 col-sm-6'>
-            <div className='vendor-card text-center px-16 pb-24'>
-              <div className=''>
-                <img
-                  src='/assets/images/thumbs/vendor-logo5.png'
-                  alt=''
-                  className='vendor-card__logo m-12'
-                />
-                <h6 className='title mt-32'>
-                  <Link href='/vendor-details' className=''>
-                    Lucky Supermarket
-                  </Link>
-                </h6>
-                <span className='text-heading text-sm d-block'>
-                  Delivery by 6:15am
-                </span>
-                <Link
-                  href='/shop'
-                  className='bg-white text-neutral-600 hover-bg-main-600 hover-text-white rounded-pill py-6 px-16 text-12 mt-8'
-                >
-                  $5 off Snack &amp; Candy
-                </Link>
-              </div>
-              <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col-xxl-3 col-lg-4 col-sm-6'>
-            <div className='vendor-card text-center px-16 pb-24'>
-              <div className=''>
-                <img
-                  src='/assets/images/thumbs/vendor-logo6.png'
-                  alt=''
-                  className='vendor-card__logo m-12'
-                />
-                <h6 className='title mt-32'>
-                  <Link href='/vendor-details' className=''>
-                    Arico Farmer
-                  </Link>
-                </h6>
-                <span className='text-heading text-sm d-block'>
-                  Delivery by 6:15am
-                </span>
-                <Link
-                  href='/shop'
-                  className='bg-white text-neutral-600 hover-bg-main-600 hover-text-white rounded-pill py-6 px-16 text-12 mt-8'
-                >
-                  $5 off Snack &amp; Candy
-                </Link>
-              </div>
-              <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col-xxl-3 col-lg-4 col-sm-6'>
-            <div className='vendor-card text-center px-16 pb-24'>
-              <div className=''>
-                <img
-                  src='/assets/images/thumbs/vendor-logo7.png'
-                  alt=''
-                  className='vendor-card__logo m-12'
-                />
-                <h6 className='title mt-32'>
-                  <Link href='/vendor-details' className=''>
-                    Farmer Market
-                  </Link>
-                </h6>
-                <span className='text-heading text-sm d-block'>
-                  Delivery by 6:15am
-                </span>
-                <Link
-                  href='/shop'
-                  className='bg-white text-neutral-600 hover-bg-main-600 hover-text-white rounded-pill py-6 px-16 text-12 mt-8'
-                >
-                  $5 off Snack &amp; Candy
-                </Link>
-              </div>
-              <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col-xxl-3 col-lg-4 col-sm-6'>
-            <div className='vendor-card text-center px-16 pb-24'>
-              <div className=''>
-                <img
-                  src='/assets/images/thumbs/vendor-logo8.png'
-                  alt=''
-                  className='vendor-card__logo m-12'
-                />
-                <h6 className='title mt-32'>
-                  <Link href='/vendor-details' className=''>
-                    Foodsco
-                  </Link>
-                </h6>
-                <span className='text-heading text-sm d-block'>
-                  Delivery by 6:15am
-                </span>
-                <Link
-                  href='/shop'
-                  className='bg-white text-neutral-600 hover-bg-main-600 hover-text-white rounded-pill py-6 px-16 text-12 mt-8'
-                >
-                  $5 off Snack &amp; Candy
-                </Link>
-              </div>
-              <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col-xxl-3 col-lg-4 col-sm-6'>
-            <div className='vendor-card text-center px-16 pb-24'>
-              <div className=''>
-                <img
-                  src='/assets/images/thumbs/vendor-logo2.png'
-                  alt=''
-                  className='vendor-card__logo m-12'
-                />
-                <h6 className='title mt-32'>
-                  <Link href='/vendor-details' className=''>
-                    Organic Market
-                  </Link>
-                </h6>
-                <span className='text-heading text-sm d-block'>
-                  Delivery by 6:15am
-                </span>
-                <Link
-                  href='/shop'
-                  className='bg-white text-neutral-600 hover-bg-main-600 hover-text-white rounded-pill py-6 px-16 text-12 mt-8'
-                >
-                  $5 off Snack &amp; Candy
-                </Link>
-              </div>
-              <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col-xxl-3 col-lg-4 col-sm-6'>
-            <div className='vendor-card text-center px-16 pb-24'>
-              <div className=''>
-                <img
-                  src='/assets/images/thumbs/vendor-logo2.png'
-                  alt=''
-                  className='vendor-card__logo m-12'
-                />
-                <h6 className='title mt-32'>
-                  <Link href='/vendor-details' className=''>
-                    Safeway
-                  </Link>
-                </h6>
-                <span className='text-heading text-sm d-block'>
-                  Delivery by 6:15am
-                </span>
-                <Link
-                  href='/shop'
-                  className='bg-white text-neutral-600 hover-bg-main-600 hover-text-white rounded-pill py-6 px-16 text-12 mt-8'
-                >
-                  $5 off Snack &amp; Candy
-                </Link>
-              </div>
-              <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col-xxl-3 col-lg-4 col-sm-6'>
-            <div className='vendor-card text-center px-16 pb-24'>
-              <div className=''>
-                <img
-                  src='/assets/images/thumbs/vendor-logo3.png'
-                  alt=''
-                  className='vendor-card__logo m-12'
-                />
-                <h6 className='title mt-32'>
-                  <Link href='/vendor-details' className=''>
-                    Food Max
-                  </Link>
-                </h6>
-                <span className='text-heading text-sm d-block'>
-                  Delivery by 6:15am
-                </span>
-                <Link
-                  href='/shop'
-                  className='bg-white text-neutral-600 hover-bg-main-600 hover-text-white rounded-pill py-6 px-16 text-12 mt-8'
-                >
-                  $5 off Snack &amp; Candy
-                </Link>
-              </div>
-              <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col-xxl-3 col-lg-4 col-sm-6'>
-            <div className='vendor-card text-center px-16 pb-24'>
-              <div className=''>
-                <img
-                  src='/assets/images/thumbs/vendor-logo4.png'
-                  alt=''
-                  className='vendor-card__logo m-12'
-                />
-                <h6 className='title mt-32'>
-                  <Link href='/vendor-details' className=''>
-                    HRmart
-                  </Link>
-                </h6>
-                <span className='text-heading text-sm d-block'>
-                  Delivery by 6:15am
-                </span>
-                <Link
-                  href='/shop'
-                  className='bg-white text-neutral-600 hover-bg-main-600 hover-text-white rounded-pill py-6 px-16 text-12 mt-8'
-                >
-                  $5 off Snack &amp; Candy
-                </Link>
-              </div>
-              <div className='vendor-card__list mt-22 flex-center flex-wrap gap-8'>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img1.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img2.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img3.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img4.png' alt='' />
-                </div>
-                <div className='vendor-card__item bg-white rounded-circle flex-center'>
-                  <img src='/assets/images/thumbs/vendor-img5.png' alt='' />
-                </div>
-              </div>
-            </div>
-          </div>
+            ))
+          )}
         </div>
-        <ul className='pagination flex-center flex-wrap gap-16'>
-          <li className='page-item'>
-            <Link
-              className='page-link h-64 w-64 flex-center text-xxl rounded-circle fw-medium text-neutral-600 border border-gray-100'
-              href='#'
-            >
-              <i className='ph-bold ph-arrow-left' />
-            </Link>
-          </li>
-          <li className='page-item active'>
-            <Link
-              className='page-link h-64 w-64 flex-center text-md rounded-circle fw-medium text-neutral-600 border border-gray-100'
-              href='#'
-            >
-              01
-            </Link>
-          </li>
-          <li className='page-item'>
-            <Link
-              className='page-link h-64 w-64 flex-center text-md rounded-circle fw-medium text-neutral-600 border border-gray-100'
-              href='#'
-            >
-              02
-            </Link>
-          </li>
-          <li className='page-item'>
-            <Link
-              className='page-link h-64 w-64 flex-center text-md rounded-circle fw-medium text-neutral-600 border border-gray-100'
-              href='#'
-            >
-              03
-            </Link>
-          </li>
-          <li className='page-item'>
-            <Link
-              className='page-link h-64 w-64 flex-center text-md rounded-circle fw-medium text-neutral-600 border border-gray-100'
-              href='#'
-            >
-              04
-            </Link>
-          </li>
-          <li className='page-item'>
-            <Link
-              className='page-link h-64 w-64 flex-center text-md rounded-circle fw-medium text-neutral-600 border border-gray-100'
-              href='#'
-            >
-              05
-            </Link>
-          </li>
-          <li className='page-item'>
-            <Link
-              className='page-link h-64 w-64 flex-center text-md rounded-circle fw-medium text-neutral-600 border border-gray-100'
-              href='#'
-            >
-              06
-            </Link>
-          </li>
-          <li className='page-item'>
-            <Link
-              className='page-link h-64 w-64 flex-center text-md rounded-circle fw-medium text-neutral-600 border border-gray-100'
-              href='#'
-            >
-              07
-            </Link>
-          </li>
-          <li className='page-item'>
-            <Link
-              className='page-link h-64 w-64 flex-center text-xxl rounded-circle fw-medium text-neutral-600 border border-gray-100'
-              href='#'
-            >
-              <i className='ph-bold ph-arrow-right' />
-            </Link>
-          </li>
-        </ul>
       </div>
     </section>
   );
