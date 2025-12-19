@@ -19,9 +19,7 @@ const ProductDetailPage = ({ params }) => {
       <Breadcrumb title={slug.replace(/-/g, " ")} />
       
       <ProductDetailsOne productSlug={slug} />
-      
-    
-    
+ 
     </>
   );
 };

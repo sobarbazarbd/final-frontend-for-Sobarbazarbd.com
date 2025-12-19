@@ -298,6 +298,31 @@ const ShopSection = ({
         100
       );
 
+      // Prepare discount info
+      let discountBadge = null;
+      let discountValue = null;
+      if (product.default_variant?.discount) {
+        const discount = product.default_variant.discount;
+        // If discount is an object, show value and type
+        if (typeof discount === "object" && discount !== null) {
+          discountBadge = (
+            <span className='badge bg-danger-600 text-white px-12 py-4 rounded-pill'>
+              -{discount.value}
+              {discount.is_percentage ? "%" : ""} {discount.type ? discount.type : ""}
+            </span>
+          );
+          discountValue = discount.value;
+        } else {
+          // If discount is a number or string
+          discountBadge = (
+            <span className='badge bg-danger-600 text-white px-12 py-4 rounded-pill'>
+              -{discount}
+            </span>
+          );
+          discountValue = discount;
+        }
+      }
+
       return (
         <div 
           key={product.id} 
@@ -305,14 +330,11 @@ const ShopSection = ({
         >
           <div className='product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2 hover-shadow-lg overflow-hidden'>
             {/* Product badges */}
-            {product.default_variant?.discount && (
+            {discountBadge && (
               <div className="position-absolute top-0 start-0 m-12 z-2">
-                <span className='badge bg-danger-600 text-white px-12 py-4 rounded-pill'>
-                  -{product.default_variant.discount}%
-                </span>
+                {discountBadge}
               </div>
             )}
-            
             {product.is_new && (
               <div className="position-absolute top-0 end-0 m-12 z-2">
                 <span className='badge bg-warning-600 text-white px-12 py-4 rounded-pill'>
@@ -346,7 +368,6 @@ const ShopSection = ({
                   }}
                 />
               </div>
-              
               {/* Store Badge */}
               {product.store && (
                 <div className="position-absolute bottom-0 start-0 m-12">
@@ -428,7 +449,7 @@ const ShopSection = ({
 
               {/* Price - আগের ডিজাইনের মতো */}
               <div className='product-card__price my-20'>
-                {product.default_variant?.discount && (
+                {discountValue !== null && (
                   <span className='text-gray-400 text-md fw-semibold text-decoration-line-through me-8'>
                     ৳{product.default_variant.price}
                   </span>

@@ -14,11 +14,9 @@ export const ProductCard = ({ product, color = "main-600", badgeColors }) => {
   const { name, brand, default_variant, images, store, badge } = product;
   const imageUrl =
     images?.[0]?.image || "https://via.placeholder.com/200x200?text=No+Image";
-  const price = default_variant?.final_price ?? default_variant?.price ?? 0;
   const rating = product.rating ?? 4.5;
   const reviews = product.reviews ?? 32;
-  const originalPrice = product.originalPrice ?? price + 10;
-
+ 
   const handleProductClick = () => {
     router.push(`/shop/${product.id}`);
   };
@@ -66,6 +64,13 @@ export const ProductCard = ({ product, color = "main-600", badgeColors }) => {
     badgeColors?.[badgeText?.toLowerCase()] ||
     badgeColors?.Default ||
     "bg-main-600";
+
+  // Price display logic
+  const hasDiscount =
+    default_variant &&
+    typeof default_variant.price === "number" &&
+    typeof default_variant.final_price === "number" &&
+    default_variant.final_price < default_variant.price;
 
   return (
     <div className="product-card h-100 p-16 border border-gray-100 hover-border-main-600 rounded-16 position-relative transition-2">
@@ -115,11 +120,14 @@ export const ProductCard = ({ product, color = "main-600", badgeColors }) => {
           </span>
         </div>
         <div className="product-card__price my-20">
-          <span className="text-gray-400 text-md fw-semibold text-decoration-line-through">
-            ${originalPrice}
-          </span>
+          {hasDiscount && (
+            <span className="text-gray-400 text-md fw-semibold text-decoration-line-through me-2">
+              ৳{default_variant.price}
+            </span>
+          )}
           <span className="text-heading text-md fw-semibold ">
-            ${price} <span className="text-gray-500 fw-normal">/Qty</span>{" "}
+            ৳{default_variant?.final_price ?? default_variant?.price ?? "-"}
+            <span className="text-gray-500 fw-normal">/Qty</span>{" "}
           </span>
         </div>
         <div
