@@ -10,6 +10,7 @@ import { useAuth } from "@/context/AuthContext";
 import { headerConfig } from "./data/headerConfig";
 import { navigation } from "./data/navigation";
 import { locationOptions } from "./data/selectOptions";
+import TextSlider from "../TextSlider";
 
 const HeaderOne = () => {
   const { cartCount } = useCart();
@@ -116,6 +117,7 @@ const HeaderOne = () => {
 
   return (
     <>
+    <TextSlider></TextSlider>
       <div className='overlay' />
       <div
         className={`side-overlay ${(menuActive || activeCategory) && "show"}`}
