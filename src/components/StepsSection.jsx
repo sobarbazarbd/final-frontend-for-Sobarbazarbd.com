@@ -14,10 +14,9 @@ const StepsSection = () => {
             <div className='col-lg-6'>
               <div className='step-content'>
                 <div className='section-heading ms-auto text-end'>
-                  <h5 className=''>Over tk 200k in potential benefits</h5>
+                  <h5 className=''>How to Become a Seller on SobarbazarBD</h5>
                   <span className='text-gray-600'>
-                    Ready to sell? Launch your brand today with a powerful for
-                    new sellers and over $200k in potential benefits
+                   You can become a seller in just a few simple steps:
                   </span>
                 </div>
                 <div className='d-flex flex-column align-items-end gap-56'>
@@ -25,7 +24,7 @@ const StepsSection = () => {
                     <div className='text-end'>
                       <h5 className='mb-8'>Step 01</h5>
                       <p className='text-gray-600'>
-                        Create an account on our website. It is fast and free.
+                        Click on the Become a Seller button
                       </p>
                     </div>
                     <div className='w-90 h-90 flex-center bg-main-two-100 rounded-circle'>
@@ -39,7 +38,7 @@ const StepsSection = () => {
                       <h5 className='mb-8'>Step 02</h5>
                       <p className='text-gray-600'>
                         {" "}
-                        Upload your products and the display in your shop.
+                        Fill out the seller registration form with accurate information
                       </p>
                     </div>
                     <div className='w-90 h-90 flex-center bg-main-two-100 rounded-circle'>
@@ -52,13 +51,51 @@ const StepsSection = () => {
                     <div className='text-end'>
                       <h5 className='mb-8'>Step 03</h5>
                       <p className='text-gray-600'>
-                        We'll verify your account and then you can start
-                        selling!
+                       Submit your application for review
                       </p>
                     </div>
                     <div className='w-90 h-90 flex-center bg-main-two-100 rounded-circle'>
                       <h6 className='mb-0 w-60 h-60 bg-main-two-600 text-white d-flex align-items-center justify-content-center rounded-circle border border-5 border-white fw-medium'>
                         03
+                      </h6>
+                    </div>
+                  </div>
+                  <div className='d-flex align-items-center gap-32'>
+                    <div className='text-end'>
+                      <h5 className='mb-8'>Step 04</h5>
+                      <p className='text-gray-600'>
+                       Our team will verify and approve your request
+                      </p>
+                    </div>
+                    <div className='w-90 h-90 flex-center bg-main-two-100 rounded-circle'>
+                      <h6 className='mb-0 w-60 h-60 bg-main-two-600 text-white d-flex align-items-center justify-content-center rounded-circle border border-5 border-white fw-medium'>
+                        05
+                      </h6>
+                    </div>
+                  </div>
+                  <div className='d-flex align-items-center gap-32'>
+                    <div className='text-end'>
+                      <h5 className='mb-8'>Step 05</h5>
+                      <p className='text-gray-600'>
+                       Get access to the seller dashboard
+                      </p>
+                    </div>
+                    <div className='w-90 h-90 flex-center bg-main-two-100 rounded-circle'>
+                      <h6 className='mb-0 w-60 h-60 bg-main-two-600 text-white d-flex align-items-center justify-content-center rounded-circle border border-5 border-white fw-medium'>
+                        06
+                      </h6>
+                    </div>
+                  </div>
+                  <div className='d-flex align-items-center gap-32'>
+                    <div className='text-end'>
+                      <h5 className='mb-8'>Step 06</h5>
+                      <p className='text-gray-600'>
+                       Add products and start selling
+                      </p>
+                    </div>
+                    <div className='w-90 h-90 flex-center bg-main-two-100 rounded-circle'>
+                      <h6 className='mb-0 w-60 h-60 bg-main-two-600 text-white d-flex align-items-center justify-content-center rounded-circle border border-5 border-white fw-medium'>
+                        06
                       </h6>
                     </div>
                   </div>

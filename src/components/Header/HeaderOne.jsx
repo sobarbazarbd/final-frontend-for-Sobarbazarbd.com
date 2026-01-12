@@ -10,6 +10,7 @@ import { useAuth } from "@/context/AuthContext";
 import { headerConfig } from "./data/headerConfig";
 import { navigation } from "./data/navigation";
 import { locationOptions } from "./data/selectOptions";
+import TextSlider from "../TextSlider";
 
 const HeaderOne = () => {
   const { cartCount } = useCart();
@@ -116,6 +117,7 @@ const HeaderOne = () => {
 
   return (
     <>
+    <TextSlider></TextSlider>
       <div className='overlay' />
       <div
         className={`side-overlay ${(menuActive || activeCategory) && "show"}`}
@@ -360,6 +362,23 @@ const HeaderOne = () => {
                 </span>
                 <div className='line-height-1'>
                   <span className='text-gray-600 text-xs'>Your Location</span>
+                  <div className='line-height-1'>
+                    <select
+                      defaultValue={1}
+                      className='js-example-basic-single border border-gray-200 border-end-0'
+                      name='state'
+                    >
+                      {renderSelectOptions(locationOptions)}
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div className='location-box bg-white flex-align gap-8 py-6 px-16 rounded-pill border border-gray-100'>
+                <span className='text-gray-900 text-xl d-xs-flex d-none'>
+                  <i className='ph ph-map-pin' />
+                </span>
+                <div className='line-height-1'>
+                  <span className='text-gray-600 text-xs'>Shop Location</span>
                   <div className='line-height-1'>
                     <select
                       defaultValue={1}

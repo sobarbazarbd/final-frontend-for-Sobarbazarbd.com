@@ -68,7 +68,6 @@ const Page = async () => {
       <ColorInit color={false} />
       <HeroBanner section={bannerMap?.HeroBanner} />
       <FeatureOne data={homeData?.data?.subcategories || []} />
-      <PromotionalOne section={bannerMap?.Promotional} />
       <FlashSalesOne section={bannerMap?.FlashSales} />
       <RecommendedOne data={homeData?.data?.recommended_products} categories={homeData?.data?.categories}  />
       <PopularProductsOne categories={homeData?.data?.categories} section={bannerMap?.PopularProducts} />
