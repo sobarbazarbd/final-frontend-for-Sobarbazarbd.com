@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { ProductCard } from "./ProductTabSection";
 import dynamic from "next/dynamic";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext"; // add this import
@@ -9,7 +10,7 @@ import toast from "react-hot-toast"; // <-- add this import
 const Slider = dynamic(() => import("react-slick"), { ssr: false });
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://api.hetdcl.com/api/v1.0";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1.0";
 
 const ProductDetailsTwo = ({ product, discountText }) => {
   const [timeLeft, setTimeLeft] = useState({
@@ -1005,6 +1006,20 @@ const ProductDetailsTwo = ({ product, discountText }) => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+        <div className="pt-12">
+          <h6 className="mb-32">Related Products</h6>
+          <div className="row g-4">
+            {product.related_products && product.related_products.length > 0 ? (
+              product.related_products.map((relatedProduct) => (
+                <div className="col-sm-6 col-lg-4 col-xl-3" key={relatedProduct.id}>
+                  <ProductCard product={relatedProduct} />
+                </div>
+              ))
+            ) : (
+              <p>No related products found.</p>
+            )}
           </div>
         </div>
       </div>

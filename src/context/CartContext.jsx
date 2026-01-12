@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.hetdcl.com";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);

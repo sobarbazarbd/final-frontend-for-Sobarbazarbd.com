@@ -8,7 +8,7 @@ export const metadata = {
   description: "hello",
 };
 
-const BASE_URL = "https://api.hetdcl.com";
+const BASE_URL = "http://localhost:8000";
 
 async function getCategories() {
   const res = await fetch(
@@ -28,6 +28,21 @@ async function getBrands() {
   if (!res.ok) return null;
   const json = await res.json();
   return json?.data ?? null;
+}
+
+async function getStoreById(storeId) {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/v1.0/stores/${storeId}/detail/`,
+      { cache: "no-store" }
+    );
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.data ?? null;
+  } catch (e) {
+    console.error("Error fetching store:", e);
+    return null;
+  }
 }
 
 async function getProducts({ category, brand, page, page_size, subcategories, search, store }) {
@@ -84,6 +99,9 @@ const Page = async ({ searchParams }) => {
     search,
   });
 
+  // Fetch store data if store is selected
+  const storeData = selectedStore ? await getStoreById(selectedStore) : null;
+
   // SSR loading/error handling
   if (!categories || !brands || !productsData) {
     return <div>Loading or error...</div>;
@@ -107,6 +125,7 @@ const Page = async ({ searchParams }) => {
         selectedCategory={selectedCategory}
         selectedBrand={selectedBrand}
         selectedStore={selectedStore}
+        storeData={storeData}
         currentPage={currentPage}
         pageSize={pageSize}
       />

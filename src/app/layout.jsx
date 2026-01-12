@@ -11,7 +11,8 @@ import NavFooterProvider from "@/context/NavFooterProvider";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "react-hot-toast";
-import FooterOne from "@/components/FooterTwo";
+import FooterOne from "@/components/Footer/FooterOne";
+import TawkToWidget from "@/components/TawkToWidget";
 
 export const metadata = {
   title: "SobazarBd - Online Shopping Complex",
@@ -22,7 +23,7 @@ export default async function RootLayout({ children }) {
   let navData = null;
   try {
     const res = await fetch(
-      "https://api.hetdcl.com/api/v1.0/base/navbar-data/",
+      "http://localhost:8000/api/v1.0/base/navbar-data/",
       {
         cache: "force-cache",
       }
@@ -53,6 +54,7 @@ export default async function RootLayout({ children }) {
             </CartProvider>
           </AuthProvider>
         </NavFooterProvider>
+        <TawkToWidget />
       </body>
     </html>
   );

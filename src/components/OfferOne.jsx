@@ -3,7 +3,8 @@ import React from "react";
 import Link from "next/link";
 
 const OfferOne = ({ section }) => {
-  // Format date for display
+  // Format date for displa
+  if (!section?.banner_items?.length >= 0) return null;
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);

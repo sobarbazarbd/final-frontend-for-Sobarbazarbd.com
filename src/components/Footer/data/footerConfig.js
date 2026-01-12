@@ -57,12 +57,12 @@ export const footerConfig = {
       {
         name: "Apple Store",
         href: "https://www.apple.com/store",
-        image: "assets/images/thumbs/store-img1.png"
+        image: "/assets/images/thumbs/store-img1.png"
       },
       {
         name: "Google Play",
         href: "https://play.google.com/store/apps?hl=en",
-        image: "assets/images/thumbs/store-img2.png"
+        image: "/assets/images/thumbs/store-img2.png"
       }
     ]
   },
@@ -88,5 +88,5 @@ export const footerConfig = {
       icon: "ph-fill ph-linkedin-logo"
     }
   ],
-  backgroundImage: "assets/images/bg/body-bottom-bg.png"
+  backgroundImage: "/assets/images/bg/body-bottom-bg.png"
 };

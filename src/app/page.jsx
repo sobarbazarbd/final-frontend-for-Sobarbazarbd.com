@@ -27,7 +27,7 @@ export const metadata = {
 const getHomePageData = async () => {
   try {
     const res = await fetch(
-      "https://api.hetdcl.com/api/v1.0/base/home-page-data/",
+      "http://localhost:8000/api/v1.0/base/home-page-data/",
       {
         // cache: 'no-store', // or 'force-cache' for static data
         // next: {
@@ -40,6 +40,7 @@ const getHomePageData = async () => {
     }
 
     const json = await res.json();
+    console.log(json.data?.recommended_products,'jsonjsonjson')
     return json;
   } catch (err) {
     console.error("Failed to fetch home page data:", err);

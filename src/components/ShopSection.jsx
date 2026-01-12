@@ -14,6 +14,7 @@ const ShopSection = ({
   selectedCategory,
   selectedBrand,
   selectedStore,
+  storeData,
   currentPage,
   pageSize,
 }) => {
@@ -150,7 +151,7 @@ const ShopSection = ({
               }`}
               onClick={() => handleCategoryClick(cat.id)}
             >
-              {cat.name} ({cat.product_count || 0})
+              {cat.name}
             </div>
           </li>
         ))}
@@ -495,6 +496,147 @@ const ShopSection = ({
     });
   };
 
+  // Render store info card
+  const renderStoreInfoCard = () => {
+    if (!currentStore || !storeData) return null;
+
+    return (
+      <div className='shop-sidebar__box border border-main-600 bg-main-50 rounded-16 p-24 mb-32'>
+        {/* Store Header */}
+        <div className='text-center pb-24 mb-24 border-bottom border-main-200'>
+          {storeData.logo ? (
+            <div className="mb-16 flex-center">
+              <img
+                src={storeData.logo}
+                alt={storeData.name}
+                className="rounded-circle object-fit-cover"
+                style={{ width: 100, height: 100 }}
+              />
+            </div>
+          ) : (
+            <div className="mb-16 flex-center">
+              <div className="d-flex align-items-center justify-content-center bg-white rounded-circle" style={{ width: 100, height: 100 }}>
+                <i className="ph ph-storefront text-main-600" style={{ fontSize: '48px' }} />
+              </div>
+            </div>
+          )}
+          <h5 className="mb-8 text-main-600">{storeData.name}</h5>
+          {storeData.city && (
+            <span className="text-sm text-gray-700 d-flex align-items-center justify-content-center gap-4">
+              <i className="ph ph-map-pin" />
+              {storeData.city}
+            </span>
+          )}
+        </div>
+
+        {/* Store Description */}
+        {storeData.description && (
+          <div className="mb-20">
+            <p className="text-sm text-gray-700 mb-0" style={{ 
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden'
+            }}>
+              {storeData.description}
+            </p>
+          </div>
+        )}
+
+        {/* Contact Info */}
+        <div className="mb-20">
+          {storeData.phone_number && (
+            <div className="d-flex align-items-center gap-12 mb-12">
+              <span className="w-32 h-32 bg-white text-main-600 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                <i className="ph ph-phone" />
+              </span>
+              <div>
+                <span className="text-xs text-gray-600 d-block">Phone</span>
+                <a href={`tel:${storeData.phone_number}`} className="text-sm text-gray-900 hover-text-main-600">
+                  {storeData.phone_number}
+                </a>
+              </div>
+            </div>
+          )}
+
+          {storeData.contact_email && (
+            <div className="d-flex align-items-center gap-12 mb-12">
+              <span className="w-32 h-32 bg-white text-main-600 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                <i className="ph ph-envelope" />
+              </span>
+              <div>
+                <span className="text-xs text-gray-600 d-block">Email</span>
+                <a href={`mailto:${storeData.contact_email}`} className="text-sm text-gray-900 hover-text-main-600 text-break">
+                  {storeData.contact_email}
+                </a>
+              </div>
+            </div>
+          )}
+
+          {storeData.address && (
+            <div className="d-flex align-items-start gap-12">
+              <span className="w-32 h-32 bg-white text-main-600 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                <i className="ph ph-map-pin" />
+              </span>
+              <div>
+                <span className="text-xs text-gray-600 d-block">Address</span>
+                <span className="text-sm text-gray-900">{storeData.address}</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Clear Filter Button */}
+        <button
+          onClick={handleClearStoreFilter}
+          className='btn btn-outline-main w-100 rounded-8 py-12'
+        >
+          <i className='ph ph-x me-2'></i>
+          Clear Store Filter
+        </button>
+
+        {/* Social Links */}
+        {(storeData.facebook_url || storeData.twitter_url || storeData.website_url) && (
+          <div className="mt-20 pt-20 border-top border-main-200">
+            <span className="text-sm text-gray-700 d-block mb-12 fw-medium">Follow Store</span>
+            <div className="d-flex align-items-center gap-8 justify-content-center">
+              {storeData.facebook_url && (
+                <a
+                  href={storeData.facebook_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-36 h-36 d-flex align-items-center justify-content-center bg-white text-main-600 rounded-circle hover-bg-main-600 hover-text-white transition"
+                >
+                  <i className="ph-fill ph-facebook-logo" />
+                </a>
+              )}
+              {storeData.twitter_url && (
+                <a
+                  href={storeData.twitter_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-36 h-36 d-flex align-items-center justify-content-center bg-white text-main-600 rounded-circle hover-bg-main-600 hover-text-white transition"
+                >
+                  <i className="ph-fill ph-twitter-logo" />
+                </a>
+              )}
+              {storeData.website_url && (
+                <a
+                  href={storeData.website_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-36 h-36 d-flex align-items-center justify-content-center bg-white text-main-600 rounded-circle hover-bg-main-600 hover-text-white transition"
+                >
+                  <i className="ph ph-globe" />
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <section className='shop py-80'>
       <div className={`side-overlay ${active && "show"}`}></div>
@@ -510,6 +652,9 @@ const ShopSection = ({
               >
                 <i className='ph ph-x' />
               </button>
+              
+              {/* Store Info Card - Show when filtered by store */}
+              {renderStoreInfoCard()}
               
               {/* Category Filter */}
               <div className='shop-sidebar__box border border-gray-100 rounded-8 p-32 mb-32'>
@@ -568,30 +713,6 @@ const ShopSection = ({
                 </h6>
                 {renderColorFilter()}
               </div>
-
-              {/* Store Filter - Show only if a store is selected */}
-              {currentStore && (
-                <div className='shop-sidebar__box border border-main-100 bg-main-50 rounded-8 p-32 mb-32'>
-                  <div className='d-flex justify-content-between align-items-center border-bottom border-main-200 pb-24 mb-24'>
-                    <h6 className='text-xl text-main-600 mb-0'>
-                      <i className='ph ph-storefront me-2'></i>
-                      Filtered by Store
-                    </h6>
-                    <button
-                      onClick={handleClearStoreFilter}
-                      className='btn btn-sm btn-outline-main-600 rounded-pill px-16 py-4'
-                      title='Clear store filter'
-                    >
-                      <i className='ph ph-x me-1'></i>
-                      Clear
-                    </button>
-                  </div>
-                  <p className='text-gray-700 mb-0'>
-                    <i className='ph ph-info me-2'></i>
-                    Showing products from a specific store
-                  </p>
-                </div>
-              )}
 
               {/* Brand Filter */}
               <div className='shop-sidebar__box border border-gray-100 rounded-8 p-32 mb-32'>

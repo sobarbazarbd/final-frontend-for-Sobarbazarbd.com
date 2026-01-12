@@ -30,7 +30,7 @@ const SignupPage = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "https://api.hetdcl.com"}/api/v1.0/customers/register/`,
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/v1.0/customers/register/`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
