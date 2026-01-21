@@ -19,7 +19,7 @@ const TopVendorsOne = ({ data }) => {
         <div className='row gy-4 vendor-card-wrapper'>
           {data?.map((vendor) => (
             <div key={vendor.id} className='col-xxl-3 col-lg-4 col-sm-6'>
-              <Link href={`/vendor/${vendor.id}`}>
+              <Link href={`/shop?store=${vendor.id}`}>
                 <div className='vendor-card text-center px-16 pb-24 cursor-pointer'>
                   <div className=''>
                     <img
