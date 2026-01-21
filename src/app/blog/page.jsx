@@ -1,6 +1,6 @@
 import Blog from "@/components/Blog";
 import Breadcrumb from "@/components/Breadcrumb";
-import HeaderTwo from "@/components/HeaderTwo";
+// import HeaderTwo from "@/components/HeaderTwo";
 import ColorInit from "@/helper/ColorInit";
 import Preloader from "@/helper/Preloader";
 import ScrollToTopInit from "@/helper/ScrollToTopInit";
@@ -24,7 +24,7 @@ const page = () => {
       <Preloader />
 
       {/* HeaderTwo */}
-      <HeaderTwo category={true} />
+      {/* <HeaderTwo category={true} /> */}
 
       {/* Breadcrumb */}
       <Breadcrumb title={"Blog"} />
