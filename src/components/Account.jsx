@@ -91,7 +91,7 @@ const Account = () => {
         if (payload[key] === "") delete payload[key];
       });
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/v1.0/stores/register/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://api.hetdcl.com"}/api/v1.0/stores/register/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,10 +1,5 @@
 import React from "react";
 import Breadcrumb from "@/components/Breadcrumb";
-import FooterTwo from "@/components/FooterTwo";
-import HeaderTwo from "@/components/HeaderTwo";
-import ShippingTwo from "@/components/ShippingTwo";
-import ColorInit from "@/helper/ColorInit";
-import Preloader from "@/helper/Preloader";
 import ScrollToTopInit from "@/helper/ScrollToTopInit";
 import Link from "next/link";
 

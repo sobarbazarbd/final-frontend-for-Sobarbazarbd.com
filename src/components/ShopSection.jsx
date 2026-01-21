@@ -22,12 +22,18 @@ const ShopSection = ({
   let [active, setActive] = useState(false);
   let [addingId, setAddingId] = useState(null);
   let [searchValue, setSearchValue] = useState("");
+  let [priceRange, setPriceRange] = useState([0, 500000]);
   let [selectedRating, setSelectedRating] = useState(null);
-  let [selectedColor, setSelectedColor] = useState(null);
-  
+  let [filterOptions, setFilterOptions] = useState(null);
+  let [expandedCategories, setExpandedCategories] = useState({});
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchParam = searchParams.get("search") || "";
+  const minPriceParam = searchParams.get("min_price");
+  const maxPriceParam = searchParams.get("max_price");
+  const minRatingParam = searchParams.get("min_rating");
+  const sortParam = searchParams.get("ordering");
   
   // Initialize search value from URL
   React.useEffect(() => {
@@ -35,6 +41,36 @@ const ShopSection = ({
       setSearchValue(searchParam);
     }
   }, [searchParam]);
+
+  // Fetch filter options (categories with subcategories, brands, price range)
+  React.useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        const res = await fetch(`https://api.hetdcl.com/api/v1.0/customers/products/filter_options/`);
+        if (res.ok) {
+          const data = await res.json();
+          setFilterOptions(data);
+          // Set initial price range from API
+          if (data.price_range) {
+            setPriceRange([
+              minPriceParam ? parseInt(minPriceParam) : data.price_range.min,
+              maxPriceParam ? parseInt(maxPriceParam) : data.price_range.max
+            ]);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching filter options:', err);
+      }
+    };
+    fetchFilterOptions();
+  }, []);
+
+  // Initialize filters from URL
+  React.useEffect(() => {
+    if (minRatingParam) {
+      setSelectedRating(parseFloat(minRatingParam));
+    }
+  }, [minRatingParam]);
 
   let sidebarController = () => setActive(!active);
   const { addToCart, refreshCart } = useCart();
@@ -102,12 +138,62 @@ const ShopSection = ({
     router.push(`/shop?${params.toString()}`);
   };
 
-  const handleRatingChange = (rating) => {
-    setSelectedRating(rating);
+  const handlePriceFilter = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("min_price", priceRange[0]);
+    params.set("max_price", priceRange[1]);
+    params.delete("page");
+    router.push(`/shop?${params.toString()}`);
   };
 
-  const handleColorChange = (color) => {
-    setSelectedColor(color);
+  const handleRatingChange = (rating) => {
+    setSelectedRating(rating);
+    const params = new URLSearchParams(searchParams.toString());
+    if (rating) {
+      params.set("min_rating", rating);
+    } else {
+      params.delete("min_rating");
+    }
+    params.delete("page");
+    router.push(`/shop?${params.toString()}`);
+  };
+
+  const handleSortChange = (e) => {
+    const sortValue = e.target.value;
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (sortValue === "latest") {
+      params.set("ordering", "-created_at");
+    } else if (sortValue === "price-low") {
+      params.set("ordering", "variants__price");
+    } else if (sortValue === "price-high") {
+      params.set("ordering", "-variants__price");
+    } else {
+      params.delete("ordering");
+    }
+    params.delete("page");
+    router.push(`/shop?${params.toString()}`);
+  };
+
+  const handleClearFilters = () => {
+    router.push('/shop');
+    setSelectedRating(null);
+    if (filterOptions?.price_range) {
+      setPriceRange([filterOptions.price_range.min, filterOptions.price_range.max]);
+    }
+  };
+
+  const hasActiveFilters = () => {
+    return (
+      currentCategory ||
+      currentBrand ||
+      currentStore ||
+      minPriceParam ||
+      maxPriceParam ||
+      minRatingParam ||
+      sortParam ||
+      searchParam
+    );
   };
 
   const handleAddToCart = async (product, e) => {
@@ -138,23 +224,86 @@ const ShopSection = ({
     }
   };
 
-  // Render categories
+  // Handle subcategory filter
+  const handleSubcategoryClick = (subcatId) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("supplier_product__subcategories", subcatId);
+    params.delete("category");
+    params.delete("page");
+    router.push(`/shop?${params.toString()}`);
+  };
+
+  // Toggle category expansion
+  const toggleCategory = (catId) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [catId]: !prev[catId]
+    }));
+  };
+
+  // Render categories with subcategories as accordion
   const renderCategories = () => {
-    if (!categories) return null;
+    const dataSource = filterOptions?.categories || categories;
+    if (!dataSource) return null;
+
+    const subcategoryParam = searchParams.get("supplier_product__subcategories");
+
     return (
       <ul className='max-h-540 overflow-y-auto scroll-sm'>
-        {categories.map((cat) => (
-          <li key={cat.id} className='mb-24'>
-            <div
-              className={`cursor-pointer py-2 ${
-                currentCategory == cat.id ? "text-main-600 fw-semibold" : "text-gray-900 hover-text-main-600"
-              }`}
-              onClick={() => handleCategoryClick(cat.id)}
-            >
-              {cat.name}
-            </div>
-          </li>
-        ))}
+        {dataSource.map((cat) => {
+          const isExpanded = expandedCategories[cat.id];
+          const hasSubcategories = cat.subcategories && cat.subcategories.length > 0;
+
+          return (
+            <li key={cat.id} className='mb-12'>
+              <div className='d-flex align-items-center justify-content-between'>
+                <div
+                  className={`cursor-pointer py-2 fw-semibold flex-grow-1 ${
+                    currentCategory == cat.id ? "text-main-600" : "text-gray-900 hover-text-main-600"
+                  }`}
+                  onClick={() => handleCategoryClick(cat.id)}
+                >
+                  {cat.name}
+                </div>
+                {/* Accordion toggle icon */}
+                {hasSubcategories && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleCategory(cat.id);
+                    }}
+                    className='btn btn-sm p-0 ms-2'
+                    style={{ width: '24px', height: '24px' }}
+                  >
+                    <i className={`ph ${isExpanded ? 'ph-caret-up' : 'ph-caret-down'} text-gray-600`} />
+                  </button>
+                )}
+              </div>
+              {/* Subcategories - collapsible */}
+              {hasSubcategories && isExpanded && (
+                <ul className='ms-16 mt-8'>
+                  {cat.subcategories.map((subcat) => (
+                    <li key={subcat.id} className='mb-8'>
+                      <div
+                        className={`cursor-pointer py-1 text-sm ${
+                          subcategoryParam == subcat.id
+                            ? "text-main-600 fw-medium"
+                            : "text-gray-600 hover-text-main-600"
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSubcategoryClick(subcat.id);
+                        }}
+                      >
+                        {subcat.name}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          );
+        })}
       </ul>
     );
   };
@@ -305,8 +454,8 @@ const ShopSection = ({
 
     return products.map((product) => {
       const stockPercentage = Math.min(
-        ((product.default_variant?.stock || 0) / (product.default_variant?.available_stock || 1)) * 100,
-        100
+        ((product.default_variant?.sold ||product.sold || 0) / (product.default_variant?.available_stock || 1)) * 100,
+        80
       );
 
       // Prepare discount info
@@ -423,18 +572,23 @@ const ShopSection = ({
                 </div>
               )}
 
-              {/* Rating - আগের ডিজাইনের মতো */}
+              {/* Rating - Dynamic */}
               <div className='flex-align mb-16 gap-6'>
-                <span className='text-xs fw-medium text-gray-500'>4.8</span>
+                <span className='text-xs fw-medium text-gray-500'>
+                  {product.rating ? product.rating.toFixed(1) : '0.0'}
+                </span>
                 <div className='text-15 fw-medium text-warning-600 d-flex gap-1'>
-                  <i className='ph-fill ph-star' />
-                  <i className='ph-fill ph-star' />
-                  <i className='ph-fill ph-star' />
-                  <i className='ph-fill ph-star' />
-                  <i className='ph ph-star text-gray-400' />
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <i
+                      key={star}
+                      className={`${star <= Math.floor(product.rating || 0) ? 'ph-fill' : 'ph'} ph-star ${star <= Math.floor(product.rating || 0) ? '' : 'text-gray-400'}`}
+                    />
+                  ))}
                 </div>
                 <span className='text-xs fw-medium text-gray-500'>
-                  (17k)
+                  ({product.review_count >= 1000
+                    ? `${(product.review_count / 1000).toFixed(1)}k`
+                    : product.review_count || 0})
                 </span>
               </div>
 
@@ -454,7 +608,7 @@ const ShopSection = ({
                   />
                 </div>
                 <span className='text-gray-900 text-xs fw-medium mt-8'>
-                  Sold: {product.default_variant?.stock || 0}/{product.default_variant?.available_stock || 0}
+                  Sold: {product.default_variant?.sold ||product.sold || 0}/{product.default_variant?.stock || 0}
                 </span>
               </div>
 
@@ -664,7 +818,7 @@ const ShopSection = ({
                 {renderCategories()}
               </div>
 
-              {/* Price Filter - */}
+              {/* Price Filter - Dynamic */}
               <div className='shop-sidebar__box border border-gray-100 rounded-8 p-32 mb-32'>
                 <h6 className='text-xl border-bottom border-gray-100 pb-24 mb-24'>
                   Filter by Price
@@ -674,44 +828,43 @@ const ShopSection = ({
                     className='horizontal-slider'
                     thumbClassName='example-thumb'
                     trackClassName='example-track'
-                    defaultValue={[0, 100]}
+                    value={priceRange}
+                    min={filterOptions?.price_range?.min || 0}
+                    max={filterOptions?.price_range?.max || 500000}
+                    onChange={(value) => setPriceRange(value)}
                     ariaLabel={["Lower thumb", "Upper thumb"]}
                     ariaValuetext={(state) => `Thumb value ${state.valueNow}`}
                     renderThumb={(props, state) => {
                       const { key, ...restProps } = props;
                       return (
                         <div {...restProps} key={state.index}>
-                          {state.valueNow}
+                          ৳{state.valueNow}
                         </div>
                       );
                     }}
                     pearling
-                    minDistance={10}
+                    minDistance={100}
                   />
-                  <br />
-                  <br />
-                  <div className='flex-between flex-wrap-reverse gap-8 mt-24'>
-                    <button type='button' className='btn btn-main h-40 flex-align'>
-                      Filter
-                    </button>
+                  <div className='flex-between gap-8 mt-32 mb-16'>
+                    <span className='text-sm text-gray-600'>৳{priceRange[0]}</span>
+                    <span className='text-sm text-gray-600'>৳{priceRange[1]}</span>
                   </div>
+                  <button
+                    type='button'
+                    onClick={handlePriceFilter}
+                    className='btn btn-main h-40 w-100 flex-center'
+                  >
+                    Apply Price Filter
+                  </button>
                 </div>
               </div>
 
-              {/* Rating Filter -  */}
+              {/* Rating Filter - Dynamic */}
               <div className='shop-sidebar__box border border-gray-100 rounded-8 p-32 mb-32'>
                 <h6 className='text-xl border-bottom border-gray-100 pb-24 mb-24'>
                   Filter by Rating
                 </h6>
                 {renderRatingFilter()}
-              </div>
-
-              {/* Color Filter -  */}
-              <div className='shop-sidebar__box border border-gray-100 rounded-8 p-32 mb-32'>
-                <h6 className='text-xl border-bottom border-gray-100 pb-24 mb-24'>
-                  Filter by Color
-                </h6>
-                {renderColorFilter()}
               </div>
 
               {/* Brand Filter */}
@@ -738,9 +891,22 @@ const ShopSection = ({
           <div className='col-lg-9'>
             {/* Top Bar */}
             <div className='flex-between gap-16 flex-wrap mb-40'>
-              <span className='text-gray-900'>
-                Showing {startItem}-{endItem} of {count} results
-              </span>
+              <div className='d-flex align-items-center gap-12'>
+                <span className='text-gray-900'>
+                  Showing {startItem}-{endItem} of {count} results
+                </span>
+                {/* Clear Filters Button */}
+                {hasActiveFilters() && (
+                  <button
+                    onClick={handleClearFilters}
+                    className='btn btn-outline-main h-40 px-16 d-flex align-items-center gap-8'
+                    type='button'
+                  >
+                    <i className='ph ph-x-circle' />
+                    Clear Filters
+                  </button>
+                )}
+              </div>
               <div className='d-flex align-items-center gap-16 flex-wrap'>
                 {/* Search */}
                 <form
@@ -787,7 +953,7 @@ const ShopSection = ({
                   </button>
                 </div>
 
-                {/* Sort */}
+                {/* Sort - Functional */}
                 <div className='d-flex align-items-center gap-4'>
                   <label htmlFor='sorting' className='text-gray-500 text-sm flex-shrink-0'>
                     Sort by:
@@ -796,6 +962,13 @@ const ShopSection = ({
                     className='form-select border-gray-100 rounded-6 py-8 px-12'
                     id='sorting'
                     style={{ width: 'auto', minWidth: '120px' }}
+                    onChange={handleSortChange}
+                    value={
+                      sortParam === "-created_at" ? "latest" :
+                      sortParam === "variants__price" ? "price-low" :
+                      sortParam === "-variants__price" ? "price-high" :
+                      "popular"
+                    }
                   >
                     <option value="popular">Popular</option>
                     <option value="latest">Latest</option>

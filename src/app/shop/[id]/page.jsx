@@ -3,7 +3,7 @@ import ScrollToTopInit from "@/helper/ScrollToTopInit";
 import Breadcrumb from "@/components/Breadcrumb";
 import ProductDetailsTwo from "@/components/ProductDetailsTwo";
 
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "https://api.hetdcl.com";
 
 async function getProductDetail(id) {
   const res = await fetch(`${BASE_URL}/api/v1.0/customers/products/${id}/`, { cache: "no-store" });

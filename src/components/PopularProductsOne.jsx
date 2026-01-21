@@ -127,7 +127,7 @@ const PopularProductsOne = ({ section, categories = [] }) => {
                     <img
                       src={category.image || "/assets/images/thumbs/brand-three-img9.png"}
                       alt={category.name}
-                      className="w-auto max-w-unset"
+                      className="w-auto max-w-unset h-64 object-contain"
                     />
                   </div>
                   <div className="product-card__content flex-grow-1">

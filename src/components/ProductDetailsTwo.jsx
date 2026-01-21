@@ -10,7 +10,7 @@ import toast from "react-hot-toast"; // <-- add this import
 const Slider = dynamic(() => import("react-slick"), { ssr: false });
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1.0";
+  process.env.NEXT_PUBLIC_API_URL || "https://api.hetdcl.com/api/v1.0";
 
 const ProductDetailsTwo = ({ product, discountText }) => {
   const [timeLeft, setTimeLeft] = useState({
@@ -46,8 +46,17 @@ const ProductDetailsTwo = ({ product, discountText }) => {
     (v) => v.id === selectedVariantId
   );
 
-  // Main image state
-  const [mainImage, setMainImage] = useState(productImages[0]);
+  // Main image state - update when variant changes
+  const [mainImage, setMainImage] = useState(
+    selectedVariant?.image || productImages[0]
+  );
+
+  // Update main image when variant changes
+  useEffect(() => {
+    if (selectedVariant?.image) {
+      setMainImage(selectedVariant.image);
+    }
+  }, [selectedVariantId, selectedVariant]);
 
   // Parse attributes if present
   let attributes = {};
@@ -69,9 +78,141 @@ const ProductDetailsTwo = ({ product, discountText }) => {
   };
 
   const { addToCart, loading: cartLoading } = useCart();
-  const { user } = useAuth(); // add this line
+  const { user } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const [addingToCart, setAddingToCart] = useState(false);
+
+  // Reviews state
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [reviewStats, setReviewStats] = useState({
+    average: 0,
+    total: 0,
+    distribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+  });
+  const [reviewForm, setReviewForm] = useState({
+    rating: 5,
+    comment: "",
+  });
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+  // Fetch reviews
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (!product?.id) return;
+
+      try {
+        const res = await fetch(
+          `${API_BASE_URL}/api/v1.0/customers/products/${product.id}/reviews/`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          const reviewsList = Array.isArray(data) ? data : data.data || [];
+          setReviews(reviewsList);
+
+          // Calculate stats
+          if (reviewsList.length > 0) {
+            const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+            let totalRating = 0;
+            reviewsList.forEach((r) => {
+              distribution[r.rating] = (distribution[r.rating] || 0) + 1;
+              totalRating += r.rating;
+            });
+            setReviewStats({
+              average: (totalRating / reviewsList.length).toFixed(1),
+              total: reviewsList.length,
+              distribution,
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching reviews:", err);
+      } finally {
+        setReviewsLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, [product?.id]);
+
+  // Submit review handler
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    if (!user) {
+      toast.error("Please login to submit a review");
+      return;
+    }
+    if (!reviewForm.comment.trim()) {
+      toast.error("Please write a review comment");
+      return;
+    }
+
+    setSubmittingReview(true);
+    try {
+      const token = localStorage.getItem("access_token");
+      const res = await fetch(
+        `${API_BASE_URL}/api/v1.0/customers/products/${product.id}/reviews/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `JWT ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            rating: reviewForm.rating,
+            comment: reviewForm.comment,
+            orderitem_id: 0, // This needs a valid order item ID - see note below
+          }),
+        }
+      );
+
+      if (res.ok) {
+        const newReview = await res.json();
+        setReviews((prev) => [newReview, ...prev]);
+        setReviewForm({ rating: 5, comment: "" });
+        toast.success("Review submitted successfully!");
+      } else {
+        const errorData = await res.json();
+        toast.error(
+          errorData?.detail ||
+            errorData?.non_field_errors?.[0] ||
+            "You can only review products you have purchased and received"
+        );
+      }
+    } catch (err) {
+      console.error("Error submitting review:", err);
+      toast.error("Failed to submit review");
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
+  // Helper to render stars
+  const renderStars = (rating, size = "text-15") => {
+    return Array(5)
+      .fill(0)
+      .map((_, i) => (
+        <span
+          key={i}
+          className={`${size} fw-medium ${
+            i < rating ? "text-warning-600" : "text-gray-400"
+          } d-flex`}
+        >
+          <i className="ph-fill ph-star" />
+        </span>
+      ));
+  };
+
+  // Helper to format date
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays < 7) return `${diffDays} days ago`;
+    return date.toLocaleDateString();
+  };
 
   const handleAddToCart = async () => {
     if (!selectedVariant) {
@@ -218,73 +359,109 @@ const ProductDetailsTwo = ({ product, discountText }) => {
                     </span>
                   </div>
                   <h5 className="mb-12">{product?.name}</h5>
-                  {/* Variant Selector */}
-                  {product?.variants?.length > 1 && (
-                    <div className="mb-16">
-                      <label className="fw-semibold mb-8 d-block">
+                  {/* Variant Selector - Enhanced */}
+                  {product?.variants?.length > 0 && (
+                    <div className="mb-24">
+                      <label className="fw-semibold mb-12 d-block text-lg">
                         Select Variant:
                       </label>
-                      <div className="d-flex flex-wrap gap-12">
-                        {product.variants.map((variant) => (
-                          <label
-                            key={variant.id}
-                            className="d-flex align-items-center gap-8 cursor-pointer"
-                          >
-                            <input
-                              type="radio"
-                              name="variant"
-                              checked={selectedVariantId === variant.id}
-                              onChange={() => setSelectedVariantId(variant.id)}
-                            />
-                            <span>
-                              {variant.name}
-                              {variant.attributes && (
-                                <span className="text-xs text-gray-500 ms-2">
-                                  {Object.entries(
-                                    (() => {
-                                      try {
-                                        return JSON.parse(
-                                          variant.attributes.replace(/'/g, '"')
-                                        );
-                                      } catch {
-                                        return {};
-                                      }
-                                    })()
-                                  )
-                                    .map(([k, v]) => `${k}: ${v}`)
-                                    .join(", ")}
-                                </span>
+                      <div className="d-flex flex-wrap jus gap-12">
+                        {product.variants.map((variant) => {
+                          const isSelected = selectedVariantId === variant.id;
+                          let variantAttrs = {};
+                          try {
+                            variantAttrs = JSON.parse(variant.attributes.replace(/'/g, '"'));
+                          } catch {}
+
+                          return (
+                            <div
+                              key={variant.id}
+                              onClick={() => setSelectedVariantId(variant.id)}
+                              className={`border rounded-12 p-12 cursor-pointer transition-all ${
+                                isSelected
+                                  ? 'border-main-600 bg-main-50 shadow-sm'
+                                  : 'border-gray-200 hover:border-main-400'
+                              }`}
+                              style={{ minWidth: '140px', cursor: 'pointer' }}
+                            >
+                              {/* Variant Image */}
+                              {variant.image && (
+                                <div className="mb-8 text-center">
+                                  <img
+                                    src={variant.image}
+                                    alt={variant.name}
+                                    className="rounded-8"
+                                    style={{
+                                      width: '60px',
+                                      height: '60px',
+                                      objectFit: 'cover',
+                                      border: isSelected ? '2px solid #299E60' : '1px solid #e5e7eb'
+                                    }}
+                                  />
+                                </div>
                               )}
-                            </span>
-                          </label>
-                        ))}
+
+                              {/* Variant Name */}
+                              <div className={`fw-semibold mb-4 text-sm ${isSelected ? 'text-main-600' : 'text-gray-900'}`}>
+                                {variant.name}
+                              </div>
+
+                              {/* Attributes */}
+                              {Object.keys(variantAttrs).length > 0 && (
+                                <div className="text-xs text-gray-600 mb-6">
+                                  {Object.entries(variantAttrs).map(([k, v], idx) => (
+                                    <div key={idx}>
+                                      <span className="fw-medium">{k}:</span> {v}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+
+                              {/* Price */}
+                              <div className={`fw-bold text-sm ${isSelected ? 'text-main-600' : 'text-gray-700'}`}>
+                                ৳{variant.final_price || variant.price}
+                              </div>
+
+                              {/* Stock indicator */}
+                              <div className={`text-xs mt-4 ${variant.available_stock > 0 ? 'text-success-600' : 'text-danger-600'}`}>
+                                {variant.available_stock > 0 ? `${variant.available_stock} in stock` : 'Out of stock'}
+                              </div>
+
+                              {/* Selected indicator */}
+                              {isSelected && (
+                                <div className="mt-8 text-center">
+                                  <i className="ph-fill ph-check-circle text-main-600" style={{fontSize: '18px'}}></i>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
                   <div className="flex-align flex-wrap gap-12">
                     <div className="flex-align gap-12 flex-wrap">
                       <div className="flex-align gap-8">
-                        <span className="text-15 fw-medium text-warning-600 d-flex">
-                          <i className="ph-fill ph-star" />
-                        </span>
-                        <span className="text-15 fw-medium text-warning-600 d-flex">
-                          <i className="ph-fill ph-star" />
-                        </span>
-                        <span className="text-15 fw-medium text-warning-600 d-flex">
-                          <i className="ph-fill ph-star" />
-                        </span>
-                        <span className="text-15 fw-medium text-warning-600 d-flex">
-                          <i className="ph-fill ph-star" />
-                        </span>
-                        <span className="text-15 fw-medium text-warning-600 d-flex">
-                          <i className="ph-fill ph-star" />
-                        </span>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <span
+                            key={star}
+                            className={`text-15 fw-medium d-flex ${
+                              star <= Math.floor(product.rating || 0)
+                                ? 'text-warning-600'
+                                : 'text-gray-300'
+                            }`}
+                          >
+                            <i className="ph-fill ph-star" />
+                          </span>
+                        ))}
                       </div>
                       <span className="text-sm fw-medium text-neutral-600">
-                        4.7 Star Rating
+                        {product.rating ? product.rating.toFixed(1) : '0.0'} Star Rating
                       </span>
                       <span className="text-sm fw-medium text-gray-500">
-                        (21,671)
+                        ({product.review_count >= 1000
+                          ? `${(product.review_count / 1000).toFixed(1)}k`
+                          : product.review_count || 0})
                       </span>
                     </div>
                     <span className="text-sm fw-medium text-gray-500">|</span>
@@ -374,36 +551,47 @@ const ProductDetailsTwo = ({ product, discountText }) => {
               <div className="mb-32">
                 <label
                   htmlFor="stock"
-                  className="text-lg mb-8 text-heading fw-semibold d-block"
+                  className="text-lg mb-12 text-heading fw-semibold d-block"
                 >
-                  Total Stock: {selectedVariant?.stock ?? 0}
+                  Quantity
                 </label>
-                <span className="text-xl d-flex">
-                  <i className="ph ph-location" />
-                </span>
-                {/* <div className='d-flex rounded-4 overflow-hidden'>
-                  <button
-                    onClick={decrementQuantity}
-                    type='button'
-                    className='quantity__minus flex-shrink-0 h-48 w-48 text-neutral-600 bg-gray-50 flex-center hover-bg-main-600 hover-text-white'
-                  >
-                    <i className='ph ph-minus' />
-                  </button>
-                  <input
-                    type='number'
-                    className='quantity__input flex-grow-1 border border-gray-100 border-start-0 border-end-0 text-center w-32 px-16'
-                    id='stock'
-                    value={quantity}
-                    readOnly
-                  />
-                  <button
-                    onClick={incrementQuantity}
-                    type='button'
-                    className='quantity__plus flex-shrink-0 h-48 w-48 text-neutral-600 bg-gray-50 flex-center hover-bg-main-600 hover-text-white'
-                  >
-                    <i className='ph ph-plus' />
-                  </button>
-                </div> */}
+                <div className="d-flex align-items-center gap-12 mb-16">
+                  <div className='d-flex rounded-8 overflow-hidden border border-gray-200'>
+                    <button
+                      onClick={decrementQuantity}
+                      type='button'
+                      disabled={quantity <= 1}
+                      className='quantity__minus flex-shrink-0 h-48 w-48 text-neutral-600 bg-gray-50 flex-center hover-bg-main-600 hover-text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed'
+                    >
+                      <i className='ph ph-minus fw-bold' />
+                    </button>
+                    <input
+                      type='number'
+                      className='quantity__input flex-grow-1 border-0 text-center w-64 px-16 fw-semibold'
+                      id='stock'
+                      value={quantity}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value) || 1;
+                        if (val >= 1 && val <= (selectedVariant?.available_stock || 0)) {
+                          setQuantity(val);
+                        }
+                      }}
+                      min={1}
+                      max={selectedVariant?.available_stock || 0}
+                    />
+                    <button
+                      onClick={incrementQuantity}
+                      type='button'
+                      disabled={quantity >= (selectedVariant?.available_stock || 0)}
+                      className='quantity__plus flex-shrink-0 h-48 w-48 text-neutral-600 bg-gray-50 flex-center hover-bg-main-600 hover-text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed'
+                    >
+                      <i className='ph ph-plus fw-bold' />
+                    </button>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <span className="fw-medium">{selectedVariant?.available_stock || 0}</span> available
+                  </div>
+                </div>
               </div>
               <div className="mb-32">
                 <div className="flex-between flex-wrap gap-8 border-bottom border-gray-100 pb-16 mb-16">
@@ -412,10 +600,10 @@ const ProductDetailsTwo = ({ product, discountText }) => {
                     ৳{selectedVariant?.final_price ?? ""}
                   </h6>
                 </div>
-                <div className="flex-between flex-wrap gap-8">
+                {/* <div className="flex-between flex-wrap gap-8">
                   <span className="text-gray-500">Shipping</span>
                   <h6 className="text-lg mb-0">From $10.00</h6>
-                </div>
+                </div> */}
               </div>
               <button
                 onClick={handleAddToCart}
@@ -455,17 +643,17 @@ const ProductDetailsTwo = ({ product, discountText }) => {
 
               <div className="mt-32"></div>
               <div className="mt-32">
-                <div className="px-16 py-8 bg-main-50 rounded-8 flex-between gap-24 mb-14">
+                {/* <div className="px-16 py-8 bg-main-50 rounded-8 flex-between gap-24 mb-14">
                   <span className="w-32 h-32 bg-white text-main-600 rounded-circle flex-center text-xl flex-shrink-0">
                     <i className="ph-fill ph-truck" />
                   </span>
                   <span className="text-sm text-neutral-600">
                     Ship from{" "}
                     <span className="fw-semibold">
-                      {product?.store?.name ?? "N/A"}
+                      {product?.store?.name ?? "SobarBazarBD"}
                     </span>
                   </span>
-                </div>
+                </div> */}
                 <div className="px-16 py-8 bg-main-50 rounded-8 flex-between gap-24 mb-0">
                   <span className="w-32 h-32 bg-white text-main-600 rounded-circle flex-center text-xl flex-shrink-0">
                     <i className="ph-fill ph-storefront" />
@@ -473,7 +661,7 @@ const ProductDetailsTwo = ({ product, discountText }) => {
                   <span className="text-sm text-neutral-600">
                     Sold by:{" "}
                     <span className="fw-semibold">
-                      {product?.store?.name ?? "N/A"}
+                      {product?.store?.name ?? "SobarBazarBD"}
                     </span>
                   </span>
                 </div>
@@ -604,180 +792,125 @@ const ProductDetailsTwo = ({ product, discountText }) => {
                 >
                   <div className="row g-4">
                     <div className="col-lg-6">
-                      <h6 className="mb-24">Product Description</h6>
-                      <div className="d-flex align-items-start gap-24 pb-44 border-bottom border-gray-100 mb-44">
-                        <img
-                          src="/assets/images/thumbs/comment-img1.png"
-                          alt=""
-                          className="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0"
-                        />
-                        <div className="flex-grow-1">
-                          <div className="flex-between align-items-start gap-8 ">
-                            <div className="">
-                              <h6 className="mb-12 text-md">Nicolas cage</h6>
-                              <div className="flex-align gap-8">
-                                <span className="text-15 fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-15 fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-15 fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-15 fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-15 fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                              </div>
-                            </div>
-                            <span className="text-gray-800 text-xs">
-                              3 Days ago
-                            </span>
-                          </div>
-                          <h6 className="mb-14 text-md mt-24">
-                            Greate Product
-                          </h6>
-                          <p className="text-gray-700">
-                            There are many variations of passages of Lorem Ipsum
-                            available, but the majority have suffered alteration
-                            in some form, by injected humour
-                          </p>
-                          <div className="flex-align gap-20 mt-44">
-                            <button className="flex-align gap-12 text-gray-700 hover-text-main-600">
-                              <i className="ph-bold ph-thumbs-up" />
-                              Like
-                            </button>
-                            <Link
-                              href="#comment-form"
-                              className="flex-align gap-12 text-gray-700 hover-text-main-600"
-                            >
-                              <i className="ph-bold ph-arrow-bend-up-left" />
-                              Replay
-                            </Link>
+                      <h6 className="mb-24">Customer Reviews ({reviewStats.total})</h6>
+
+                      {reviewsLoading ? (
+                        <div className="text-center py-4">
+                          <div className="spinner-border text-main-600" role="status">
+                            <span className="visually-hidden">Loading...</span>
                           </div>
                         </div>
-                      </div>
-                      <div className="d-flex align-items-start gap-24">
-                        <img
-                          src="/assets/images/thumbs/comment-img1.png"
-                          alt=""
-                          className="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0"
-                        />
-                        <div className="flex-grow-1">
-                          <div className="flex-between align-items-start gap-8 ">
-                            <div className="">
-                              <h6 className="mb-12 text-md">Nicolas cage</h6>
-                              <div className="flex-align gap-8">
-                                <span className="text-15 fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-15 fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-15 fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-15 fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-15 fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
+                      ) : reviews.length === 0 ? (
+                        <p className="text-gray-500">No reviews yet. Be the first to review this product!</p>
+                      ) : (
+                        reviews.map((review, index) => (
+                          <div
+                            key={review.id}
+                            className={`d-flex align-items-start gap-24 ${
+                              index < reviews.length - 1 ? "pb-44 border-bottom border-gray-100 mb-44" : ""
+                            }`}
+                          >
+                            <img
+                              src={review.customer?.profile_image || "/assets/images/thumbs/comment-img1.png"}
+                              alt={review.customer?.name || "User"}
+                              className="w-52 h-52 object-fit-cover rounded-circle flex-shrink-0"
+                            />
+                            <div className="flex-grow-1">
+                              <div className="flex-between align-items-start gap-8">
+                                <div>
+                                  <h6 className="mb-12 text-md">
+                                    {review.customer?.name || "Anonymous"}
+                                  </h6>
+                                  <div className="flex-align gap-8">
+                                    {renderStars(review.rating)}
+                                  </div>
+                                </div>
+                                <span className="text-gray-800 text-xs">
+                                  {formatDate(review.created_at)}
                                 </span>
                               </div>
+                              <p className="text-gray-700 mt-16">{review.comment}</p>
+                              {review.image && (
+                                <img
+                                  src={review.image}
+                                  alt="Review"
+                                  className="mt-12 rounded-8"
+                                  style={{ maxWidth: "200px", maxHeight: "150px", objectFit: "cover" }}
+                                />
+                              )}
                             </div>
-                            <span className="text-gray-800 text-xs">
-                              3 Days ago
-                            </span>
                           </div>
-                          <h6 className="mb-14 text-md mt-24">
-                            Greate Product
-                          </h6>
-                          <p className="text-gray-700">
-                            There are many variations of passages of Lorem Ipsum
-                            available, but the majority have suffered alteration
-                            in some form, by injected humour
-                          </p>
-                          <div className="flex-align gap-20 mt-44">
-                            <button className="flex-align gap-12 text-gray-700 hover-text-main-600">
-                              <i className="ph-bold ph-thumbs-up" />
-                              Like
-                            </button>
-                            <Link
-                              href="#comment-form"
-                              className="flex-align gap-12 text-gray-700 hover-text-main-600"
-                            >
-                              <i className="ph-bold ph-arrow-bend-up-left" />
-                              Replay
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
+                        ))
+                      )}
+
                       <div className="mt-56">
-                        <div className="">
+                        <div>
                           <h6 className="mb-24">Write a Review</h6>
-                          <span className="text-heading mb-8">
-                            What is it like to Product?
-                          </span>
-                          <div className="flex-align gap-8">
-                            <span className="text-15 fw-medium text-warning-600 d-flex">
-                              <i className="ph-fill ph-star" />
-                            </span>
-                            <span className="text-15 fw-medium text-warning-600 d-flex">
-                              <i className="ph-fill ph-star" />
-                            </span>
-                            <span className="text-15 fw-medium text-warning-600 d-flex">
-                              <i className="ph-fill ph-star" />
-                            </span>
-                            <span className="text-15 fw-medium text-warning-600 d-flex">
-                              <i className="ph-fill ph-star" />
-                            </span>
-                            <span className="text-15 fw-medium text-warning-600 d-flex">
-                              <i className="ph-fill ph-star" />
-                            </span>
+                          {!user ? (
+                            <p className="text-gray-500">
+                              Please <Link href="/login" className="text-main-600">login</Link> to write a review
+                            </p>
+                          ) : (
+                            <>
+                              <span className="text-heading mb-8 d-block">
+                                How would you rate this product?
+                              </span>
+                              <div className="flex-align gap-8 mb-24">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <button
+                                    key={star}
+                                    type="button"
+                                    onClick={() => setReviewForm((prev) => ({ ...prev, rating: star }))}
+                                    className={`text-xl fw-medium ${
+                                      star <= reviewForm.rating ? "text-warning-600" : "text-gray-400"
+                                    } d-flex border-0 bg-transparent cursor-pointer`}
+                                  >
+                                    <i className="ph-fill ph-star" />
+                                  </button>
+                                ))}
+                              </div>
+                            </>
+                          )}
+                        </div>
+                        {user && (
+                          <div className="mt-32">
+                            <form onSubmit={handleSubmitReview}>
+                              <div className="mb-32">
+                                <label htmlFor="review-content" className="text-neutral-600 mb-8">
+                                  Your Review
+                                </label>
+                                <textarea
+                                  className="common-input rounded-8"
+                                  id="review-content"
+                                  rows={4}
+                                  placeholder="Share your experience with this product..."
+                                  value={reviewForm.comment}
+                                  onChange={(e) =>
+                                    setReviewForm((prev) => ({ ...prev, comment: e.target.value }))
+                                  }
+                                  required
+                                />
+                              </div>
+                              <p className="text-gray-500 text-sm mb-16">
+                                Note: You can only review products you have purchased and received.
+                              </p>
+                              <button
+                                type="submit"
+                                disabled={submittingReview}
+                                className="btn btn-main rounded-pill"
+                              >
+                                {submittingReview ? (
+                                  <>
+                                    <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                                    Submitting...
+                                  </>
+                                ) : (
+                                  "Submit Review"
+                                )}
+                              </button>
+                            </form>
                           </div>
-                        </div>
-                        <div className="mt-32">
-                          <form action="#">
-                            <div className="mb-32">
-                              <label
-                                htmlFor="title"
-                                className="text-neutral-600 mb-8"
-                              >
-                                Review Title
-                              </label>
-                              <input
-                                type="text"
-                                className="common-input rounded-8"
-                                id="title"
-                                placeholder="Great Products"
-                              />
-                            </div>
-                            <div className="mb-32">
-                              <label
-                                htmlFor="desc"
-                                className="text-neutral-600 mb-8"
-                              >
-                                Review Content
-                              </label>
-                              <textarea
-                                className="common-input rounded-8"
-                                id="desc"
-                                defaultValue={
-                                  "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English."
-                                }
-                              />
-                            </div>
-                            <button
-                              type="submit"
-                              className="btn btn-main rounded-pill mt-48"
-                            >
-                              Submit Review
-                            </button>
-                          </form>
-                        </div>
+                        )}
                       </div>
                     </div>
                     <div className="col-lg-6">
@@ -785,219 +918,51 @@ const ProductDetailsTwo = ({ product, discountText }) => {
                         <h6 className="mb-24">Customers Feedback</h6>
                         <div className="d-flex flex-wrap gap-44">
                           <div className="border border-gray-100 rounded-8 px-40 py-52 flex-center flex-column flex-shrink-0 text-center">
-                            <h2 className="mb-6 text-main-600">4.8</h2>
+                            <h2 className="mb-6 text-main-600">
+                              {reviewStats.total > 0 ? reviewStats.average : "N/A"}
+                            </h2>
                             <div className="flex-center gap-8">
-                              <span className="text-15 fw-medium text-warning-600 d-flex">
-                                <i className="ph-fill ph-star" />
-                              </span>
-                              <span className="text-15 fw-medium text-warning-600 d-flex">
-                                <i className="ph-fill ph-star" />
-                              </span>
-                              <span className="text-15 fw-medium text-warning-600 d-flex">
-                                <i className="ph-fill ph-star" />
-                              </span>
-                              <span className="text-15 fw-medium text-warning-600 d-flex">
-                                <i className="ph-fill ph-star" />
-                              </span>
-                              <span className="text-15 fw-medium text-warning-600 d-flex">
-                                <i className="ph-fill ph-star" />
-                              </span>
+                              {renderStars(Math.round(reviewStats.average))}
                             </div>
                             <span className="mt-16 text-gray-500">
-                              Average Product Rating
+                              {reviewStats.total > 0
+                                ? `Based on ${reviewStats.total} review${reviewStats.total > 1 ? "s" : ""}`
+                                : "No reviews yet"}
                             </span>
                           </div>
                           <div className="border border-gray-100 rounded-8 px-24 py-40 flex-grow-1">
-                            <div className="flex-align gap-8 mb-20">
-                              <span className="text-gray-900 flex-shrink-0">
-                                5
-                              </span>
-                              <div
-                                className="progress w-100 bg-gray-100 rounded-pill h-8"
-                                role="progressbar"
-                                aria-label="Basic example"
-                                aria-valuenow={70}
-                                aria-valuemin={0}
-                                aria-valuemax={100}
-                              >
+                            {[5, 4, 3, 2, 1].map((star) => {
+                              const count = reviewStats.distribution[star] || 0;
+                              const percentage = reviewStats.total > 0
+                                ? Math.round((count / reviewStats.total) * 100)
+                                : 0;
+                              return (
                                 <div
-                                  className="progress-bar bg-main-600 rounded-pill"
-                                  style={{ width: "70%" }}
-                                />
-                              </div>
-                              <div className="flex-align gap-4">
-                                <span className="text-xs fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                              </div>
-                              <span className="text-gray-900 flex-shrink-0">
-                                124
-                              </span>
-                            </div>
-                            <div className="flex-align gap-8 mb-20">
-                              <span className="text-gray-900 flex-shrink-0">
-                                4
-                              </span>
-                              <div
-                                className="progress w-100 bg-gray-100 rounded-pill h-8"
-                                role="progressbar"
-                                aria-label="Basic example"
-                                aria-valuenow={50}
-                                aria-valuemin={0}
-                                aria-valuemax={100}
-                              >
-                                <div
-                                  className="progress-bar bg-main-600 rounded-pill"
-                                  style={{ width: "50%" }}
-                                />
-                              </div>
-                              <div className="flex-align gap-4">
-                                <span className="text-xs fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-gray-400 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                              </div>
-                              <span className="text-gray-900 flex-shrink-0">
-                                52
-                              </span>
-                            </div>
-                            <div className="flex-align gap-8 mb-20">
-                              <span className="text-gray-900 flex-shrink-0">
-                                3
-                              </span>
-                              <div
-                                className="progress w-100 bg-gray-100 rounded-pill h-8"
-                                role="progressbar"
-                                aria-label="Basic example"
-                                aria-valuenow={35}
-                                aria-valuemin={0}
-                                aria-valuemax={100}
-                              >
-                                <div
-                                  className="progress-bar bg-main-600 rounded-pill"
-                                  style={{ width: "35%" }}
-                                />
-                              </div>
-                              <div className="flex-align gap-4">
-                                <span className="text-xs fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-gray-400 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-gray-400 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                              </div>
-                              <span className="text-gray-900 flex-shrink-0">
-                                12
-                              </span>
-                            </div>
-                            <div className="flex-align gap-8 mb-20">
-                              <span className="text-gray-900 flex-shrink-0">
-                                2
-                              </span>
-                              <div
-                                className="progress w-100 bg-gray-100 rounded-pill h-8"
-                                role="progressbar"
-                                aria-label="Basic example"
-                                aria-valuenow={20}
-                                aria-valuemin={0}
-                                aria-valuemax={100}
-                              >
-                                <div
-                                  className="progress-bar bg-main-600 rounded-pill"
-                                  style={{ width: "20%" }}
-                                />
-                              </div>
-                              <div className="flex-align gap-4">
-                                <span className="text-xs fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-gray-400 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-gray-400 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-gray-400 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                              </div>
-                              <span className="text-gray-900 flex-shrink-0">
-                                5
-                              </span>
-                            </div>
-                            <div className="flex-align gap-8 mb-0">
-                              <span className="text-gray-900 flex-shrink-0">
-                                1
-                              </span>
-                              <div
-                                className="progress w-100 bg-gray-100 rounded-pill h-8"
-                                role="progressbar"
-                                aria-label="Basic example"
-                                aria-valuenow={5}
-                                aria-valuemin={0}
-                                aria-valuemax={100}
-                              >
-                                <div
-                                  className="progress-bar bg-main-600 rounded-pill"
-                                  style={{ width: "5%" }}
-                                />
-                              </div>
-                              <div className="flex-align gap-4">
-                                <span className="text-xs fw-medium text-warning-600 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-gray-400 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-gray-400 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-gray-400 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                                <span className="text-xs fw-medium text-gray-400 d-flex">
-                                  <i className="ph-fill ph-star" />
-                                </span>
-                              </div>
-                              <span className="text-gray-900 flex-shrink-0">
-                                2
-                              </span>
-                            </div>
+                                  key={star}
+                                  className={`flex-align gap-8 ${star > 1 ? "mb-20" : "mb-0"}`}
+                                >
+                                  <span className="text-gray-900 flex-shrink-0">{star}</span>
+                                  <div
+                                    className="progress w-100 bg-gray-100 rounded-pill h-8"
+                                    role="progressbar"
+                                    aria-valuenow={percentage}
+                                    aria-valuemin={0}
+                                    aria-valuemax={100}
+                                  >
+                                    <div
+                                      className="progress-bar bg-main-600 rounded-pill"
+                                      style={{ width: `${percentage}%` }}
+                                    />
+                                  </div>
+                                  <div className="flex-align gap-4">
+                                    {renderStars(star, "text-xs")}
+                                  </div>
+                                  <span className="text-gray-900 flex-shrink-0" style={{ minWidth: "30px" }}>
+                                    {count}
+                                  </span>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
                       </div>

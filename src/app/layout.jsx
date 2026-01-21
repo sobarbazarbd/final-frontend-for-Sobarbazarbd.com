@@ -23,7 +23,7 @@ export default async function RootLayout({ children }) {
   let navData = null;
   try {
     const res = await fetch(
-      "http://localhost:8000/api/v1.0/base/navbar-data/",
+      "https://api.hetdcl.com/api/v1.0/base/navbar-data/",
       {
         cache: "force-cache",
       }

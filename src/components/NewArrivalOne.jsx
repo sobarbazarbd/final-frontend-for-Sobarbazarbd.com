@@ -83,7 +83,7 @@ const NewArrivalOne = ({ data }) => {
                 product.images?.[0]?.image ||
                 "/assets/images/default-product.png";
               const price = product.default_variant?.final_price || 0;
-              const storeName = product.store?.name || "Unknown Store";
+              const storeName = product.store?.name || "SobarBazarBD";
               const oldPrice = product.default_variant?.discount
                 ? price + product.default_variant.discount
                 : null;

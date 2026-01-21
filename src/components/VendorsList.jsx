@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "https://api.hetdcl.com";
 
 const VendorsList = () => {
   const [stores, setStores] = useState([]);

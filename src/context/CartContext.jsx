@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.hetdcl.com";
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
@@ -239,7 +239,7 @@ export const CartProvider = ({ children }) => {
       };
 
       if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
+        headers["Authorization"] = `JWT ${token}`;
       }
 
       const requestBody = {
@@ -248,8 +248,11 @@ export const CartProvider = ({ children }) => {
         area: area,
       };
 
-      // Add guest data if provided (not authenticated)
-      if (guestData) {
+      // For authenticated users, only send shipping address
+      if (token) {
+        requestBody.shipping_address = shippingAddress;
+      } else if (guestData) {
+        // For guest checkout, send all required fields
         requestBody.name = guestData.name;
         requestBody.email = guestData.email;
         requestBody.phone = guestData.phone;

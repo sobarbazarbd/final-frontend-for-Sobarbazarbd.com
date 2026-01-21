@@ -36,16 +36,15 @@ const Checkout = () => {
   }, []);
 
   const fetchUserData = async () => {
+    const API_BASE_URL =
+      process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.hetdcl.com";
     try {
       const token = localStorage.getItem("access_token");
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL || "api.hetdcl.com"}/api/v1.0/users/me/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/auth/users/me/`, {
+        headers: {
+          Authorization: `JWT ${token}`,
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -97,29 +96,32 @@ const Checkout = () => {
   };
 
   const validateForm = () => {
-    const required = ["name", "phone", "address"];
-
-    // Email only required for guest checkout
-    if (!isAuthenticated) {
-      required.push("email");
+    // For authenticated users, only validate shipping address
+    if (isAuthenticated) {
+      if (!formData.address || !formData.address.trim()) {
+        toast.error("Please provide a shipping address");
+        return false;
+      }
+      return true;
     }
+
+    // For guest checkout, validate all fields
+    const required = ["name", "email", "phone", "address"];
 
     for (const field of required) {
       if (!formData[field]) {
         toast.error(
-          `Please fill in ${field.replace(/([A-Z])/g, " $1").toLowerCase()}`
+          `Please fill in ${field.replace(/([A-Z])/g, " $1").toLowerCase()}`,
         );
         return false;
       }
     }
 
     // Email validation
-    if (formData.email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
-        toast.error("Please enter a valid email address");
-        return false;
-      }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Please enter a valid email address");
+      return false;
     }
 
     // Phone validation (Bangladesh format)
@@ -155,17 +157,13 @@ const Checkout = () => {
 
       const paymentMethod = paymentMethodMap[selectedPayment] || "COD";
 
-      // Always pass all form fields for guest checkout, and for authenticated users, merge with userData if needed
+      // Only pass guest data for unauthenticated users
       let customerData = null;
       if (!isAuthenticated) {
-        customerData = { ...formData };
-      } else if (userData && userData.customer) {
         customerData = {
-          name: formData.name || userData.customer.name || "",
-          email: formData.email || userData.customer.email || "",
-          phone: formData.phone || userData.customer.phone || "",
-          address: formData.address || userData.customer.shipping_address || "",
-          notes: formData.notes || "",
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
         };
       }
 
@@ -173,14 +171,14 @@ const Checkout = () => {
         cartId,
         paymentMethod,
         selectedArea,
-        formData.address,
-        customerData
+        formData.address, // shipping address
+        customerData, // null for authenticated, guest data for unauthenticated
       );
 
       if (result.success) {
-        if (result.paymentGatewayUrl) {
+        if (result?.order?.data?.GatewayPageURL) {
           toast.success("Redirecting to payment gateway...");
-          window.location.href = result.paymentGatewayUrl;
+          window.location.href = result?.order?.data?.GatewayPageURL;
         } else {
           toast.success("Order placed successfully!");
           router.push("/order-success");
@@ -241,58 +239,90 @@ const Checkout = () => {
             <div className="col-xl-9 col-lg-8">
               <div className="pe-xl-5">
                 <h5 className="mb-32">
-                  {isAuthenticated ? "Confirm Your Details" : "Your Details"}
+                  {isAuthenticated ? "Shipping Information" : "Your Details"}
                 </h5>
-                <div className="row gy-3">
-                  <div className="col-12">
-                    <label className="text-gray-900 fw-medium mb-8">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      className="common-input border-gray-100"
-                      placeholder="Enter your full name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
 
-                  {!isAuthenticated && (
-                    <div className="col-12">
-                      <label className="text-gray-900 fw-medium mb-8">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        className="common-input border-gray-100"
-                        placeholder="your.email@example.com"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                      />
+                {/* Show user info banner for authenticated users */}
+                {isAuthenticated && userData?.customer && (
+                  <div className="alert alert-success mb-24">
+                    <div className="d-flex align-items-start gap-12">
+                      <i className="ph ph-check-circle text-success-600 text-xl mt-4"></i>
+                      <div>
+                        <div className="fw-semibold mb-8">Ordering as:</div>
+                        <div className="text-sm">
+                          <div>
+                            <span className="fw-medium">Name:</span>{" "}
+                            {userData.customer.name}
+                          </div>
+                          <div>
+                            <span className="fw-medium">Phone:</span>{" "}
+                            {userData.customer.phone}
+                          </div>
+                          {userData.customer.email && (
+                            <div>
+                              <span className="fw-medium">Email:</span>{" "}
+                              {userData.customer.email}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  )}
-
-                  <div className="col-12">
-                    <label className="text-gray-900 fw-medium mb-8">
-                      Phone Number *
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      className="common-input border-gray-100"
-                      placeholder="01XXXXXXXXX"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      required
-                    />
-                    <small className="text-gray-500">
-                      Format: 01XXXXXXXXX
-                    </small>
                   </div>
+                )}
+
+                <div className="row gy-3">
+                  {/* Guest checkout fields */}
+                  {!isAuthenticated && (
+                    <>
+                      <div className="col-12">
+                        <label className="text-gray-900 fw-medium mb-8">
+                          Full Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="name"
+                          className="common-input border-gray-100"
+                          placeholder="Enter your full name"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+
+                      <div className="col-12">
+                        <label className="text-gray-900 fw-medium mb-8">
+                          Email Address *
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          className="common-input border-gray-100"
+                          placeholder="your.email@example.com"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+
+                      <div className="col-12">
+                        <label className="text-gray-900 fw-medium mb-8">
+                          Phone Number *
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          className="common-input border-gray-100"
+                          placeholder="01XXXXXXXXX"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          required
+                        />
+                        <small className="text-gray-500">
+                          Format: 01XXXXXXXXX
+                        </small>
+                      </div>
+                    </>
+                  )}
 
                   <div className="col-12">
                     <label className="text-gray-900 fw-medium mb-8">

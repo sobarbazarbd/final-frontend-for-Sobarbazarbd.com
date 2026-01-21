@@ -39,7 +39,7 @@ import {
 } from "@mui/material";
 import toast from "react-hot-toast";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1.0";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.hetdcl.com/api/v1.0";
 
 const DashboardPage = () => {
   const { user, loading: authLoading, logout } = useAuth();

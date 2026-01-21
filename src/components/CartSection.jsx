@@ -108,7 +108,7 @@ const CartSection = () => {
                               className="table-product__thumb border border-gray-100 rounded-8 flex-center "
                             >
                               <img
-                                src={item.variant?.images?.[0]?.image || "/assets/images/thumbs/product-img1.png"}
+                                src={item.variant?.image || "/assets/images/thumbs/product-img1.png"} 
                                 alt={item.product?.name || "Product"}
                               />
                             </Link>

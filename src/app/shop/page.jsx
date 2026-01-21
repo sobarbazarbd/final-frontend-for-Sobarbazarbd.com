@@ -8,7 +8,7 @@ export const metadata = {
   description: "hello",
 };
 
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "https://api.hetdcl.com";
 
 async function getCategories() {
   const res = await fetch(
@@ -45,7 +45,19 @@ async function getStoreById(storeId) {
   }
 }
 
-async function getProducts({ category, brand, page, page_size, subcategories, search, store }) {
+async function getProducts({
+  category,
+  brand,
+  page,
+  page_size,
+  subcategories,
+  search,
+  store,
+  min_price,
+  max_price,
+  min_rating,
+  ordering
+}) {
   const params = [];
   if (category)
     params.push(`supplier_product__subcategories__category=${category}`);
@@ -62,6 +74,10 @@ async function getProducts({ category, brand, page, page_size, subcategories, se
   if (brand) params.push(`supplier_product__brand_or_company=${brand}`);
   if (store) params.push(`supplier_product__store=${store}`);
   if (search) params.push(`search=${encodeURIComponent(search)}`);
+  if (min_price) params.push(`min_price=${min_price}`);
+  if (max_price) params.push(`max_price=${max_price}`);
+  if (min_rating) params.push(`min_rating=${min_rating}`);
+  if (ordering) params.push(`ordering=${ordering}`);
   params.push(`pagination=1`);
   params.push(`page_size=${page_size || 20}`);
   if (page) params.push(`page=${page}`);
@@ -80,12 +96,16 @@ const Page = async ({ searchParams }) => {
   // Await the searchParams promise
   const params = await searchParams;
   const selectedCategory = params?.category || null;
-  const subCategory = params?.subcategories || null;
+  const subCategory = params?.supplier_product__subcategories || null;
   const selectedBrand = params?.brand || null;
   const selectedStore = params?.store || null;
   const currentPage = params?.page ? parseInt(params.page) : 1;
   const pageSize = 20;
   const search = params?.search || "";
+  const minPrice = params?.min_price || null;
+  const maxPrice = params?.max_price || null;
+  const minRating = params?.min_rating || null;
+  const ordering = params?.ordering || null;
 
   const categories = await getCategories();
   const brands = await getBrands();
@@ -97,6 +117,10 @@ const Page = async ({ searchParams }) => {
     page: currentPage,
     page_size: pageSize,
     search,
+    min_price: minPrice,
+    max_price: maxPrice,
+    min_rating: minRating,
+    ordering: ordering,
   });
 
   // Fetch store data if store is selected

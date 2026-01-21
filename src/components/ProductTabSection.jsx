@@ -116,7 +116,7 @@ export const ProductCard = ({ product, color = "main-600", badgeColors }) => {
             <i className="ph-fill ph-storefront" />
           </span>
           <span className="text-gray-500 text-xs">
-            By {store?.name || "Unknown Store"}
+            By {store?.name || "SobarBazarBD"}
           </span>
         </div>
         <div className="product-card__price my-20">
