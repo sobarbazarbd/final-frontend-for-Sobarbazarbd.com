@@ -4,8 +4,9 @@ export const headerConfig = {
     alt: "Logo",
   },
   topLinks: [
+    { text: "About us", href: "/about-us" },
     { text: "Become A Seller", href: "/become-seller" },
-    { text: "About us", href: "#" },
+    
     { text: "Free Delivery", href: "#" },
     { text: "Returns Policy", href: "#" },
   ],
@@ -14,7 +15,7 @@ export const headerConfig = {
     { icon: "ph ph-chat-circle-dots", text: "Live Chat", href: "#" },
   ],
   contact: {
-    phone: "01- 234 567 890",
+    phone: "01713332003",
     icon: "ph ph-phone-call",
   },
 };

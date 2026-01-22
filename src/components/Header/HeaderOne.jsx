@@ -30,7 +30,7 @@ const HeaderOne = () => {
   }, []);
 
   const fallbackLogo = headerConfig.logo.src;
-  const fallbackPhone = headerConfig.contact?.phone ?? "01- 234 567 890";
+  const fallbackPhone = headerConfig.contact?.phone ?? "01713332003";
 
   useEffect(() => {
     if (typeof window !== "undefined") {
