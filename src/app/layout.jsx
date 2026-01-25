@@ -10,9 +10,11 @@ import "./dashboard/dashboard.css";
 import NavFooterProvider from "@/context/NavFooterProvider";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { ShopModeProvider } from "@/context/ShopModeContext";
 import { Toaster } from "react-hot-toast";
 import FooterOne from "@/components/Footer/FooterOne";
 import TawkToWidget from "@/components/TawkToWidget";
+import PreloaderWrapper from "@/components/Preloader/PreloaderWrapper";
 
 export const metadata = {
   title: "SobazarBd - Online Shopping Complex",
@@ -43,18 +45,22 @@ export default async function RootLayout({ children }) {
         <Toaster position="top-right" />
         <PhosphorIconInit />
         <RouteScrollToTop />
-        <NavFooterProvider initialData={navData}>
-          <AuthProvider>
-            <CartProvider>
-              <HeaderOne />
-              {children}
-              <ShippingOne />
-              <NewsletterOne />
-              <FooterOne />
-            </CartProvider>
-          </AuthProvider>
-        </NavFooterProvider>
-        <TawkToWidget />
+        <PreloaderWrapper>
+          <ShopModeProvider>
+            <NavFooterProvider initialData={navData}>
+              <AuthProvider>
+                <CartProvider>
+                  <HeaderOne />
+                  {children}
+                  <ShippingOne />
+                  <NewsletterOne />
+                  <FooterOne />
+                </CartProvider>
+              </AuthProvider>
+            </NavFooterProvider>
+            <TawkToWidget />
+          </ShopModeProvider>
+        </PreloaderWrapper>
       </body>
     </html>
   );
