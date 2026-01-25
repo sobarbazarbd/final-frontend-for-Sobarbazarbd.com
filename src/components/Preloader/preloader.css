@@ -5,13 +5,14 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: #F3FAF2;
   z-index: 99999;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
   transition: opacity 0.5s ease, visibility 0.5s ease;
+  font-family: "Quicksand", "Inter", sans-serif;
 }
 
 .preloader-container.fade-out {
@@ -35,31 +36,69 @@
   pointer-events: none;
 }
 
-/* Door Styles */
+/* Door Styles - Clean Light Theme */
 .door {
   position: absolute;
   width: 50%;
   height: 100%;
-  background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+  background: #f3faf2;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+}
+
+/* Subtle Shine Overlay */
+.door::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.2) 40%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+}
+
+/* Edge Highlight */
+.door::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    rgba(39, 158, 90, 0.2) 0%,
+    rgba(39, 158, 90, 0.1) 50%,
+    rgba(39, 158, 90, 0.2) 100%
+  );
+}
+
+.door-left::after {
+  right: 0;
+}
+
+.door-right::after {
+  left: 0;
 }
 
 .door-left {
   left: 0;
   transform-origin: left center;
-  border-right: 3px solid #e94560;
 }
 
 .door-right {
   right: 0;
   transform-origin: right center;
-  border-left: 3px solid #e94560;
 }
 
 /* Door Open Animation */
@@ -85,27 +124,65 @@
 .door-panel {
   width: 100%;
   height: 45%;
-  background: linear-gradient(145deg, #34495e, #2c3e50);
-  border: 2px solid #4a6278;
+  background: linear-gradient(145deg, #e8f5e9 0%, #dcedc8 100%);
+  border: 2px solid rgba(39, 158, 90, 0.15);
   border-radius: 8px;
   box-shadow:
-    inset 5px 5px 15px rgba(0, 0, 0, 0.3),
-    inset -5px -5px 15px rgba(255, 255, 255, 0.05);
+    inset 3px 3px 8px rgba(0, 0, 0, 0.05),
+    inset -3px -3px 8px rgba(255, 255, 255, 0.8),
+    0 4px 12px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
 }
 
-/* Door Handle */
+/* Shine on panels */
+.door-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  border-radius: 6px 6px 0 0;
+}
+
+/* Door Handle - Green Theme */
 .door-handle {
   position: absolute;
   right: 30px;
   top: 50%;
   transform: translateY(-50%);
-  width: 15px;
-  height: 60px;
-  background: linear-gradient(180deg, #f1c40f, #d4a20a);
-  border-radius: 8px;
+  width: 12px;
+  height: 50px;
+  background: linear-gradient(
+    180deg,
+    #34d399 0%,
+    #279E5A 30%,
+    #1F8A4D 60%,
+    #279E5A 100%
+  );
+  border-radius: 6px;
   box-shadow:
-    2px 2px 10px rgba(0, 0, 0, 0.4),
-    inset 0 0 10px rgba(255, 255, 255, 0.3);
+    2px 2px 8px rgba(39, 158, 90, 0.3),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+/* Handle shine */
+.door-handle::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 2px;
+  width: 3px;
+  height: 30%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent);
+  border-radius: 2px;
 }
 
 .door-handle.left {
@@ -118,67 +195,20 @@
   position: absolute;
   bottom: 15%;
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .door-brand span {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #e94560;
-  text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
-  animation: glow 2s ease-in-out infinite alternate;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #279E5A;
+  text-shadow: 0 2px 8px rgba(39, 158, 90, 0.2);
+  font-family: "Quicksand", sans-serif;
 }
 
-.door-brand span:nth-child(1) { animation-delay: 0s; }
-.door-brand span:nth-child(2) { animation-delay: 0.1s; }
-.door-brand span:nth-child(3) { animation-delay: 0.2s; }
-.door-brand span:nth-child(4) { animation-delay: 0.3s; }
-.door-brand span:nth-child(5) { animation-delay: 0.4s; }
-
-@keyframes glow {
-  from {
-    text-shadow: 0 0 10px rgba(233, 69, 96, 0.3);
-  }
-  to {
-    text-shadow: 0 0 30px rgba(233, 69, 96, 0.8), 0 0 60px rgba(233, 69, 96, 0.4);
-  }
-}
-
-/* Door Frame */
+/* Door Frame - Hidden */
 .door-frame {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.frame-top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 20px;
-  background: linear-gradient(180deg, #e94560, #c73e54);
-  box-shadow: 0 5px 20px rgba(233, 69, 96, 0.5);
-}
-
-.frame-left,
-.frame-right {
-  position: absolute;
-  top: 0;
-  width: 10px;
-  height: 100%;
-  background: linear-gradient(90deg, #e94560, #c73e54);
-}
-
-.frame-left {
-  left: 0;
-  box-shadow: 5px 0 20px rgba(233, 69, 96, 0.3);
-}
-
-.frame-right {
-  right: 0;
-  box-shadow: -5px 0 20px rgba(233, 69, 96, 0.3);
+  display: none;
 }
 
 /* Welcome Content */
@@ -200,13 +230,13 @@
 }
 
 .welcome-logo {
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
 .logo-img {
-  width: 180px;
+  width: 160px;
   height: auto;
-  filter: drop-shadow(0 0 30px rgba(233, 69, 96, 0.5));
+  filter: drop-shadow(0 4px 15px rgba(39, 158, 90, 0.3));
   animation: float 3s ease-in-out infinite;
 }
 
@@ -215,34 +245,36 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-15px);
+    transform: translateY(-12px);
   }
 }
 
 .welcome-title {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .welcome-text {
-  font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 300;
+  font-size: 1.4rem;
+  color: #279E5A;
+  font-weight: 500;
   letter-spacing: 3px;
   text-transform: uppercase;
+  font-family: "Quicksand", sans-serif;
 }
 
 .brand-name {
-  font-size: 3.5rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #e94560 0%, #f1c40f 50%, #e94560 100%);
+  font-size: 3rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #279E5A 0%, #FF9F29 50%, #279E5A 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: shine 3s linear infinite;
+  font-family: "Quicksand", sans-serif;
 }
 
 @keyframes shine {
@@ -252,32 +284,34 @@
 }
 
 .welcome-tagline {
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 40px;
-  letter-spacing: 1px;
+  font-size: 1rem;
+  color: #5a7a6a;
+  margin-bottom: 35px;
+  letter-spacing: 0.5px;
+  font-family: "Inter", sans-serif;
 }
 
 /* Start Shopping Button */
 .start-shopping-btn {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 18px 45px;
-  font-size: 1.2rem;
+  gap: 10px;
+  padding: 16px 40px;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #fff;
-  background: linear-gradient(135deg, #e94560 0%, #c73e54 100%);
+  background: linear-gradient(135deg, #279E5A 0%, #22C55E 100%);
   border: none;
   border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 40px rgba(233, 69, 96, 0.4);
+  box-shadow: 0 8px 30px rgba(39, 158, 90, 0.35);
   opacity: 0;
   transform: translateY(30px);
   position: relative;
   z-index: 100;
   pointer-events: none;
+  font-family: "Quicksand", sans-serif;
 }
 
 .start-shopping-btn.show {
@@ -290,16 +324,17 @@
 
 @keyframes pulse {
   0%, 100% {
-    box-shadow: 0 10px 40px rgba(233, 69, 96, 0.4);
+    box-shadow: 0 8px 30px rgba(39, 158, 90, 0.35);
   }
   50% {
-    box-shadow: 0 10px 60px rgba(233, 69, 96, 0.6);
+    box-shadow: 0 8px 45px rgba(39, 158, 90, 0.5);
   }
 }
 
 .start-shopping-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 15px 50px rgba(233, 69, 96, 0.5);
+  box-shadow: 0 12px 40px rgba(39, 158, 90, 0.45);
+  background: linear-gradient(135deg, #22C55E 0%, #279E5A 100%);
 }
 
 .btn-icon {
@@ -319,8 +354,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -336,15 +371,14 @@
 }
 
 .shop-popup {
-  background: linear-gradient(145deg, #1e2a3a, #162232);
-  border-radius: 24px;
-  padding: 40px;
-  max-width: 700px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 35px;
+  max-width: 650px;
   width: 90%;
   transform: scale(0.8) translateY(50px);
   transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  border: 1px solid rgba(233, 69, 96, 0.3);
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15);
 }
 
 .shop-popup.show {
@@ -353,74 +387,83 @@
 
 .popup-header {
   text-align: center;
-  margin-bottom: 35px;
+  margin-bottom: 30px;
 }
 
 .popup-header h2 {
-  font-size: 1.8rem;
-  color: #fff;
-  margin-bottom: 10px;
+  font-size: 1.6rem;
+  color: #1a1a1a;
+  margin-bottom: 8px;
   font-weight: 700;
+  font-family: "Quicksand", sans-serif;
 }
 
 .popup-header p {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 1rem;
+  color: #666;
+  font-size: 0.95rem;
+  font-family: "Inter", sans-serif;
 }
 
 /* Shop Options */
 .popup-options {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .shop-option {
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 25px;
-  background: rgba(255, 255, 255, 0.05);
+  padding: 22px;
+  background: #F3FAF2;
   border: 2px solid transparent;
-  border-radius: 16px;
+  border-radius: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: left;
 }
 
 .shop-option:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateX(10px);
+  transform: translateX(8px);
+}
+
+.shop-option.retail {
+  background: linear-gradient(135deg, #F3FAF2 0%, #E8F5E9 100%);
 }
 
 .shop-option.retail:hover {
-  border-color: #e94560;
-  box-shadow: 0 10px 40px rgba(233, 69, 96, 0.2);
+  border-color: #279E5A;
+  box-shadow: 0 8px 30px rgba(39, 158, 90, 0.15);
+}
+
+.shop-option.wholesale {
+  background: linear-gradient(135deg, #FFFBF4 0%, #FFF3E0 100%);
 }
 
 .shop-option.wholesale:hover {
-  border-color: #22c55e;
-  box-shadow: 0 10px 40px rgba(34, 197, 94, 0.2);
+  border-color: #FF9F29;
+  box-shadow: 0 8px 30px rgba(255, 159, 41, 0.15);
 }
 
 .option-icon {
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 16px;
+  border-radius: 14px;
   flex-shrink: 0;
 }
 
 .shop-option.retail .option-icon {
-  background: linear-gradient(135deg, rgba(233, 69, 96, 0.2), rgba(233, 69, 96, 0.1));
-  color: #e94560;
+  background: linear-gradient(135deg, #279E5A, #22C55E);
+  color: #fff;
 }
 
 .shop-option.wholesale .option-icon {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
-  color: #22c55e;
+  background: linear-gradient(135deg, #FF9F29, #FFB347);
+  color: #fff;
 }
 
 .option-content {
@@ -428,16 +471,18 @@
 }
 
 .option-content h3 {
-  font-size: 1.4rem;
-  color: #fff;
-  margin-bottom: 5px;
+  font-size: 1.3rem;
+  color: #1a1a1a;
+  margin-bottom: 4px;
   font-weight: 700;
+  font-family: "Quicksand", sans-serif;
 }
 
 .option-content p {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.95rem;
-  margin-bottom: 12px;
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  font-family: "Inter", sans-serif;
 }
 
 .option-features {
@@ -446,15 +491,16 @@
   margin: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
 .option-features li {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.75rem;
+  color: #555;
+  background: rgba(0, 0, 0, 0.05);
   padding: 4px 10px;
   border-radius: 20px;
+  font-family: "Inter", sans-serif;
 }
 
 .option-arrow {
@@ -462,12 +508,12 @@
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  color: rgba(255, 255, 255, 0.3);
+  color: #ccc;
   transition: all 0.3s ease;
 }
 
 .enter-text {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -477,7 +523,6 @@
 }
 
 .shop-option:hover .option-arrow {
-  color: #fff;
   transform: translateX(5px);
 }
 
@@ -486,34 +531,42 @@
   transform: translateY(0);
 }
 
+.shop-option.retail:hover .option-arrow {
+  color: #279E5A;
+}
+
 .shop-option.retail:hover .enter-text {
-  color: #e94560;
+  color: #279E5A;
+}
+
+.shop-option.wholesale:hover .option-arrow {
+  color: #FF9F29;
 }
 
 .shop-option.wholesale:hover .enter-text {
-  color: #22c55e;
+  color: #FF9F29;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .door-brand span {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
   }
 
   .brand-name {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
   }
 
   .welcome-text {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 
   .welcome-tagline {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
   }
 
   .start-shopping-btn {
-    padding: 15px 35px;
+    padding: 14px 32px;
     font-size: 1rem;
   }
 
@@ -523,27 +576,27 @@
   }
 
   .popup-header h2 {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
   }
 
   .shop-option {
-    padding: 18px;
+    padding: 16px;
     flex-direction: column;
     text-align: center;
   }
 
   .option-icon {
-    width: 60px;
-    height: 60px;
+    width: 55px;
+    height: 55px;
   }
 
   .option-icon svg {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
   }
 
   .option-content h3 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 
   .option-features {
@@ -555,22 +608,21 @@
   }
 
   .logo-img {
-    width: 130px;
+    width: 120px;
   }
 }
 
 @media (max-width: 480px) {
   .door-brand span {
-    font-size: 1.4rem;
-    gap: 4px;
+    font-size: 1.3rem;
   }
 
   .brand-name {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .welcome-text {
-    font-size: 1rem;
+    font-size: 0.95rem;
     letter-spacing: 2px;
   }
 
@@ -597,7 +649,7 @@
   height: 100%;
   background: radial-gradient(
     ellipse at center,
-    rgba(255, 255, 255, 0.1) 0%,
+    rgba(39, 158, 90, 0.1) 0%,
     transparent 70%
   );
   animation: rays 2s ease-out forwards;
@@ -618,20 +670,20 @@
   }
 }
 
-/* Particles Effect */
+/* Subtle Dot Pattern Effect */
 .preloader-container::before {
   content: '';
   position: absolute;
   width: 100%;
   height: 100%;
   background-image:
-    radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.3), transparent),
-    radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.2), transparent),
-    radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.4), transparent),
-    radial-gradient(2px 2px at 130px 80px, rgba(255, 255, 255, 0.2), transparent),
-    radial-gradient(1px 1px at 160px 120px, rgba(255, 255, 255, 0.3), transparent);
+    radial-gradient(2px 2px at 20px 30px, rgba(39, 158, 90, 0.12), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(39, 158, 90, 0.08), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(39, 158, 90, 0.1), transparent),
+    radial-gradient(2px 2px at 130px 80px, rgba(39, 158, 90, 0.08), transparent),
+    radial-gradient(1px 1px at 160px 120px, rgba(39, 158, 90, 0.1), transparent);
   background-size: 200px 200px;
-  animation: particles 20s linear infinite;
+  animation: particles 30s linear infinite;
   pointer-events: none;
 }
 
