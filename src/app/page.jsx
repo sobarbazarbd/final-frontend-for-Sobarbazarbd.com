@@ -74,12 +74,13 @@ const Page = async () => {
       {/* <MegaDealsBanner section={bannerMap?.Deals} /> */}
       <FlashSalesOne section={bannerMap?.FlashSales} />
       <RecommendedOne data={homeData?.data?.recommended_products} categories={homeData?.data?.categories}  />
+      <HotDealsOne section={bannerMap?.Deals}  data={homeData?.data?.recommended_products} />
       <PopularProductsOne categories={homeData?.data?.categories} section={bannerMap?.PopularProducts} />
       <Trending data={homeData?.data?.recommended_products} />
       <DealsOne section={bannerMap?.Deals}  data={homeData?.data?.recommended_products} />
       <PromotionalThree section={bannerMap?.PromotionalTwo} />
       <OfferOne section={bannerMap?.Offer} />
-      <HotDealsOne section={bannerMap?.Deals}  data={homeData?.data?.recommended_products} />
+      
      
       <BestSellsOne section={bannerMap?.Deals} data={homeData?.data?.recommended_products} />
       <OrganicOne section={bannerMap?.Deals}  data={homeData?.data?.recommended_products} />
