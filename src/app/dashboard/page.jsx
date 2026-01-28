@@ -2,22 +2,18 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { 
-  Person, ShoppingCart, Favorite, LocalShipping, 
-  Headset, Logout, Edit, Visibility, Delete,
+import {
+  Person, ShoppingCart, Favorite, LocalShipping,
+  Headset, Logout, Edit, Delete,
   CheckCircle, Pending, DirectionsCar, TaskAlt,
   Email, Phone, Chat, ArrowForward,
   Dashboard as DashboardIcon,
   LocationOn,
-  Star,
-  StarHalf
+  Menu as MenuIcon,
+  Close as CloseIcon
 } from "@mui/icons-material";
-import { 
-  Card, 
-  CardContent, 
-  Typography, 
-  Grid, 
-  Box, 
+import {
+  Box,
   Chip,
   Avatar,
   LinearProgress,
@@ -26,164 +22,283 @@ import {
   StepLabel,
   Button,
   TextField,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   IconButton,
-  Container,
-  Divider
+  Divider,
+  Drawer,
+  useMediaQuery,
+  useTheme,
+  CircularProgress
 } from "@mui/material";
 import toast from "react-hot-toast";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.hetdcl.com/api/v1.0";
 
+/* ─── Brand tokens (matching the website) ─── */
+const C = {
+  primary:    "#279E5A",
+  primaryDk:  "#1F8A4D",
+  primaryLt:  "#E8F5E9",
+  secondary:  "#FF9F29",
+  secondaryLt:"#FFF3E0",
+  pageBg:     "#F3FAF2",
+  cardBg:     "#FFFFFF",
+  borderClr:  "#E6E6E6",
+  heading:    "#1A1A1A",
+  body:       "#666666",
+  muted:      "#999999",
+  danger:     "#DC2626",
+  info:       "#2563EB",
+  warn:       "#F59E0B",
+  success:    "#22C55E",
+};
+
+/* ─── Shared sx helpers ─── */
+const cardSx = {
+  backgroundColor: C.cardBg,
+  borderRadius: "16px",
+  border: `1px solid ${C.borderClr}`,
+  boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+  overflow: "hidden",
+};
+
+const inputSx = {
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "10px",
+    backgroundColor: "#FAFAFA",
+    fontSize: "0.9rem",
+    "& fieldset": { borderColor: C.borderClr },
+    "&:hover fieldset": { borderColor: C.primary },
+    "&.Mui-focused fieldset": { borderColor: C.primary },
+  },
+};
+
+/* ════════════════════════════════════════════
+   MAIN PAGE
+   ════════════════════════════════════════════ */
 const DashboardPage = () => {
   const { user, loading: authLoading, logout } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/login');
-    }
+    if (!authLoading && !user) router.push("/login");
   }, [user, authLoading, router]);
 
+  /* Loading screen */
   if (authLoading) {
-    return <div>Loading...</div>;
+    return (
+      <Box sx={{ backgroundColor: C.pageBg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Box sx={{ textAlign: "center" }}>
+          <CircularProgress sx={{ color: C.primary, mb: 2 }} />
+          <Box sx={{ color: C.body, fontSize: "0.95rem" }}>Loading Dashboard...</Box>
+        </Box>
+      </Box>
+    );
   }
-
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   const tabs = [
-    { id: "dashboard", label: "Dashboard", icon: <DashboardIcon /> },
-    { id: "profile", label: "Profile", icon: <Person /> },
-    { id: "orders", label: "Orders", icon: <ShoppingCart /> },
-    { id: "wishlist", label: "Wishlist", icon: <Favorite /> },
-    { id: "track", label: "Track Order", icon: <LocalShipping /> },
-    { id: "support", label: "Support", icon: <Headset /> },
+    { id: "dashboard", label: "Dashboard", icon: <DashboardIcon fontSize="small" /> },
+    { id: "profile",   label: "Profile",   icon: <Person fontSize="small" /> },
+    { id: "orders",    label: "Orders",    icon: <ShoppingCart fontSize="small" /> },
+    { id: "wishlist",  label: "Wishlist",  icon: <Favorite fontSize="small" /> },
+    { id: "track",     label: "Track Order",icon: <LocalShipping fontSize="small" /> },
+    { id: "support",   label: "Support",   icon: <Headset fontSize="small" /> },
   ];
 
+  const handleTab = (id) => {
+    setActiveTab(id);
+    if (isMobile) setMobileOpen(false);
+  };
+
+  /* ── Sidebar content (shared by desktop & drawer) ── */
+  const Sidebar = () => (
+    <Box sx={{
+      ...cardSx,
+      borderRadius: isMobile ? 0 : "16px",
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+    }}>
+      {/* Close btn on mobile */}
+      {isMobile && (
+        <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
+          <IconButton onClick={() => setMobileOpen(false)} size="small">
+            <CloseIcon />
+          </IconButton>
+        </Box>
+      )}
+
+      {/* Avatar block */}
+      <Box sx={{ textAlign: "center", pt: isMobile ? 1 : 4, pb: 3, px: 3 }}>
+        <Avatar sx={{
+          width: 80, height: 80, mx: "auto", mb: 1.5,
+          bgcolor: C.primaryLt, color: C.primary,
+          border: `3px solid ${C.primary}`,
+          fontSize: "2rem", fontWeight: 700,
+        }}>
+          {user?.username?.charAt(0)?.toUpperCase() || <Person sx={{ fontSize: 36 }} />}
+        </Avatar>
+        <Box sx={{ fontWeight: 700, fontSize: "1.1rem", color: C.heading, fontFamily: "'Quicksand', sans-serif" }}>
+          {user?.username || "Guest User"}
+        </Box>
+        <Box sx={{ fontSize: "0.8rem", color: C.muted, mt: 0.3 }}>
+          {user?.email || "No email"}
+        </Box>
+      </Box>
+
+      <Divider sx={{ borderColor: C.borderClr }} />
+
+      {/* Navigation */}
+      <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 0.5, p: 2 }}>
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <Button
+              key={tab.id}
+              startIcon={tab.icon}
+              onClick={() => handleTab(tab.id)}
+              disableElevation
+              sx={{
+                justifyContent: "flex-start",
+                textTransform: "none",
+                borderRadius: "10px",
+                py: 1.2,
+                px: 2,
+                fontSize: "0.9rem",
+                fontWeight: isActive ? 700 : 500,
+                color: isActive ? "#fff" : C.body,
+                bgcolor: isActive ? C.primary : "transparent",
+                transition: "all .25s ease",
+                "&:hover": {
+                  bgcolor: isActive ? C.primaryDk : C.primaryLt,
+                  color: isActive ? "#fff" : C.primary,
+                },
+              }}
+            >
+              {tab.label}
+            </Button>
+          );
+        })}
+      </Box>
+
+      {/* Logout */}
+      <Box sx={{ p: 2, pt: 0 }}>
+        <Button
+          fullWidth
+          startIcon={<Logout fontSize="small" />}
+          onClick={logout}
+          sx={{
+            justifyContent: "flex-start",
+            textTransform: "none",
+            borderRadius: "10px",
+            py: 1.2,
+            px: 2,
+            fontSize: "0.9rem",
+            fontWeight: 500,
+            color: C.danger,
+            border: `1px solid ${C.danger}20`,
+            "&:hover": { bgcolor: "#FEF2F2", borderColor: C.danger },
+          }}
+        >
+          Logout
+        </Button>
+      </Box>
+    </Box>
+  );
+
+  /* ── Layout ── */
   return (
-    <Box sx={{ backgroundColor: '#f8f9fa', minHeight: '100vh', py: 4 }}>
-      <Container maxWidth="xl">
-        <Grid container spacing={2}>
-          {/* Sidebar */}
-          <Grid item xs={12} lg={3}>
-            <Card sx={{ 
-              borderRadius: 3, 
-              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-              background: 'linear-gradient(135deg, #198754 0%, #20c997 100%)',
-              color: 'white',
-              mb: 3 
-            }}>
-              <CardContent sx={{ p: 3 }}>
-                <Box sx={{ textAlign: 'center', mb: 3 }}>
-                  <Avatar
-                    sx={{
-                      width: 80,
-                      height: 80,
-                      mx: 'auto',
-                      mb: 2,
-                      border: '3px solid white',
-                      backgroundColor: 'rgba(255,255,255,0.2)'
-                    }}
-                  >
-                    <Person sx={{ fontSize: 40 }} />
-                  </Avatar>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                    {user?.username || 'Guest User'}
-                  </Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.9, fontSize: '0.8rem' }}>
-                    {user?.email || 'No email'}
-                  </Typography>
-                </Box>
+    <Box sx={{ backgroundColor: C.pageBg, minHeight: "100vh" }}>
+      {/* Mobile top bar */}
+      {isMobile && (
+        <Box sx={{
+          position: "sticky", top: 0, zIndex: 50,
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          px: 2, py: 1.5,
+          backgroundColor: C.cardBg,
+          borderBottom: `1px solid ${C.borderClr}`,
+          boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+        }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+            <Avatar sx={{ width: 36, height: 36, bgcolor: C.primaryLt, color: C.primary, fontSize: "0.9rem", fontWeight: 700 }}>
+              {user?.username?.charAt(0)?.toUpperCase() || "?"}
+            </Avatar>
+            <Box>
+              <Box sx={{ fontWeight: 700, fontSize: "0.95rem", color: C.heading, fontFamily: "'Quicksand', sans-serif" }}>
+                {user?.username || "Guest"}
+              </Box>
+              <Box sx={{ fontSize: "0.7rem", color: C.muted }}>
+                {tabs.find((t) => t.id === activeTab)?.label}
+              </Box>
+            </Box>
+          </Box>
+          <IconButton onClick={() => setMobileOpen(true)} sx={{ color: C.heading }}>
+            <MenuIcon />
+          </IconButton>
+        </Box>
+      )}
 
-                <Divider sx={{ borderColor: 'rgba(255,255,255,0.3)', mb: 2 }} />
+      {/* Mobile drawer */}
+      <Drawer
+        anchor="left"
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        sx={{ "& .MuiDrawer-paper": { width: 280, border: "none" } }}
+      >
+        <Sidebar />
+      </Drawer>
 
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                  {tabs.map((tab) => (
-                    <Button
-                      key={tab.id}
-                      startIcon={tab.icon}
-                      onClick={() => setActiveTab(tab.id)}
-                      sx={{
-                        justifyContent: 'flex-start',
-                        color: activeTab === tab.id ? 'white' : 'rgba(255,255,255,0.8)',
-                        backgroundColor: activeTab === tab.id ? 'rgba(255,255,255,0.2)' : 'transparent',
-                        borderRadius: 2,
-                        py: 1.2,
-                        px: 2,
-                        fontSize: '0.9rem',
-                        '&:hover': {
-                          backgroundColor: 'rgba(255,255,255,0.15)',
-                        }
-                      }}
-                    >
-                      {tab.label}
-                    </Button>
-                  ))}
-                  
-                  <Button
-                    startIcon={<Logout />}
-                    onClick={logout}
-                    sx={{
-                      justifyContent: 'flex-start',
-                      color: 'rgba(255,255,255,0.8)',
-                      borderRadius: 2,
-                      py: 1.2,
-                      px: 2,
-                      mt: 1,
-                      fontSize: '0.9rem',
-                      '&:hover': {
-                        backgroundColor: 'rgba(255,0,0,0.2)',
-                      }
-                    }}
-                  >
-                    Logout
-                  </Button>
-                </Box>
-              </CardContent>
-            </Card>
+      {/* Main grid – full width with padding */}
+      <Box sx={{
+        display: "flex",
+        gap: 3,
+        maxWidth: "1600px",
+        width: "100%",
+        mx: "auto",
+        p: { xs: 2, md: 3, lg: 4 },
+      }}>
+        {/* Desktop sidebar */}
+        {!isMobile && (
+          <Box sx={{ width: 280, flexShrink: 0, position: "sticky", top: 24, alignSelf: "flex-start" }}>
+            <Sidebar />
+          </Box>
+        )}
 
-          </Grid>
-
-          {/* Main Content */}
-          <Grid item xs={12} lg={9}>
-            <Card sx={{ 
-              borderRadius: 3, 
-              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-              minHeight: '500px'
-            }}>
-              <CardContent sx={{ p: 4 }}>
-                {activeTab === "dashboard" && <DashboardTab />}
-                {activeTab === "profile" && <ProfileTab />}
-                {activeTab === "orders" && <OrdersTab />}
-                {activeTab === "wishlist" && <WishlistTab />}
-                {activeTab === "track" && <TrackOrderTab />}
-                {activeTab === "support" && <SupportTab />}
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </Container>
+        {/* Content area – stretches to fill remaining space */}
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          {activeTab === "dashboard" && <DashboardTab />}
+          {activeTab === "profile" && <ProfileTab />}
+          {activeTab === "orders" && <OrdersTab />}
+          {activeTab === "wishlist" && <WishlistTab />}
+          {activeTab === "track" && <TrackOrderTab />}
+          {activeTab === "support" && <SupportTab />}
+        </Box>
+      </Box>
     </Box>
   );
 };
 
-// Dashboard Tab Components u can customised
+/* ════════════════════════════════════════════
+   PAGE HEADER (reusable)
+   ════════════════════════════════════════════ */
+const PageHeader = ({ title, subtitle }) => (
+  <Box sx={{ mb: 4 }}>
+    <Box sx={{ fontWeight: 800, fontSize: { xs: "1.5rem", md: "2rem" }, color: C.heading, fontFamily: "'Quicksand', sans-serif", letterSpacing: "-0.5px" }}>
+      {title}
+    </Box>
+    <Box sx={{ fontSize: "0.9rem", color: C.muted, mt: 0.5 }}>{subtitle}</Box>
+  </Box>
+);
+
+/* ════════════════════════════════════════════
+   DASHBOARD TAB
+   ════════════════════════════════════════════ */
 const DashboardTab = () => {
-  const [stats, setStats] = useState({
-    totalOrders: 0,
-    pendingOrders: 0,
-    wishlistItems: 0,
-    deliveredOrders: 0,
-  });
+  const [stats, setStats] = useState({ totalOrders: 0, pendingOrders: 0, wishlistItems: 0, deliveredOrders: 0 });
   const [recentOrders, setRecentOrders] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -194,46 +309,28 @@ const DashboardTab = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("access_token");
-        // Fetch orders
-        const ordersRes = await fetch(`${API_BASE_URL}/customers/orders/`, {
-          headers: {
-            "Authorization": `JWT ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const headers = { Authorization: `JWT ${token}`, "Content-Type": "application/json" };
+
+        const ordersRes = await fetch(`${API_BASE_URL}/customers/orders/`, { headers });
         const ordersData = await ordersRes.json();
         const orders = Array.isArray(ordersData) ? ordersData : (ordersData.results || ordersData.data || []);
-        // Stats
+
         const totalOrders = orders.length;
-        const pendingOrders = orders.filter(o => o.status === "Pending" || o.status === "Processing" || o.status === "Placed").length;
-        const deliveredOrders = orders.filter(o => o.status === "Delivered").length;
-        // Recent orders (latest 3)
-        const sortedOrders = [...orders].sort((a, b) => new Date(b.order_date) - new Date(a.order_date));
-        setRecentOrders(sortedOrders.slice(0, 3));
-        // Fetch wishlist
-        const wishlistRes = await fetch(`${API_BASE_URL}/customers/favorite-products/`, {
-          headers: {
-            "Authorization": `JWT ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        const wishlistData = await wishlistRes.json();
-        const wishlistArr = Array.isArray(wishlistData) ? wishlistData : (wishlistData.results || wishlistData.data || []);
-        setWishlist(wishlistArr);
-        setStats({
-          totalOrders,
-          pendingOrders,
-          wishlistItems: wishlistArr.length,
-          deliveredOrders,
-        });
-      } catch (err) {
+        const pendingOrders = orders.filter((o) => ["Pending", "Processing", "Placed"].includes(o.status)).length;
+        const deliveredOrders = orders.filter((o) => o.status === "Delivered").length;
+
+        const sorted = [...orders].sort((a, b) => new Date(b.order_date) - new Date(a.order_date));
+        setRecentOrders(sorted.slice(0, 3));
+
+        const wishRes = await fetch(`${API_BASE_URL}/customers/favorite-products/`, { headers });
+        const wishData = await wishRes.json();
+        const wishArr = Array.isArray(wishData) ? wishData : (wishData.results || wishData.data || []);
+        setWishlist(wishArr);
+
+        setStats({ totalOrders, pendingOrders, wishlistItems: wishArr.length, deliveredOrders });
+      } catch {
         toast.error("Failed to load dashboard data");
-        setStats({
-          totalOrders: 0,
-          pendingOrders: 0,
-          wishlistItems: 0,
-          deliveredOrders: 0,
-        });
+        setStats({ totalOrders: 0, pendingOrders: 0, wishlistItems: 0, deliveredOrders: 0 });
         setRecentOrders([]);
         setWishlist([]);
       }
@@ -242,443 +339,268 @@ const DashboardTab = () => {
     fetchDashboardData();
   }, [user]);
 
-  const getStatusColor = (status) => {
-    if (status === "Delivered") return "success";
-    if (status === "Processing" || status === "Pending" || status === "Placed") return "warning";
-    if (status === "Shipped") return "info";
-    if (status === "Paid") return "success";
-    if (status === "Cancelled") return "error";
+  const statusColor = (s) => {
+    if (s === "Delivered") return "success";
+    if (["Processing", "Pending", "Placed"].includes(s)) return "warning";
+    if (s === "Shipped") return "info";
+    if (s === "Paid") return "success";
+    if (s === "Cancelled") return "error";
     return "default";
   };
-
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case 'Delivered': return <TaskAlt sx={{ fontSize: 16 }} />;
-      case 'Processing': case 'Pending': case 'Placed': return <Pending sx={{ fontSize: 16 }} />;
-      case 'Shipped': return <DirectionsCar sx={{ fontSize: 16 }} />;
-      case 'Paid': return <CheckCircle sx={{ fontSize: 16 }} />;
-      case 'Cancelled': return <Delete sx={{ fontSize: 16 }} />;
-      default: return <Pending sx={{ fontSize: 16 }} />;
+  const statusIcon = (s) => {
+    const sx = { fontSize: 15 };
+    switch (s) {
+      case "Delivered": return <TaskAlt sx={sx} />;
+      case "Shipped":   return <DirectionsCar sx={sx} />;
+      case "Paid":      return <CheckCircle sx={sx} />;
+      case "Cancelled": return <Delete sx={sx} />;
+      default:          return <Pending sx={sx} />;
     }
   };
 
-  return (
-    <Box>
-      <Typography variant="h4" sx={{ mb: 1, fontWeight: 'bold', color: '#333' }}>
-        Dashboard Overview
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 4, color: '#666' }}>
-        Welcome back! Here's your account summary
-      </Typography>
+  const statCards = [
+    { label: "Total Orders",   value: stats.totalOrders,   icon: <ShoppingCart />, color: C.primary,   bg: C.primaryLt },
+    { label: "Pending",        value: stats.pendingOrders,  icon: <Pending />,      color: C.warn,      bg: "#FEF9C3" },
+    { label: "Wishlist",       value: stats.wishlistItems,  icon: <Favorite />,     color: "#EC4899",   bg: "#FCE7F3" },
+    { label: "Delivered",      value: stats.deliveredOrders, icon: <TaskAlt />,     color: C.info,      bg: "#DBEAFE" },
+  ];
 
-      {/* Stats Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        {[
-          { label: 'Total Orders', value: stats.totalOrders, icon: <ShoppingCart />, color: '#4CAF50' },
-          { label: 'Pending Orders', value: stats.pendingOrders, icon: <Pending />, color: '#FF9800' },
-          { label: 'Wishlist Items', value: stats.wishlistItems, icon: <Favorite />, color: '#E91E63' },
-          { label: 'Delivered', value: stats.deliveredOrders, icon: <TaskAlt />, color: '#2196F3' },
-        ].map((stat, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
-            <Card sx={{
-              borderRadius: 3,
-              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-              background: `linear-gradient(135deg, ${stat.color}15 0%, ${stat.color}25 100%)`,
-              border: `1px solid ${stat.color}20`,
-              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: '0 6px 25px rgba(0,0,0,0.15)'
-              }
-            }}>
-              <CardContent sx={{ p: 3 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Box>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', color: stat.color, mb: 0.5 }}>
-                      {loading ? "..." : stat.value}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#666', fontSize: '0.9rem' }}>
-                      {stat.label}
-                    </Typography>
+  return (
+    <>
+      <PageHeader title="Dashboard" subtitle="Welcome back! Here's your account summary" />
+
+      {/* ── Stat cards ── */}
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" }, gap: 2.5, mb: 4 }}>
+        {statCards.map((s, i) => (
+          <Box key={i} sx={{
+            ...cardSx,
+            p: 2.5,
+            display: "flex", flexDirection: "column", gap: 1.5,
+            transition: "transform .25s ease, box-shadow .25s ease",
+            "&:hover": { transform: "translateY(-4px)", boxShadow: "0 8px 24px rgba(0,0,0,0.1)" },
+          }}>
+            <Box sx={{ width: 44, height: 44, borderRadius: "12px", bgcolor: s.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {React.cloneElement(s.icon, { sx: { color: s.color, fontSize: 22 } })}
+            </Box>
+            <Box>
+              <Box sx={{ fontWeight: 800, fontSize: "1.75rem", color: C.heading, lineHeight: 1 }}>
+                {loading ? <CircularProgress size={20} sx={{ color: s.color }} /> : s.value}
+              </Box>
+              <Box sx={{ fontSize: "0.8rem", color: C.muted, mt: 0.5 }}>{s.label}</Box>
+            </Box>
+          </Box>
+        ))}
+      </Box>
+
+      {/* ── Recent orders ── */}
+      <Box sx={{ ...cardSx, mb: 4 }}>
+        <Box sx={{ px: 3, pt: 3, pb: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Box sx={{ fontWeight: 700, fontSize: "1.1rem", color: C.heading, fontFamily: "'Quicksand', sans-serif" }}>Recent Orders</Box>
+        </Box>
+
+        {/* Desktop */}
+        <Box sx={{ display: { xs: "none", md: "block" }, overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ borderBottom: `1px solid ${C.borderClr}` }}>
+                {["Order ID", "Date", "Items", "Total", "Status", ""].map((h) => (
+                  <th key={h} style={{ textAlign: "left", padding: "10px 16px", fontSize: "0.8rem", color: C.muted, fontWeight: 600, whiteSpace: "nowrap" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr><td colSpan={6} style={{ textAlign: "center", padding: 32, color: C.muted }}>Loading...</td></tr>
+              ) : recentOrders.length === 0 ? (
+                <tr><td colSpan={6} style={{ textAlign: "center", padding: 32, color: C.muted }}>No recent orders</td></tr>
+              ) : recentOrders.map((o, i) => (
+                <tr key={o.id || i} style={{ borderBottom: `1px solid ${C.borderClr}` }}>
+                  <td style={{ padding: "14px 16px", fontWeight: 600, color: C.primary, fontSize: "0.9rem" }}>#{o.order_number || o.id}</td>
+                  <td style={{ padding: "14px 16px", color: C.body, fontSize: "0.85rem" }}>{o.order_date ? new Date(o.order_date).toLocaleDateString() : ""}</td>
+                  <td style={{ padding: "14px 16px" }}>
+                    <Chip label={`${o.items?.length || 0} items`} size="small" sx={{ fontSize: "0.7rem", bgcolor: "#F1F1F1", fontWeight: 500 }} />
+                  </td>
+                  <td style={{ padding: "14px 16px", fontWeight: 700, color: C.primary, fontSize: "0.9rem" }}>
+                    {o.total_amount ? `৳${o.total_amount}` : o.total_price ? `৳${o.total_price}` : ""}
+                  </td>
+                  <td style={{ padding: "14px 16px" }}>
+                    <Chip icon={statusIcon(o.status)} label={o.status} color={statusColor(o.status)} size="small" sx={{ fontSize: "0.7rem", fontWeight: 600 }} />
+                  </td>
+                  <td style={{ padding: "14px 16px" }}>
+                    <Button size="small" endIcon={<ArrowForward sx={{ fontSize: 14 }} />} sx={{ textTransform: "none", fontSize: "0.8rem", color: C.primary, fontWeight: 600, "&:hover": { bgcolor: C.primaryLt } }}>
+                      View
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Box>
+
+        {/* Mobile cards */}
+        <Box sx={{ display: { xs: "block", md: "none" }, px: 2, pb: 2 }}>
+          {loading ? (
+            <Box sx={{ textAlign: "center", py: 4, color: C.muted }}>Loading...</Box>
+          ) : recentOrders.length === 0 ? (
+            <Box sx={{ textAlign: "center", py: 4, color: C.muted }}>No recent orders</Box>
+          ) : recentOrders.map((o, i) => (
+            <Box key={o.id || i} sx={{ p: 2, mb: 1.5, borderRadius: "12px", border: `1px solid ${C.borderClr}`, bgcolor: "#FAFAFA" }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1.5 }}>
+                <Box sx={{ fontWeight: 600, color: C.primary, fontSize: "0.9rem" }}>#{o.order_number || o.id}</Box>
+                <Chip icon={statusIcon(o.status)} label={o.status} color={statusColor(o.status)} size="small" sx={{ fontSize: "0.65rem" }} />
+              </Box>
+              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+                <Box sx={{ fontSize: "0.8rem", color: C.muted }}>{o.order_date ? new Date(o.order_date).toLocaleDateString() : ""}</Box>
+                <Box sx={{ fontSize: "0.8rem", color: C.muted }}>{o.items?.length || 0} items</Box>
+              </Box>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <Box sx={{ fontWeight: 700, color: C.primary }}>{o.total_amount ? `৳${o.total_amount}` : o.total_price ? `৳${o.total_price}` : ""}</Box>
+                <Button size="small" endIcon={<ArrowForward sx={{ fontSize: 14 }} />} sx={{ textTransform: "none", fontSize: "0.75rem", color: C.primary }}>View</Button>
+              </Box>
+            </Box>
+          ))}
+        </Box>
+      </Box>
+
+      {/* ── Wishlist preview ── */}
+      <Box sx={{ ...cardSx }}>
+        <Box sx={{ px: 3, pt: 3, pb: 2 }}>
+          <Box sx={{ fontWeight: 700, fontSize: "1.1rem", color: C.heading, fontFamily: "'Quicksand', sans-serif" }}>My Wishlist</Box>
+        </Box>
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "repeat(3, 1fr)" }, gap: 2, px: 3, pb: 3 }}>
+          {loading ? (
+            <Box sx={{ gridColumn: "1 / -1", textAlign: "center", py: 4, color: C.muted }}>Loading...</Box>
+          ) : wishlist.length === 0 ? (
+            <Box sx={{ gridColumn: "1 / -1", textAlign: "center", py: 4, color: C.muted }}>No wishlist items</Box>
+          ) : wishlist.slice(0, 3).map((item) => {
+            const prod = item.product;
+            return (
+              <Box key={item.id} sx={{
+                borderRadius: "14px",
+                border: `1px solid ${C.borderClr}`,
+                overflow: "hidden",
+                transition: "transform .25s ease, box-shadow .25s ease",
+                "&:hover": { transform: "translateY(-4px)", boxShadow: "0 8px 24px rgba(0,0,0,0.1)" },
+              }}>
+                <Box sx={{ height: 130, bgcolor: C.primaryLt, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Favorite sx={{ fontSize: 36, color: C.primary, opacity: 0.5 }} />
+                </Box>
+                <Box sx={{ p: 2 }}>
+                  <Box sx={{ fontWeight: 700, fontSize: "0.9rem", color: C.heading, mb: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {prod?.supplier_product?.name || prod?.name || "Product"}
                   </Box>
-                  <Box sx={{
-                    backgroundColor: `${stat.color}20`,
-                    borderRadius: '50%',
-                    p: 1.5,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    {React.cloneElement(stat.icon, { sx: { color: stat.color, fontSize: 28 } })}
+                  <Box sx={{ fontWeight: 800, color: C.primary, fontSize: "1.1rem", mb: 2 }}>
+                    ৳{prod?.variants?.[0]?.price || "N/A"}
+                  </Box>
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <Button fullWidth variant="contained" disableElevation sx={{
+                      bgcolor: C.primary, borderRadius: "10px", textTransform: "none", fontWeight: 600, fontSize: "0.8rem", py: 1,
+                      "&:hover": { bgcolor: C.primaryDk },
+                    }}>
+                      Add to Cart
+                    </Button>
+                    <IconButton size="small" sx={{ border: `1px solid ${C.danger}30`, color: C.danger, borderRadius: "10px", "&:hover": { bgcolor: "#FEF2F2" } }}>
+                      <Delete fontSize="small" />
+                    </IconButton>
                   </Box>
                 </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-
-      {/* Recent Orders */}
-      <Card sx={{ borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', mb: 4 }}>
-        <CardContent sx={{ p: 3 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              Recent Orders
-            </Typography>
-          </Box>
-          <TableContainer>
-            <Table sx={{ minWidth: 650 }}>
-              <TableHead sx={{ backgroundColor: '#f8f9fa' }}>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Order ID</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Date</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Items</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Total</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Status</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={6} align="center">Loading...</TableCell>
-                  </TableRow>
-                ) : recentOrders.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} align="center">No recent orders found.</TableCell>
-                  </TableRow>
-                ) : (
-                  recentOrders.map((order, index) => (
-                    <TableRow
-                      key={order.id || index}
-                      sx={{
-                        '&:last-child td, &:last-child th': { border: 0 },
-                        '&:hover': { backgroundColor: '#f8f9fa' }
-                      }}
-                    >
-                      <TableCell>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#667eea' }}>
-                          {order.order_number || order.id}
-                        </Typography>
-                      </TableCell>
-                      <TableCell sx={{ fontSize: '0.9rem' }}>
-                        {order.order_date ? new Date(order.order_date).toLocaleDateString() : ""}
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          label={`${order.items ? order.items.length : 0} items`}
-                          size="small"
-                          variant="outlined"
-                          sx={{ fontSize: '0.75rem' }}
-                        />
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 'bold', color: '#2e7d32', fontSize: '0.9rem' }}>
-                        {order.total_amount
-                          ? `৳ ${order.total_amount}`
-                          : order.total_price
-                          ? `৳ ${order.total_price}`
-                          : ""}
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          icon={getStatusIcon(order.status)}
-                          label={order.status}
-                          color={getStatusColor(order.status)}
-                          variant="filled"
-                          size="small"
-                          sx={{ fontSize: '0.75rem', fontWeight: '500' }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          endIcon={<ArrowForward sx={{ fontSize: 16 }} />}
-                          sx={{
-                            borderRadius: 2,
-                            fontSize: '0.8rem',
-                            textTransform: 'none'
-                          }}
-                        >
-                          View Details
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </CardContent>
-      </Card>
-
-      {/* Wishlist */}
-      <Card sx={{ borderRadius: 3, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
-        <CardContent sx={{ p: 3 }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 3 }}>
-            My Wishlist
-          </Typography>
-          <Grid container spacing={3}>
-            {loading ? (
-              <Grid item xs={12}><Typography>Loading...</Typography></Grid>
-            ) : wishlist.length === 0 ? (
-              <Grid item xs={12}><Typography>No wishlist items found.</Typography></Grid>
-            ) : (
-              wishlist.map((item) => {
-                const prod = item.product;
-                return (
-                  <Grid item xs={12} sm={6} md={4} key={item.id}>
-                    <Card sx={{
-                      borderRadius: 3,
-                      boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                      '&:hover': {
-                        transform: 'translateY(-5px)',
-                        boxShadow: '0 8px 30px rgba(0,0,0,0.15)'
-                      },
-                      position: 'relative',
-                      overflow: 'visible'
-                    }}>
-                      <CardContent sx={{ p: 0 }}>
-                        <Box sx={{
-                          height: 120,
-                          background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          borderRadius: '12px 12px 0 0',
-                          position: 'relative'
-                        }}>
-                          <Box sx={{
-                            width: 60,
-                            height: 60,
-                            borderRadius: '50%',
-                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                          }}>
-                            <Favorite sx={{ fontSize: 28, color: '#667eea' }} />
-                          </Box>
-                        </Box>
-                        <Box sx={{ p: 2.5 }}>
-                          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, fontSize: '1rem' }}>
-                            {prod?.supplier_product?.name || prod?.name || "Product"}
-                          </Typography>
-                          {/* Optionally show rating if available */}
-                          {/* <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                              {renderStars(prod?.rating || 0)}
-                            </Box>
-                            <Typography variant="body2" sx={{ color: '#666', fontSize: '0.8rem' }}>
-                              ({prod?.rating || 0})
-                            </Typography>
-                          </Box> */}
-                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
-                            <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
-                              ৳{prod?.variants?.[0]?.price || "N/A"}
-                            </Typography>
-                          </Box>
-                          <Box sx={{ display: 'flex', gap: 1 }}>
-                            <Button
-                              variant="contained"
-                              fullWidth
-                              sx={{
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                borderRadius: 2,
-                                py: 0.8,
-                                fontSize: '0.8rem',
-                                fontWeight: '500',
-                                textTransform: 'none'
-                              }}
-                            >
-                              Add to Cart
-                            </Button>
-                            <IconButton
-                              sx={{
-                                border: '1px solid #ff4444',
-                                color: '#ff4444',
-                                borderRadius: 2,
-                                '&:hover': { backgroundColor: 'rgba(255,68,68,0.1)' }
-                              }}
-                            >
-                              <Delete sx={{ fontSize: 20 }} />
-                            </IconButton>
-                          </Box>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                );
-              })
-            )}
-          </Grid>
-        </CardContent>
-      </Card>
-    </Box>
+              </Box>
+            );
+          })}
+        </Box>
+      </Box>
+    </>
   );
 };
 
-// Profile Tab Component - Fixed to match screenshot structure
+/* ════════════════════════════════════════════
+   PROFILE TAB
+   ════════════════════════════════════════════ */
 const ProfileTab = () => {
   const { user, updateProfile } = useAuth();
-  const [formData, setFormData] = useState({
-    email: "",
-    name: "",
-    phone: "",
-    shipping_address: "",
-    gender: "",
-  });
+  const [formData, setFormData] = useState({ email: "", name: "", phone: "", shipping_address: "", gender: "" });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      setFormData({
-        email: user?.customer?.email || user?.email || "",
-        name: user?.customer?.name || "",
-        phone: user?.customer?.phone || "",
-        shipping_address: user?.customer?.shipping_address || "",
-        gender: user?.customer?.gender || "",
-      });
-    }
+    if (user) setFormData({
+      email: user?.customer?.email || user?.email || "",
+      name: user?.customer?.name || "",
+      phone: user?.customer?.phone || "",
+      shipping_address: user?.customer?.shipping_address || "",
+      gender: user?.customer?.gender || "",
+    });
   }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // Send as { customer: { ...fields } }
     await updateProfile({ customer: formData });
     setLoading(false);
   };
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const fields = [
+    { label: "Username", value: user?.username || "", disabled: true },
+    { label: "Email Address", name: "email", type: "email", value: formData.email },
+    { label: "Full Name", name: "name", value: formData.name },
+    { label: "Phone Number", name: "phone", value: formData.phone },
+    { label: "Shipping Address", name: "shipping_address", value: formData.shipping_address },
+  ];
 
   return (
-    <Box>
-      <Typography variant="h4" sx={{ mb: 1, fontWeight: "bold", color: "#333" }}>
-        Profile Settings
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 4, color: "#666" }}>
-        Manage your account information and preferences
-      </Typography>
-
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="body2" sx={{ color: "#666", fontWeight: "500", mb: 0.5 }}>
-              Username
-            </Typography>
+    <>
+      <PageHeader title="Profile Settings" subtitle="Manage your account information" />
+      <Box component="form" onSubmit={handleSubmit} sx={{ ...cardSx, p: { xs: 2.5, md: 4 } }}>
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 3 }}>
+          {fields.map((f) => (
+            <Box key={f.label}>
+              <Box sx={{ fontSize: "0.85rem", fontWeight: 600, color: C.body, mb: 1 }}>{f.label}</Box>
+              <TextField
+                fullWidth
+                type={f.type || "text"}
+                name={f.name}
+                value={f.value}
+                disabled={f.disabled}
+                onChange={f.disabled ? undefined : handleChange}
+                variant="outlined"
+                size="small"
+                sx={inputSx}
+              />
+            </Box>
+          ))}
+          <Box>
+            <Box sx={{ fontSize: "0.85rem", fontWeight: 600, color: C.body, mb: 1 }}>Gender</Box>
             <TextField
-              fullWidth
-              value={user?.username || ""}
-              variant="outlined"
-              size="small"
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="body2" sx={{ color: "#666", fontWeight: "500", mb: 0.5 }}>
-              Email
-            </Typography>
-            <TextField
-              fullWidth
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              variant="outlined"
-              size="small"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="body2" sx={{ color: "#666", fontWeight: "500", mb: 0.5 }}>
-              Full Name
-            </Typography>
-            <TextField
-              fullWidth
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              variant="outlined"
-              size="small"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="body2" sx={{ color: "#666", fontWeight: "500", mb: 0.5 }}>
-              Phone
-            </Typography>
-            <TextField
-              fullWidth
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              variant="outlined"
-              size="small"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="body2" sx={{ color: "#666", fontWeight: "500", mb: 0.5 }}>
-              Shipping Address
-            </Typography>
-            <TextField
-              fullWidth
-              name="shipping_address"
-              value={formData.shipping_address}
-              onChange={handleChange}
-              variant="outlined"
-              size="small"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="body2" sx={{ color: "#666", fontWeight: "500", mb: 0.5 }}>
-              Gender
-            </Typography>
-            <TextField
-              fullWidth
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              variant="outlined"
-              size="small"
-              select
-              SelectProps={{ native: true }}
+              fullWidth name="gender" value={formData.gender} onChange={handleChange}
+              variant="outlined" size="small" select SelectProps={{ native: true }} sx={inputSx}
             >
               <option value="">Select gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
               <option value="Other">Other</option>
             </TextField>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
 
         <Button
-          type="submit"
-          variant="contained"
-          startIcon={<Edit />}
-          disabled={loading}
+          type="submit" variant="contained" startIcon={<Edit />} disabled={loading} disableElevation
           sx={{
-            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-            borderRadius: 2,
-            px: 4,
-            py: 1,
-            fontWeight: "bold",
-            textTransform: "none",
-            mt: 2,
+            mt: 4, bgcolor: C.primary, borderRadius: "10px", px: 4, py: 1.3,
+            fontWeight: 700, textTransform: "none", fontSize: "0.95rem",
+            "&:hover": { bgcolor: C.primaryDk },
+            "&:disabled": { bgcolor: "#E0E0E0" },
           }}
         >
-          {loading ? "UPDATING..." : "UPDATE PROFILE"}
+          {loading ? "Updating..." : "Update Profile"}
         </Button>
-      </form>
-    </Box>
+      </Box>
+    </>
   );
 };
 
-// Orders Tab Component
+/* ════════════════════════════════════════════
+   ORDERS TAB
+   ════════════════════════════════════════════ */
 const OrdersTab = () => {
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
@@ -690,146 +612,115 @@ const OrdersTab = () => {
       try {
         const token = localStorage.getItem("access_token");
         const res = await fetch(`${API_BASE_URL}/customers/orders/`, {
-          headers: {
-            "Authorization": `JWT ${token}`,
-            "Content-Type": "application/json",
-          },
+          headers: { Authorization: `JWT ${token}`, "Content-Type": "application/json" },
         });
         const data = await res.json();
-        // If paginated, data.results; else data
-        let orderList = Array.isArray(data) ? data : (data.results || data.data || []);
-        setOrders(orderList);
-      } catch (err) {
-        setOrders([]);
-      }
+        setOrders(Array.isArray(data) ? data : (data.results || data.data || []));
+      } catch { setOrders([]); }
       setLoadingOrders(false);
     };
     fetchOrders();
   }, [user]);
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case 'Delivered': return <TaskAlt sx={{ fontSize: 16 }} />;
-      case 'Processing': return <Pending sx={{ fontSize: 16 }} />;
-      case 'Shipped': return <DirectionsCar sx={{ fontSize: 16 }} />;
-      case 'Paid': return <CheckCircle sx={{ fontSize: 16 }} />;
-      case 'Cancelled': return <Delete sx={{ fontSize: 16 }} />;
-      default: return <Pending sx={{ fontSize: 16 }} />;
+  const statusColor = (s) => {
+    if (s === "Delivered" || s === "Paid") return "success";
+    if (["Processing", "Pending", "Placed"].includes(s)) return "warning";
+    if (s === "Shipped") return "info";
+    if (s === "Cancelled") return "error";
+    return "default";
+  };
+  const statusIcon = (s) => {
+    const sx = { fontSize: 15 };
+    switch (s) {
+      case "Delivered": return <TaskAlt sx={sx} />;
+      case "Shipped":   return <DirectionsCar sx={sx} />;
+      case "Paid":      return <CheckCircle sx={sx} />;
+      case "Cancelled": return <Delete sx={sx} />;
+      default:          return <Pending sx={sx} />;
     }
   };
 
   return (
-    <Box>
-      <Typography variant="h4" sx={{ mb: 1, fontWeight: 'bold', color: '#333' }}>
-        Order History
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 4, color: '#666' }}>
-        View and manage your recent orders
-      </Typography>
+    <>
+      <PageHeader title="Order History" subtitle="View and manage your orders" />
+      <Box sx={{ ...cardSx }}>
+        {loadingOrders ? (
+          <Box sx={{ textAlign: "center", py: 6, color: C.muted }}>
+            <CircularProgress size={28} sx={{ color: C.primary, mb: 1 }} />
+            <Box>Loading orders...</Box>
+          </Box>
+        ) : (
+          <>
+            {/* Desktop */}
+            <Box sx={{ display: { xs: "none", md: "block" }, overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ borderBottom: `1px solid ${C.borderClr}` }}>
+                    {["Order ID", "Date", "Items", "Total", "Status", ""].map((h) => (
+                      <th key={h} style={{ textAlign: "left", padding: "12px 16px", fontSize: "0.8rem", color: C.muted, fontWeight: 600 }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.length === 0 ? (
+                    <tr><td colSpan={6} style={{ textAlign: "center", padding: 40, color: C.muted }}>No orders found</td></tr>
+                  ) : orders.map((o, i) => (
+                    <tr key={o.id || i} style={{ borderBottom: `1px solid ${C.borderClr}`, transition: "background .2s" }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = "#F9FBF9"}
+                        onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
+                      <td style={{ padding: "14px 16px", fontWeight: 600, color: C.primary, fontSize: "0.9rem" }}>#{o.order_number || o.id}</td>
+                      <td style={{ padding: "14px 16px", color: C.body, fontSize: "0.85rem" }}>{o.order_date ? new Date(o.order_date).toLocaleDateString() : ""}</td>
+                      <td style={{ padding: "14px 16px" }}>
+                        <Chip label={`${o.items?.length || 0} items`} size="small" sx={{ fontSize: "0.7rem", bgcolor: "#F1F1F1", fontWeight: 500 }} />
+                      </td>
+                      <td style={{ padding: "14px 16px", fontWeight: 700, color: C.primary, fontSize: "0.9rem" }}>
+                        {o.total_amount ? `৳${o.total_amount}` : o.total_price ? `৳${o.total_price}` : ""}
+                      </td>
+                      <td style={{ padding: "14px 16px" }}>
+                        <Chip icon={statusIcon(o.status)} label={o.status} color={statusColor(o.status)} size="small" sx={{ fontSize: "0.7rem", fontWeight: 600 }} />
+                      </td>
+                      <td style={{ padding: "14px 16px" }}>
+                        <Button size="small" endIcon={<ArrowForward sx={{ fontSize: 14 }} />} sx={{ textTransform: "none", fontSize: "0.8rem", color: C.primary, fontWeight: 600, "&:hover": { bgcolor: C.primaryLt } }}>
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Box>
 
-      {loadingOrders ? (
-        <Typography>Loading orders...</Typography>
-      ) : (
-        <TableContainer component={Paper} sx={{ borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-          <Table sx={{ minWidth: 650 }}>
-            <TableHead sx={{ backgroundColor: '#f8f9fa' }}>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Order ID</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Date</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Items</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Total</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Status</TableCell>
-                <TableCell sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
+            {/* Mobile */}
+            <Box sx={{ display: { xs: "block", md: "none" }, p: 2 }}>
               {orders.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} align="center">
-                    No orders found.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                orders.map((order, index) => (
-                  <TableRow
-                    key={order.id || index}
-                    sx={{
-                      '&:last-child td, &:last-child th': { border: 0 },
-                      '&:hover': { backgroundColor: '#f8f9fa' }
-                    }}
-                  >
-                    <TableCell>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#667eea' }}>
-                        {order.order_number || order.id}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={{ fontSize: '0.9rem' }}>
-                      {order.order_date ? new Date(order.order_date).toLocaleDateString() : ""}
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={`${order.items ? order.items.length : 0} items`}
-                        size="small"
-                        variant="outlined"
-                        sx={{ fontSize: '0.75rem' }}
-                      />
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', color: '#2e7d32', fontSize: '0.9rem' }}>
-                      {order.total_amount
-                        ? `৳ ${order.total_amount}`
-                        : order.total_price
-                        ? `৳ ${order.total_price}`
-                        : ""}
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        icon={getStatusIcon(order.status)}
-                        label={order.status}
-                        color={
-                          order.status === "Delivered"
-                            ? "success"
-                            : order.status === "Processing"
-                            ? "warning"
-                            : order.status === "Shipped"
-                            ? "info"
-                            : order.status === "Paid"
-                            ? "success"
-                            : order.status === "Cancelled"
-                            ? "error"
-                            : "default"
-                        }
-                        variant="filled"
-                        size="small"
-                        sx={{ fontSize: '0.75rem', fontWeight: '500' }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        endIcon={<ArrowForward sx={{ fontSize: 16 }} />}
-                        sx={{
-                          borderRadius: 2,
-                          fontSize: '0.8rem',
-                          textTransform: 'none'
-                        }}
-                        // onClick={() => ...} // Add order details navigation if needed
-                      >
-                        View Details
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-    </Box>
+                <Box sx={{ textAlign: "center", py: 4, color: C.muted }}>No orders found</Box>
+              ) : orders.map((o, i) => (
+                <Box key={o.id || i} sx={{ p: 2, mb: 1.5, borderRadius: "12px", border: `1px solid ${C.borderClr}`, bgcolor: "#FAFAFA" }}>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1.5 }}>
+                    <Box sx={{ fontWeight: 600, color: C.primary, fontSize: "0.9rem" }}>#{o.order_number || o.id}</Box>
+                    <Chip icon={statusIcon(o.status)} label={o.status} color={statusColor(o.status)} size="small" sx={{ fontSize: "0.65rem" }} />
+                  </Box>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+                    <Box sx={{ fontSize: "0.8rem", color: C.muted }}>{o.order_date ? new Date(o.order_date).toLocaleDateString() : ""}</Box>
+                    <Box sx={{ fontSize: "0.8rem", color: C.muted }}>{o.items?.length || 0} items</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <Box sx={{ fontWeight: 700, color: C.primary }}>{o.total_amount ? `৳${o.total_amount}` : o.total_price ? `৳${o.total_price}` : ""}</Box>
+                    <Button size="small" endIcon={<ArrowForward sx={{ fontSize: 14 }} />} sx={{ textTransform: "none", fontSize: "0.75rem", color: C.primary }}>View</Button>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          </>
+        )}
+      </Box>
+    </>
   );
 };
 
-// Wishlist Tab Component
+/* ════════════════════════════════════════════
+   WISHLIST TAB
+   ════════════════════════════════════════════ */
 const WishlistTab = () => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -841,509 +732,275 @@ const WishlistTab = () => {
       try {
         const token = localStorage.getItem("access_token");
         const res = await fetch(`${API_BASE_URL}/customers/favorite-products/`, {
-          headers: {
-            "Authorization": `JWT ${token}`,
-            "Content-Type": "application/json",
-          },
+          headers: { Authorization: `JWT ${token}`, "Content-Type": "application/json" },
         });
         const data = await res.json();
-        const wishlistArr = Array.isArray(data) ? data : (data.results || data.data || []);
-        setWishlist(wishlistArr);
-      } catch (err) {
-        setWishlist([]);
-      }
+        setWishlist(Array.isArray(data) ? data : (data.results || data.data || []));
+      } catch { setWishlist([]); }
       setLoading(false);
     };
     if (user) fetchWishlist();
   }, [user]);
 
-  const renderStars = (rating) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<Star key={`full-${i}`} sx={{ fontSize: 16, color: '#ffc107' }} />);
-    }
-    if (hasHalfStar) {
-      stars.push(<StarHalf key="half" sx={{ fontSize: 16, color: '#ffc107' }} />);
-    }
-    const emptyStars = 5 - stars.length;
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(<Star key={`empty-${i}`} sx={{ fontSize: 16, color: '#e0e0e0' }} />);
-    }
-    return stars;
-  };
-
   return (
-    <Box>
-      <Typography variant="h4" sx={{ mb: 1, fontWeight: 'bold', color: '#333' }}>
-        My Wishlist
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 4, color: '#666' }}>
-        Your favorite products saved for later
-      </Typography>
-      <Grid container spacing={3}>
-        {loading ? (
-          <Grid item xs={12}><Typography>Loading...</Typography></Grid>
-        ) : wishlist.length === 0 ? (
-          <Grid item xs={12}><Typography>No wishlist items found.</Typography></Grid>
-        ) : (
-          wishlist.map((item) => {
+    <>
+      <PageHeader title="My Wishlist" subtitle="Your favorite products saved for later" />
+
+      {loading ? (
+        <Box sx={{ textAlign: "center", py: 8, color: C.muted }}>
+          <CircularProgress size={28} sx={{ color: C.primary, mb: 1 }} />
+          <Box>Loading wishlist...</Box>
+        </Box>
+      ) : wishlist.length === 0 ? (
+        <Box sx={{ ...cardSx, textAlign: "center", py: 8, color: C.muted }}>
+          <Favorite sx={{ fontSize: 48, color: C.borderClr, mb: 1 }} />
+          <Box>No wishlist items found</Box>
+        </Box>
+      ) : (
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" }, gap: 2.5 }}>
+          {wishlist.map((item) => {
             const prod = item.product;
             return (
-              <Grid item xs={12} sm={6} md={4} key={item.id}>
-                <Card sx={{
-                  borderRadius: 3,
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                  '&:hover': {
-                    transform: 'translateY(-5px)',
-                    boxShadow: '0 8px 30px rgba(0,0,0,0.15)'
-                  },
-                  position: 'relative',
-                  overflow: 'visible'
-                }}>
-                  <CardContent sx={{ p: 0 }}>
-                    <Box sx={{
-                      height: 120,
-                      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: '12px 12px 0 0',
-                      position: 'relative'
+              <Box key={item.id} sx={{
+                ...cardSx,
+                overflow: "hidden",
+                transition: "transform .25s ease, box-shadow .25s ease",
+                "&:hover": { transform: "translateY(-4px)", boxShadow: "0 8px 24px rgba(0,0,0,0.1)" },
+              }}>
+                <Box sx={{ height: 150, bgcolor: C.primaryLt, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Favorite sx={{ fontSize: 40, color: C.primary, opacity: 0.4 }} />
+                </Box>
+                <Box sx={{ p: 2.5 }}>
+                  <Box sx={{ fontWeight: 700, fontSize: "0.95rem", color: C.heading, mb: 1.5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {prod?.supplier_product?.name || prod?.name || "Product"}
+                  </Box>
+                  <Box sx={{ fontWeight: 800, color: C.primary, fontSize: "1.15rem", mb: 2 }}>
+                    ৳{prod?.variants?.[0]?.price || "N/A"}
+                  </Box>
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <Button fullWidth variant="contained" disableElevation sx={{
+                      bgcolor: C.primary, borderRadius: "10px", textTransform: "none", fontWeight: 600, fontSize: "0.8rem", py: 1,
+                      "&:hover": { bgcolor: C.primaryDk },
                     }}>
-                      <Box sx={{
-                        width: 60,
-                        height: 60,
-                        borderRadius: '50%',
-                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}>
-                        <Favorite sx={{ fontSize: 28, color: '#667eea' }} />
-                      </Box>
-                    </Box>
-                    <Box sx={{ p: 2.5 }}>
-                      <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, fontSize: '1rem' }}>
-                        {prod?.supplier_product?.name || prod?.name || "Product"}
-                      </Typography>
-                      {/* Optionally show rating if available */}
-                      {/* <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          {renderStars(prod?.rating || 0)}
-                        </Box>
-                        <Typography variant="body2" sx={{ color: '#666', fontSize: '0.8rem' }}>
-                          ({prod?.rating || 0})
-                        </Typography>
-                      </Box> */}
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
-                        <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
-                          ৳{prod?.variants?.[0]?.price || "N/A"}
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Button
-                          variant="contained"
-                          fullWidth
-                          sx={{
-                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                            borderRadius: 2,
-                            py: 0.8,
-                            fontSize: '0.8rem',
-                            fontWeight: '500',
-                            textTransform: 'none'
-                          }}
-                        >
-                          Add to Cart
-                        </Button>
-                        <IconButton
-                          sx={{
-                            border: '1px solid #ff4444',
-                            color: '#ff4444',
-                            borderRadius: 2,
-                            '&:hover': { backgroundColor: 'rgba(255,68,68,0.1)' }
-                          }}
-                        >
-                          <Delete sx={{ fontSize: 20 }} />
-                        </IconButton>
-                      </Box>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            );
-          })
-        )}
-      </Grid>
-    </Box>
-  );
-};
-
-// Track Order Tab Component
-const TrackOrderTab = () => {
-  const [trackingId, setTrackingId] = useState('ORD-001');
-
-  const steps = ['Order Placed', 'Processing', 'Shipped', 'Delivered'];
-  const activeStep = 3; // Delivered
-
-  return (
-    <Box>
-      <Typography variant="h4" sx={{ mb: 1, fontWeight: 'bold', color: '#333' }}>
-        Track Your Order
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 4, color: '#666' }}>
-        Real-time tracking for your orders
-      </Typography>
-
-      <Grid container spacing={5}>
-        <Grid item xs={12} md={8}>
-          <Card sx={{ borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-            <CardContent sx={{ p: 3 }}>
-              {/* Tracking Input */}
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: '600' }}>
-                  Enter Tracking ID
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
-                  <TextField
-                    fullWidth
-                    value={trackingId}
-                    onChange={(e) => setTrackingId(e.target.value)}
-                    placeholder="Enter your tracking ID"
-                    variant="outlined"
-                    size="small"
-                  />
-                  <Button 
-                    variant="contained"
-                    sx={{
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                      px: 4,
-                      py: 1,
-                      fontWeight: '500',
-                      textTransform: 'none'
-                    }}
-                  >
-                    Track
-                  </Button>
-                </Box>
-              </Box>
-
-              {/* Order Status */}
-              <Box sx={{ mb: 4 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="h6" sx={{ fontWeight: '600' }}>
-                    Order Status: 
-                  </Typography>
-                  <Chip 
-                    label="Delivered" 
-                    color="success" 
-                    icon={<TaskAlt sx={{ fontSize: 16 }} />}
-                    sx={{ fontWeight: '500' }}
-                  />
-                </Box>
-                <LinearProgress 
-                  variant="determinate" 
-                  value={100} 
-                  sx={{ 
-                    height: 8, 
-                    borderRadius: 4,
-                    backgroundColor: '#e0e0e0',
-                    '& .MuiLinearProgress-bar': {
-                      backgroundColor: '#4caf50',
-                      borderRadius: 4
-                    }
-                  }}
-                />
-              </Box>
-
-              {/* Stepper */}
-              <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
-                {steps.map((label, index) => (
-                  <Step key={label}>
-                    <StepLabel 
-                      StepIconProps={{
-                        sx: {
-                          color: index <= activeStep ? '#4caf50' : '#e0e0e0',
-                          '& .MuiStepIcon-text': { fontWeight: 'bold' }
-                        }
-                      }}
-                      sx={{
-                        '& .MuiStepLabel-label': {
-                          fontSize: '0.8rem',
-                          fontWeight: index <= activeStep ? '600' : '400'
-                        }
-                      }}
-                    >
-                      {label}
-                    </StepLabel>
-                  </Step>
-                ))}
-              </Stepper>
-
-              {/* Timeline Details */}
-              <Box sx={{ p: 3, backgroundColor: '#f8f9fa', borderRadius: 2 }}>
-                <Typography variant="h6" sx={{ mb: 3, fontWeight: '600' }}>
-                  Delivery Timeline
-                </Typography>
-                {[
-                  { date: '15 Oct 2024, 03:30 PM', event: 'Delivered', location: 'Uttara, Dhaka', icon: <TaskAlt sx={{ color: '#4caf50' }} /> },
-                  { date: '14 Oct 2024, 10:15 AM', event: 'Out for delivery', location: 'Dhaka Hub', icon: <LocalShipping sx={{ color: '#2196f3' }} /> },
-                  { date: '13 Oct 2024, 02:00 PM', event: 'Processing completed', location: 'Warehouse', icon: <Pending sx={{ color: '#ff9800' }} /> },
-                  { date: '12 Oct 2024, 11:30 AM', event: 'Order confirmed', location: 'Sobarbazar BD', icon: <CheckCircle sx={{ color: '#4caf50' }} /> },
-                ].map((item, index) => (
-                  <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', mb: 3, pb: 2, 
-                    borderBottom: index < 3 ? '1px solid #e0e0e0' : 'none' 
-                  }}>
-                    <Box sx={{ mr: 2, mt: 0.2 }}>
-                      {item.icon}
-                    </Box>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="body1" sx={{ fontWeight: '600', mb: 0.5 }}>
-                        {item.event}
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: '#666', mb: 0.5, fontSize: '0.85rem' }}>
-                        {item.date}
-                      </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <LocationOn sx={{ fontSize: 14, color: '#999' }} />
-                        <Typography variant="body2" sx={{ color: '#999', fontSize: '0.8rem' }}>
-                          {item.location}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-                ))}
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Order Summary */}
-        <Grid item xs={12} md={4}>
-          <Card sx={{ borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" sx={{ mb: 3, fontWeight: '600' }}>
-                Order Summary
-              </Typography>
-              
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-                <Box>
-                  <Typography variant="body2" sx={{ color: '#666', mb: 0.5, fontSize: '0.85rem' }}>
-                    Tracking ID
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: '600', color: '#667eea' }}>
-                    #ORD-001
-                  </Typography>
-                </Box>
-
-                <Box>
-                  <Typography variant="body2" sx={{ color: '#666', mb: 0.5, fontSize: '0.85rem' }}>
-                    Delivery Adress
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontSize: '0.9rem' }}>
-                    House 12, Road 8, Uttara, Dhaka
-                  </Typography>
-                </Box>
-
-                <Box>
-                  <Typography variant="body2" sx={{ color: '#666', mb: 0.5, fontSize: '0.85rem' }}>
-                    Contact
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontSize: '0.9rem' }}>
-                    +880 1234 567890
-                  </Typography>
-                </Box>
-
-                <Box>
-                  <Typography variant="body2" sx={{ color: '#666', mb: 0.5, fontSize: '0.85rem' }}>
-                    Items
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontSize: '0.9rem' }}>
-                    3 Products
-                  </Typography>
-                </Box>
-
-                <Box sx={{ pt: 2, borderTop: '1px solid #e0e0e0' }}>
-                  <Typography variant="body2" sx={{ color: '#666', mb: 0.5, fontSize: '0.85rem' }}>
-                    Total Amount
-                  </Typography>
-                  <Typography variant="h6" sx={{ color: '#2e7d32', fontWeight: 'bold' }}>
-                    ৳ 1,250.00
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-    </Box>
-  );
-};
-
-// Support Tab Component
-const SupportTab = () => {
-  const [message, setMessage] = useState('');
-
-  return (
-    <Box>
-      <Typography variant="h4" sx={{ mb: 1, fontWeight: 'bold', color: '#333' }}>
-        Customer Support
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 4, color: '#666' }}>
-        We're here to help you 24/7
-      </Typography>
-
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
-          <Card sx={{ borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" sx={{ mb: 3, fontWeight: '600' }}>
-                Create Support Ticket
-              </Typography>
-
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="body2" sx={{ color: '#666', mb: 0.5, fontSize: '0.85rem' }}>
-                    Subject
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    select
-                    SelectProps={{ native: true }}
-                    variant="outlined"
-                    size="small"
-                  >
-                    <option>Order Issue</option>
-                    <option>Product Quality</option>
-                    <option>Delivery Problem</option>
-                    <option>Payment Issue</option>
-                    <option>Other</option>
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="body2" sx={{ color: '#666', mb: 0.5, fontSize: '0.85rem' }}>
-                    Order ID (Optional)
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="body2" sx={{ color: '#666', mb: 0.5, fontSize: '0.85rem' }}>
-                    Message
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    multiline
-                    rows={4}
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Please describe your issue in detail..."
-                    variant="outlined"
-                    sx={{ mb: 3 }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Button 
-                    variant="contained"
-                    startIcon={<Email />}
-                    sx={{
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                      px: 4,
-                      py: 1.2,
-                      fontWeight: '500',
-                      textTransform: 'none'
-                    }}
-                  >
-                    Submit Ticket
-                  </Button>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Contact Information */}
-        <Grid item xs={12} md={4}>
-          <Card sx={{ borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" sx={{ mb: 3, fontWeight: '600' }}>
-                Contact Support
-              </Typography>
-
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-                {[
-                  { icon: <Phone sx={{ color: '#667eea', fontSize: 20 }} />, title: 'Phone Support', desc: '+880 1234 567890', action: 'Call Now' },
-                  { icon: <Email sx={{ color: '#667eea', fontSize: 20 }} />, title: 'Email Support', desc: 'support@sobar.com', action: 'Send Email' },
-                  { icon: <Chat sx={{ color: '#667eea', fontSize: 20 }} />, title: 'Live Chat', desc: '24/7 Available', action: 'Start Chat' },
-                ].map((contact, index) => (
-                  <Box key={index} sx={{ 
-                    p: 2, 
-                    borderRadius: 2, 
-                    backgroundColor: '#f8f9fa',
-                    border: '1px solid #e0e0e0'
-                  }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
-                      {contact.icon}
-                      <Typography variant="body1" sx={{ fontWeight: '600', ml: 1.5, fontSize: '0.95rem' }}>
-                        {contact.title}
-                      </Typography>
-                    </Box>
-                    <Typography variant="body2" sx={{ color: '#666', mb: 1.5, fontSize: '0.85rem' }}>
-                      {contact.desc}
-                    </Typography>
-                    <Button 
-                      variant="text" 
-                      size="small"
-                      sx={{ 
-                        color: '#667eea', 
-                        textTransform: 'none',
-                        fontWeight: '500',
-                        fontSize: '0.8rem',
-                        p: 0
-                      }}
-                    >
-                      {contact.action} →
+                      Add to Cart
                     </Button>
+                    <IconButton size="small" sx={{ border: `1px solid ${C.danger}30`, color: C.danger, borderRadius: "10px", "&:hover": { bgcolor: "#FEF2F2" } }}>
+                      <Delete fontSize="small" />
+                    </IconButton>
                   </Box>
-                ))}
+                </Box>
               </Box>
-            </CardContent>
-          </Card>
+            );
+          })}
+        </Box>
+      )}
+    </>
+  );
+};
 
-          {/* FAQ Quick Links */}
-          <Card sx={{ borderRadius: 3, boxShadow: '0 2px 10px rgba(0,0,0,0.1)', mt: 3 }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" sx={{ mb: 2, fontWeight: '600' }}>
-                Quick Help
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                {['How to track my order?', 'Return policy', 'Payment methods', 'Delivery areas'].map((faq, index) => (
-                  <Button 
-                    key={index}
-                    variant="text"
-                    sx={{ 
-                      justifyContent: 'flex-start',
-                      color: '#666',
-                      textTransform: 'none',
-                      fontSize: '0.85rem',
-                      py: 0.8,
-                      px: 1
-                    }}
-                  >
-                    {faq}
-                  </Button>
-                ))}
+/* ════════════════════════════════════════════
+   TRACK ORDER TAB
+   ════════════════════════════════════════════ */
+const TrackOrderTab = () => {
+  const [trackingId, setTrackingId] = useState("ORD-001");
+  const steps = ["Order Placed", "Processing", "Shipped", "Delivered"];
+  const activeStep = 3;
+
+  return (
+    <>
+      <PageHeader title="Track Your Order" subtitle="Real-time tracking for your orders" />
+
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 340px" }, gap: 3 }}>
+        {/* Left: tracking details */}
+        <Box sx={{ ...cardSx, p: { xs: 2.5, md: 3.5 } }}>
+          {/* Input */}
+          <Box sx={{ mb: 4 }}>
+            <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading, mb: 2, fontFamily: "'Quicksand', sans-serif" }}>Enter Tracking ID</Box>
+            <Box sx={{ display: "flex", gap: 1.5, flexDirection: { xs: "column", sm: "row" } }}>
+              <TextField fullWidth value={trackingId} onChange={(e) => setTrackingId(e.target.value)} placeholder="Enter your tracking ID" variant="outlined" size="small" sx={{ ...inputSx, flex: 1 }} />
+              <Button variant="contained" disableElevation sx={{
+                bgcolor: C.primary, borderRadius: "10px", px: 4, py: 1, fontWeight: 600, textTransform: "none", whiteSpace: "nowrap",
+                "&:hover": { bgcolor: C.primaryDk },
+              }}>
+                Track Order
+              </Button>
+            </Box>
+          </Box>
+
+          {/* Status */}
+          <Box sx={{ mb: 4 }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1.5 }}>
+              <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading }}>Order Status</Box>
+              <Chip label="Delivered" color="success" icon={<TaskAlt sx={{ fontSize: 15 }} />} sx={{ fontWeight: 600, fontSize: "0.8rem" }} />
+            </Box>
+            <LinearProgress variant="determinate" value={100} sx={{
+              height: 8, borderRadius: 4,
+              bgcolor: "#E5E7EB",
+              "& .MuiLinearProgress-bar": { bgcolor: C.primary, borderRadius: 4 },
+            }} />
+          </Box>
+
+          {/* Stepper */}
+          <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
+            {steps.map((label, idx) => (
+              <Step key={label}>
+                <StepLabel
+                  StepIconProps={{ sx: { color: idx <= activeStep ? C.primary : "#D1D5DB", fontSize: 28, "&.Mui-completed": { color: C.primary }, "&.Mui-active": { color: C.primary } } }}
+                  sx={{ "& .MuiStepLabel-label": { fontSize: "0.78rem", fontWeight: idx <= activeStep ? 600 : 400, color: idx <= activeStep ? C.heading : C.muted, mt: 0.5 } }}
+                >
+                  {label}
+                </StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+
+          {/* Timeline */}
+          <Box sx={{ p: 2.5, bgcolor: "#FAFAFA", borderRadius: "12px", border: `1px solid ${C.borderClr}` }}>
+            <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading, mb: 2.5, fontFamily: "'Quicksand', sans-serif" }}>Delivery Timeline</Box>
+            {[
+              { date: "15 Oct 2024, 03:30 PM", event: "Delivered", location: "Uttara, Dhaka", icon: <TaskAlt sx={{ color: C.primary }} /> },
+              { date: "14 Oct 2024, 10:15 AM", event: "Out for delivery", location: "Dhaka Hub", icon: <LocalShipping sx={{ color: C.info }} /> },
+              { date: "13 Oct 2024, 02:00 PM", event: "Processing completed", location: "Warehouse", icon: <Pending sx={{ color: C.warn }} /> },
+              { date: "12 Oct 2024, 11:30 AM", event: "Order confirmed", location: "Sobarbazar BD", icon: <CheckCircle sx={{ color: C.primary }} /> },
+            ].map((item, idx) => (
+              <Box key={idx} sx={{ display: "flex", alignItems: "flex-start", mb: idx < 3 ? 2.5 : 0, pb: idx < 3 ? 2 : 0, borderBottom: idx < 3 ? `1px solid ${C.borderClr}` : "none" }}>
+                <Box sx={{ mr: 2, mt: 0.3, p: 0.8, borderRadius: "10px", bgcolor: C.cardBg, border: `1px solid ${C.borderClr}`, display: "flex" }}>
+                  {item.icon}
+                </Box>
+                <Box sx={{ flex: 1 }}>
+                  <Box sx={{ fontWeight: 600, color: C.heading, mb: 0.3, fontSize: "0.9rem" }}>{item.event}</Box>
+                  <Box sx={{ color: C.muted, fontSize: "0.8rem", mb: 0.3 }}>{item.date}</Box>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <LocationOn sx={{ fontSize: 13, color: C.muted }} />
+                    <Box sx={{ color: C.muted, fontSize: "0.75rem" }}>{item.location}</Box>
+                  </Box>
+                </Box>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-    </Box>
+            ))}
+          </Box>
+        </Box>
+
+        {/* Right: order summary */}
+        <Box sx={{ ...cardSx, p: 3, alignSelf: "flex-start", position: { md: "sticky" }, top: { md: 24 } }}>
+          <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading, mb: 3, fontFamily: "'Quicksand', sans-serif" }}>Order Summary</Box>
+          {[
+            { label: "Tracking ID", value: "#ORD-001", highlight: true },
+            { label: "Delivery Address", value: "House 12, Road 8, Uttara, Dhaka" },
+            { label: "Contact", value: "+880 1234 567890" },
+            { label: "Items", value: "3 Products" },
+          ].map((r, i) => (
+            <Box key={i} sx={{ mb: 2.5 }}>
+              <Box sx={{ fontSize: "0.8rem", color: C.muted, mb: 0.3 }}>{r.label}</Box>
+              <Box sx={{ fontWeight: r.highlight ? 700 : 500, color: r.highlight ? C.primary : C.heading, fontSize: "0.9rem" }}>{r.value}</Box>
+            </Box>
+          ))}
+          <Divider sx={{ my: 2, borderColor: C.borderClr }} />
+          <Box>
+            <Box sx={{ fontSize: "0.8rem", color: C.muted, mb: 0.3 }}>Total Amount</Box>
+            <Box sx={{ fontWeight: 800, color: C.primary, fontSize: "1.25rem" }}>৳ 1,250.00</Box>
+          </Box>
+        </Box>
+      </Box>
+    </>
+  );
+};
+
+/* ════════════════════════════════════════════
+   SUPPORT TAB
+   ════════════════════════════════════════════ */
+const SupportTab = () => {
+  const [message, setMessage] = useState("");
+
+  return (
+    <>
+      <PageHeader title="Customer Support" subtitle="We're here to help you 24/7" />
+
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 340px" }, gap: 3 }}>
+        {/* Left: ticket form */}
+        <Box sx={{ ...cardSx, p: { xs: 2.5, md: 3.5 } }}>
+          <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading, mb: 3, fontFamily: "'Quicksand', sans-serif" }}>Create Support Ticket</Box>
+
+          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2.5, mb: 2.5 }}>
+            <Box>
+              <Box sx={{ fontSize: "0.85rem", fontWeight: 600, color: C.body, mb: 1 }}>Subject</Box>
+              <TextField fullWidth select SelectProps={{ native: true }} variant="outlined" size="small" sx={inputSx}>
+                <option>Order Issue</option>
+                <option>Product Quality</option>
+                <option>Delivery Problem</option>
+                <option>Payment Issue</option>
+                <option>Other</option>
+              </TextField>
+            </Box>
+            <Box>
+              <Box sx={{ fontSize: "0.85rem", fontWeight: 600, color: C.body, mb: 1 }}>Order ID (Optional)</Box>
+              <TextField fullWidth variant="outlined" size="small" sx={inputSx} />
+            </Box>
+          </Box>
+
+          <Box sx={{ mb: 3 }}>
+            <Box sx={{ fontSize: "0.85rem", fontWeight: 600, color: C.body, mb: 1 }}>Message</Box>
+            <TextField
+              fullWidth multiline rows={5} value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Please describe your issue in detail..."
+              variant="outlined" sx={inputSx}
+            />
+          </Box>
+
+          <Button variant="contained" startIcon={<Email />} disableElevation sx={{
+            bgcolor: C.primary, borderRadius: "10px", px: 4, py: 1.3,
+            fontWeight: 600, textTransform: "none", fontSize: "0.9rem",
+            "&:hover": { bgcolor: C.primaryDk },
+          }}>
+            Submit Ticket
+          </Button>
+        </Box>
+
+        {/* Right: contact + FAQ */}
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3, alignSelf: "flex-start", position: { md: "sticky" }, top: { md: 24 } }}>
+          {/* Contact cards */}
+          <Box sx={{ ...cardSx, p: 3 }}>
+            <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading, mb: 2.5, fontFamily: "'Quicksand', sans-serif" }}>Contact Support</Box>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              {[
+                { icon: <Phone />, title: "Phone Support", desc: "+880 1234 567890", action: "Call Now", color: C.primary, bg: C.primaryLt },
+                { icon: <Email />, title: "Email Support", desc: "support@sobar.com", action: "Send Email", color: C.secondary, bg: C.secondaryLt },
+                { icon: <Chat />, title: "Live Chat", desc: "24/7 Available", action: "Start Chat", color: C.info, bg: "#DBEAFE" },
+              ].map((c, i) => (
+                <Box key={i} sx={{ p: 2, borderRadius: "12px", border: `1px solid ${C.borderClr}`, bgcolor: "#FAFAFA", transition: "transform .2s", "&:hover": { transform: "translateX(4px)" } }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
+                    <Box sx={{ width: 36, height: 36, borderRadius: "10px", bgcolor: c.bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      {React.cloneElement(c.icon, { sx: { color: c.color, fontSize: 18 } })}
+                    </Box>
+                    <Box sx={{ fontWeight: 600, fontSize: "0.9rem", color: C.heading }}>{c.title}</Box>
+                  </Box>
+                  <Box sx={{ fontSize: "0.8rem", color: C.muted, mb: 1 }}>{c.desc}</Box>
+                  <Button size="small" endIcon={<ArrowForward sx={{ fontSize: 14 }} />} sx={{ textTransform: "none", fontSize: "0.8rem", color: c.color, fontWeight: 600, p: 0, minWidth: 0 }}>
+                    {c.action}
+                  </Button>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+
+          {/* FAQ */}
+          <Box sx={{ ...cardSx, p: 3 }}>
+            <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading, mb: 2, fontFamily: "'Quicksand', sans-serif" }}>Quick Help</Box>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
+              {["How to track my order?", "Return policy", "Payment methods", "Delivery areas"].map((faq, i) => (
+                <Button key={i} endIcon={<ArrowForward sx={{ fontSize: 13 }} />} sx={{
+                  justifyContent: "space-between", textTransform: "none", color: C.body, fontSize: "0.85rem",
+                  py: 1, px: 1.5, borderRadius: "8px", border: `1px solid ${C.borderClr}`,
+                  transition: "all .2s", "&:hover": { bgcolor: C.primaryLt, borderColor: C.primary, color: C.primary },
+                }}>
+                  {faq}
+                </Button>
+              ))}
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+    </>
   );
 };
 
