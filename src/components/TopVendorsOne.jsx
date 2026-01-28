@@ -7,7 +7,7 @@ const TopVendorsOne = ({ data }) => {
       <div className='container container-lg'>
         <div className='section-heading'>
           <div className='flex-between flex-wrap gap-8'>
-            <h5 className='mb-0'>Weekly Top Vendors</h5>
+            <h5 className='mb-0'>Weekly Top Shop</h5>
             <Link
               href='/vendor'
               className='text-sm fw-medium text-gray-700 hover-text-main-600 hover-text-decoration-underline'

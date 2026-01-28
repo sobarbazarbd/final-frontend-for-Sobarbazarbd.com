@@ -15,6 +15,7 @@ import RecommendedOne from "@/components/RecommendedOne";
 import ShortProductOne from "@/components/ShortProductOne";
 import TopVendorsOne from "@/components/TopVendorsOne";
 import Trending from "@/components/Trending";
+// import MegaDealsBanner from "@/components/MegaDealsBanner";
 import ColorInit from "@/helper/ColorInit";
 import ScrollToTopInit from "@/helper/ScrollToTopInit";
 
@@ -67,7 +68,10 @@ const Page = async () => {
       <ScrollToTopInit color="#299E60" />
       <ColorInit color={false} />
       <HeroBanner section={bannerMap?.HeroBanner} />
+      
       <FeatureOne data={homeData?.data?.subcategories || []} />
+       <TopVendorsOne data={homeData?.data?.stores}/>
+      {/* <MegaDealsBanner section={bannerMap?.Deals} /> */}
       <FlashSalesOne section={bannerMap?.FlashSales} />
       <RecommendedOne data={homeData?.data?.recommended_products} categories={homeData?.data?.categories}  />
       <PopularProductsOne categories={homeData?.data?.categories} section={bannerMap?.PopularProducts} />
@@ -76,7 +80,7 @@ const Page = async () => {
       <PromotionalThree section={bannerMap?.PromotionalTwo} />
       <OfferOne section={bannerMap?.Offer} />
       <HotDealsOne section={bannerMap?.Deals}  data={homeData?.data?.recommended_products} />
-      <TopVendorsOne data={homeData?.data?.stores}/>
+     
       <BestSellsOne section={bannerMap?.Deals} data={homeData?.data?.recommended_products} />
       <OrganicOne section={bannerMap?.Deals}  data={homeData?.data?.recommended_products} />
       {/* <ShortProductOne /> */}
