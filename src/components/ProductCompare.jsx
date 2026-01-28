@@ -23,23 +23,27 @@ const ProductCompare = ({ currentProduct, relatedProducts }) => {
 
   const compareList = relatedProducts.filter((p) => selected.includes(p.id));
 
-  // Build current product card-like object
-  const currentDefault =
-    currentProduct?.variants?.find((v) => v.is_default) ||
-    currentProduct?.variants?.[0];
+  // Get variant data — main product uses variants array, related products use default_variant
+  const getVariant = (product) => {
+    if (product?.default_variant) return product.default_variant;
+    if (product?.variants?.length) {
+      return product.variants.find((v) => v.is_default) || product.variants[0];
+    }
+    return null;
+  };
 
   const getPrice = (product) => {
-    const v = product?.variants?.find((v) => v.is_default) || product?.variants?.[0];
+    const v = getVariant(product);
     return v?.final_price ?? v?.price ?? product?.price ?? "—";
   };
 
   const getOriginalPrice = (product) => {
-    const v = product?.variants?.find((v) => v.is_default) || product?.variants?.[0];
+    const v = getVariant(product);
     return v?.price ?? product?.original_price ?? null;
   };
 
   const getStock = (product) => {
-    const v = product?.variants?.find((v) => v.is_default) || product?.variants?.[0];
+    const v = getVariant(product);
     return v?.available_stock ?? v?.stock ?? "—";
   };
 
