@@ -19,28 +19,28 @@ export const footerConfig = {
     }
   },
   informationLinks: [
+    { text: "About Us", href: "/about-us" },
     { text: "Become a Vendor", href: "/become-seller" },
-    { text: "Affiliate Program", href: "/shop" },
-    { text: "Privacy Policy", href: "/contact" },
-    { text: "Our Suppliers", href: "/vendor" },
-    { text: "Extended Plan", href: "/shop" },
-    { text: "Community", href: "/blog" }
+    { text: "Our Vendors", href: "/vendor" },
+    { text: "Return Policy", href: "/return-policy" },
+    { text: "Blog", href: "/blog" },
+    { text: "Contact Us", href: "/contact" }
   ],
   customerSupport: [
     { text: "Help Center", href: "/contact" },
     { text: "Contact Us", href: "/contact" },
+    { text: "Return Policy", href: "/return-policy" },
     { text: "Report Abuse", href: "/contact" },
     { text: "Submit and Dispute", href: "/contact" },
-    { text: "Policies & Rules", href: "/contact" },
     { text: "Online Shopping", href: "/shop" }
   ],
   myAccount: [
-    { text: "My Account", href: "/account" },
-    { text: "Order History", href: "/account" },
+    { text: "My Account", href: "/dashboard" },
+    { text: "Order History", href: "/dashboard" },
     { text: "Shopping Cart", href: "/cart" },
-    { text: "Compare", href: "/shop" },
-    { text: "Help Ticket", href: "/contact" },
-    { text: "Wishlist", href: "/wishlist" }
+    { text: "Wishlist", href: "/wishlist" },
+    { text: "Login", href: "/login" },
+    { text: "Sign Up", href: "/signup" }
   ],
   dailyGroceries: [
     { text: "Dairy & Eggs", href: "/shop" },
