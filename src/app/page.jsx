@@ -9,13 +9,10 @@ import NewArrivalOne from "@/components/NewArrivalOne";
 import OfferOne from "@/components/OfferOne";
 import OrganicOne from "@/components/OrganicOne";
 import PopularProductsOne from "@/components/PopularProductsOne";
-import PromotionalOne from "@/components/PromotionalOne";
 import PromotionalThree from "@/components/PromotionalThree";
 import RecommendedOne from "@/components/RecommendedOne";
-import ShortProductOne from "@/components/ShortProductOne";
 import TopVendorsOne from "@/components/TopVendorsOne";
 import Trending from "@/components/Trending";
-// import MegaDealsBanner from "@/components/MegaDealsBanner";
 import ColorInit from "@/helper/ColorInit";
 import ScrollToTopInit from "@/helper/ScrollToTopInit";
 
@@ -30,10 +27,7 @@ const getHomePageData = async () => {
     const res = await fetch(
       "https://api.hetdcl.com/api/v1.0/base/home-page-data/",
       {
-        // cache: 'no-store', // or 'force-cache' for static data
-        // next: {
-        //   revalidate: 3600 // Revalidate every hour (optional)
-        // }
+        next: { revalidate: 300 }, // revalidate every 5 minutes
       }
     );
     if (!res.ok) {
@@ -41,7 +35,6 @@ const getHomePageData = async () => {
     }
 
     const json = await res.json();
-    console.log(json.data?.recommended_products,'jsonjsonjson')
     return json;
   } catch (err) {
     console.error("Failed to fetch home page data:", err);
@@ -60,8 +53,6 @@ const Page = async () => {
       }
     });
   }
-
-  // console.log(homeData?.data,'homeData')
 
   return (
     <>

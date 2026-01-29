@@ -120,4 +120,29 @@
         width: 120px !important;
     }
 }
+/* Mobile responsive for feature/category section */
+@media (max-width: 575px) {
+    .feature-item {
+        &__thumb {
+            max-width: 80px !important;
+            max-height: 80px !important;
+        }
+        &__content {
+            h6 {
+                font-size: 12px !important;
+            }
+            span {
+                font-size: 10px !important;
+            }
+        }
+    }
+}
+@media (max-width: 399px) {
+    .feature-item {
+        &__thumb {
+            max-width: 70px !important;
+            max-height: 70px !important;
+        }
+    }
+}
 /* ============================ Feature Section Css End =============================== */

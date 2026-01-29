@@ -34,8 +34,8 @@ const FooterOne = () => {
     <footer className='footer py-120'>
       <img src={footerConfig.backgroundImage} alt='BG' className='body-bottom-bg' />
       <div className='container container-lg'>
-        <div className='footer-item-wrapper d-flex align-items-start flex-wrap'>
-          <div className='footer-item'>
+        <div className='footer-item-wrapper footer-responsive-grid'>
+          <div className='footer-item footer-item--company'>
             <div className='footer-item__logo'>
               <Link href='/'>
                 {owner?.logo ? (
@@ -194,6 +194,37 @@ const FooterOne = () => {
 
         </div>
       </div>
+
+      <style jsx>{`
+        .footer-responsive-grid {
+          display: grid;
+          grid-template-columns: 1.5fr repeat(4, 1fr) 1.2fr;
+          gap: 32px;
+        }
+        @media (max-width: 1199px) {
+          .footer-responsive-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+          .footer-item--company {
+            grid-column: 1 / -1;
+          }
+        }
+        @media (max-width: 767px) {
+          .footer-responsive-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+          }
+          .footer-item--company {
+            grid-column: 1 / -1;
+          }
+        }
+        @media (max-width: 479px) {
+          .footer-responsive-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+          }
+        }
+      `}</style>
     </footer>
   );
 };

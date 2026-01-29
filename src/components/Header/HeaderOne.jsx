@@ -35,9 +35,9 @@ const HeaderOne = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const handleScroll = () => {
-        setScroll(window.pageYOffset > 150);
+        setScroll(window.scrollY > 150);
       };
-      window.addEventListener("scroll", handleScroll);
+      window.addEventListener("scroll", handleScroll, { passive: true });
 
       const selectElement = query(".js-example-basic-single");
       selectElement.select2();
@@ -112,8 +112,6 @@ const HeaderOne = () => {
       </option>
     ));
   };
-
-  console.log("selected category", activeCategory)
 
   return (
     <>
@@ -356,7 +354,7 @@ const HeaderOne = () => {
                   </button>
                 </div>
               </div>
-              <div className='location-box bg-white flex-align gap-8 py-6 px-16 rounded-pill border border-gray-100'>
+              <div className='location-box bg-white flex-align gap-8 py-6 px-16 rounded-pill border border-gray-100 d-none d-lg-flex'>
                 <span className='text-gray-900 text-xl d-xs-flex d-none'>
                   <i className='ph ph-map-pin' />
                 </span>
@@ -373,7 +371,7 @@ const HeaderOne = () => {
                   </div>
                 </div>
               </div>
-              <div className='location-box bg-white flex-align gap-8 py-6 px-16 rounded-pill border border-gray-100'>
+              <div className='location-box bg-white flex-align gap-8 py-6 px-16 rounded-pill border border-gray-100 d-none d-lg-flex'>
                 <span className='text-gray-900 text-xl d-xs-flex d-none'>
                   <i className='ph ph-map-pin' />
                 </span>
@@ -407,9 +405,6 @@ const HeaderOne = () => {
                 <Link href='/wishlist' className='flex-align gap-4 item-hover'>
                   <span className='text-2xl text-gray-700 d-flex position-relative me-6 mt-6 item-hover__text'>
                     <i className='ph ph-heart' />
-                    <span className='w-16 h-16 flex-center rounded-circle bg-main-600 text-white text-xs position-absolute top-n6 end-n4'>
-                      0
-                    </span>
                   </span>
                   <span className='text-md text-gray-500 item-hover__text d-none d-lg-flex'>
                     Wishlist
@@ -620,9 +615,6 @@ const HeaderOne = () => {
                   >
                     <span className='text-2xl text-gray-700 d-flex position-relative me-6 mt-6 item-hover__text'>
                       <i className='ph ph-heart' />
-                      <span className='w-16 h-16 flex-center rounded-circle bg-main-600 text-white text-xs position-absolute top-n6 end-n4'>
-                        2
-                      </span>
                     </span>
                     <span className='text-md text-gray-500 item-hover__text d-none d-lg-flex'>
                       Wishlist
@@ -681,16 +673,15 @@ const HeaderOne = () => {
           <Link href="/wishlist" className="flex-fill text-decoration-none text-dark py-2 position-relative">
             <i className="ph ph-heart fs-4 d-block"></i>
             <small className="d-block">Wishlist</small>
-            <span className="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger">
-              2
-            </span>
           </Link>
-          <Link href="/account" className="flex-fill text-decoration-none text-dark py-2">
+          <Link href="/dashboard" className="flex-fill text-decoration-none text-dark py-2">
             <i className="ph ph-user-circle fs-4 d-block"></i>
             <small className="d-block">Account</small>
           </Link>
         </div>
       </nav>
+      {/* Spacer so page content isn't hidden behind fixed bottom nav on mobile */}
+      <div className="d-lg-none" style={{ height: '64px' }} />
       {/* ==================== Mobile Bottom Navbar End ==================== */}
     </>
   );
