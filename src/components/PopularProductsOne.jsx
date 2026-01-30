@@ -132,7 +132,7 @@ const PopularProductsOne = ({ section, categories = [] }) => {
                   </div>
                   <div className="product-card__content flex-grow-1">
                     <h6 className="title text-lg fw-semibold mb-12">
-                      <Link href="/shop" className="link text-line-2">
+                      <Link href={`/shop?category=${category.id}`} className="link text-line-2">
                         {category.name}
                       </Link>
                     </h6>
@@ -141,14 +141,14 @@ const PopularProductsOne = ({ section, categories = [] }) => {
                     <ul className="text-gray-600 text-sm mb-4">
                       {category.subcategories.map((sub) => (
                         <li key={sub.id} className="mb-3">
-                          <Link href={`/shop?subcategories=${sub.id}`} className="hover-text-main-600">
+                          <Link href={`/shop?supplier_product__subcategories=${sub.id}`} className="hover-text-main-600">
                      <span className=" text-gray-600">  {sub.name}</span>     
                           </Link>
                         </li>
                       ))}
                     </ul>
 
-                    <Link href="/shop" className="text-tertiary-600 flex-align gap-8 mt-24">
+                    <Link href={`/shop?category=${category.id}`} className="text-tertiary-600 flex-align gap-8 mt-24">
                       View All <i className="ph ph-arrow-right d-flex" />
                     </Link>
                   </div>
