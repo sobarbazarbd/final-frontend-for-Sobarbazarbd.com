@@ -114,6 +114,11 @@ const DashboardPage = () => {
     if (isMobile) setMobileOpen(false);
   };
 
+  const handleViewOrderFromDashboard = (order) => {
+    setActiveTab("orders");
+    // The OrdersTab will handle showing the order details
+  };
+
   /* ── Sidebar content (shared by desktop & drawer) ── */
   const Sidebar = () => (
     <Box sx={{
@@ -270,7 +275,7 @@ const DashboardPage = () => {
 
         {/* Content area – stretches to fill remaining space */}
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          {activeTab === "dashboard" && <DashboardTab />}
+          {activeTab === "dashboard" && <DashboardTab onViewOrder={handleViewOrderFromDashboard} />}
           {activeTab === "profile" && <ProfileTab />}
           {activeTab === "orders" && <OrdersTab />}
           {activeTab === "wishlist" && <WishlistTab />}
@@ -297,7 +302,7 @@ const PageHeader = ({ title, subtitle }) => (
 /* ════════════════════════════════════════════
    DASHBOARD TAB
    ════════════════════════════════════════════ */
-const DashboardTab = () => {
+const DashboardTab = ({ onViewOrder }) => {
   const [stats, setStats] = useState({ totalOrders: 0, pendingOrders: 0, wishlistItems: 0, deliveredOrders: 0 });
   const [recentOrders, setRecentOrders] = useState([]);
   const [wishlist, setWishlist] = useState([]);
@@ -427,7 +432,7 @@ const DashboardTab = () => {
                     <Chip icon={statusIcon(o.status)} label={o.status} color={statusColor(o.status)} size="small" sx={{ fontSize: "0.7rem", fontWeight: 600 }} />
                   </td>
                   <td style={{ padding: "14px 16px" }}>
-                    <Button size="small" endIcon={<ArrowForward sx={{ fontSize: 14 }} />} sx={{ textTransform: "none", fontSize: "0.8rem", color: C.primary, fontWeight: 600, "&:hover": { bgcolor: C.primaryLt } }}>
+                    <Button onClick={() => onViewOrder && onViewOrder(o)} size="small" endIcon={<ArrowForward sx={{ fontSize: 14 }} />} sx={{ textTransform: "none", fontSize: "0.8rem", color: C.primary, fontWeight: 600, "&:hover": { bgcolor: C.primaryLt } }}>
                       View
                     </Button>
                   </td>
@@ -455,7 +460,7 @@ const DashboardTab = () => {
               </Box>
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Box sx={{ fontWeight: 700, color: C.primary }}>{o.total_amount ? `৳${o.total_amount}` : o.total_price ? `৳${o.total_price}` : ""}</Box>
-                <Button size="small" endIcon={<ArrowForward sx={{ fontSize: 14 }} />} sx={{ textTransform: "none", fontSize: "0.75rem", color: C.primary }}>View</Button>
+                <Button onClick={() => onViewOrder && onViewOrder(o)} size="small" endIcon={<ArrowForward sx={{ fontSize: 14 }} />} sx={{ textTransform: "none", fontSize: "0.75rem", color: C.primary }}>View</Button>
               </Box>
             </Box>
           ))}
@@ -604,6 +609,8 @@ const ProfileTab = () => {
 const OrdersTab = () => {
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showOrderDetails, setShowOrderDetails] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -622,6 +629,16 @@ const OrdersTab = () => {
     fetchOrders();
   }, [user]);
 
+  const handleViewOrder = (order) => {
+    setSelectedOrder(order);
+    setShowOrderDetails(true);
+  };
+
+  const handleBackToList = () => {
+    setShowOrderDetails(false);
+    setSelectedOrder(null);
+  };
+
   const statusColor = (s) => {
     if (s === "Delivered" || s === "Paid") return "success";
     if (["Processing", "Pending", "Placed"].includes(s)) return "warning";
@@ -639,6 +656,10 @@ const OrdersTab = () => {
       default:          return <Pending sx={sx} />;
     }
   };
+
+  if (showOrderDetails && selectedOrder) {
+    return <OrderDetailsView order={selectedOrder} onBack={handleBackToList} />;
+  }
 
   return (
     <>
@@ -680,7 +701,7 @@ const OrdersTab = () => {
                         <Chip icon={statusIcon(o.status)} label={o.status} color={statusColor(o.status)} size="small" sx={{ fontSize: "0.7rem", fontWeight: 600 }} />
                       </td>
                       <td style={{ padding: "14px 16px" }}>
-                        <Button size="small" endIcon={<ArrowForward sx={{ fontSize: 14 }} />} sx={{ textTransform: "none", fontSize: "0.8rem", color: C.primary, fontWeight: 600, "&:hover": { bgcolor: C.primaryLt } }}>
+                        <Button onClick={() => handleViewOrder(o)} size="small" endIcon={<ArrowForward sx={{ fontSize: 14 }} />} sx={{ textTransform: "none", fontSize: "0.8rem", color: C.primary, fontWeight: 600, "&:hover": { bgcolor: C.primaryLt } }}>
                           View
                         </Button>
                       </td>
@@ -706,7 +727,7 @@ const OrdersTab = () => {
                   </Box>
                   <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <Box sx={{ fontWeight: 700, color: C.primary }}>{o.total_amount ? `৳${o.total_amount}` : o.total_price ? `৳${o.total_price}` : ""}</Box>
-                    <Button size="small" endIcon={<ArrowForward sx={{ fontSize: 14 }} />} sx={{ textTransform: "none", fontSize: "0.75rem", color: C.primary }}>View</Button>
+                    <Button onClick={() => handleViewOrder(o)} size="small" endIcon={<ArrowForward sx={{ fontSize: 14 }} />} sx={{ textTransform: "none", fontSize: "0.75rem", color: C.primary }}>View</Button>
                   </Box>
                 </Box>
               ))}
@@ -799,107 +820,465 @@ const WishlistTab = () => {
 };
 
 /* ════════════════════════════════════════════
+   ORDER DETAILS VIEW
+   ════════════════════════════════════════════ */
+const OrderDetailsView = ({ order, onBack }) => {
+  const statusColor = (s) => {
+    if (s === "Delivered" || s === "Paid") return "success";
+    if (["Processing", "Pending", "Placed"].includes(s)) return "warning";
+    if (s === "Shipped") return "info";
+    if (s === "Cancelled") return "error";
+    return "default";
+  };
+  const statusIcon = (s) => {
+    const sx = { fontSize: 18 };
+    switch (s) {
+      case "Delivered": return <TaskAlt sx={sx} />;
+      case "Shipped":   return <DirectionsCar sx={sx} />;
+      case "Paid":      return <CheckCircle sx={sx} />;
+      case "Cancelled": return <Delete sx={sx} />;
+      default:          return <Pending sx={sx} />;
+    }
+  };
+
+  return (
+    <>
+      {/* Header with back button */}
+      <Box sx={{ mb: 4, display: "flex", alignItems: "center", gap: 2 }}>
+        <IconButton onClick={onBack} sx={{ bgcolor: C.primaryLt, color: C.primary, "&:hover": { bgcolor: C.primary, color: "#fff" } }}>
+          <ArrowForward sx={{ transform: "rotate(180deg)" }} />
+        </IconButton>
+        <Box>
+          <Box sx={{ fontWeight: 800, fontSize: { xs: "1.3rem", md: "1.8rem" }, color: C.heading, fontFamily: "'Quicksand', sans-serif" }}>
+            Order Details
+          </Box>
+          <Box sx={{ fontSize: "0.85rem", color: C.muted, mt: 0.3 }}>
+            Order #{order.order_number || order.id}
+          </Box>
+        </Box>
+      </Box>
+
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "1fr 360px" }, gap: 3 }}>
+        {/* Left: Order items and details */}
+        <Box>
+          {/* Status card */}
+          <Box sx={{ ...cardSx, p: 3, mb: 3 }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+              <Box sx={{ fontWeight: 700, fontSize: "1.1rem", color: C.heading }}>Order Status</Box>
+              <Chip icon={statusIcon(order.status)} label={order.status} color={statusColor(order.status)} sx={{ fontWeight: 600, fontSize: "0.85rem" }} />
+            </Box>
+            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" }, gap: 2 }}>
+              <Box>
+                <Box sx={{ fontSize: "0.75rem", color: C.muted, mb: 0.3 }}>Order Date</Box>
+                <Box sx={{ fontWeight: 600, color: C.heading, fontSize: "0.9rem" }}>
+                  {order.order_date ? new Date(order.order_date).toLocaleDateString() : "N/A"}
+                </Box>
+              </Box>
+              <Box>
+                <Box sx={{ fontSize: "0.75rem", color: C.muted, mb: 0.3 }}>Payment Method</Box>
+                <Box sx={{ fontWeight: 600, color: C.heading, fontSize: "0.9rem" }}>
+                  {order.payment_method || "N/A"}
+                </Box>
+              </Box>
+              <Box>
+                <Box sx={{ fontSize: "0.75rem", color: C.muted, mb: 0.3 }}>Delivery Charge</Box>
+                <Box sx={{ fontWeight: 600, color: C.heading, fontSize: "0.9rem" }}>
+                  ৳{order.deliver_charge || 0}
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+
+          {/* Order items */}
+          <Box sx={{ ...cardSx, p: 3 }}>
+            <Box sx={{ fontWeight: 700, fontSize: "1.1rem", color: C.heading, mb: 3 }}>Order Items</Box>
+            {order.items && order.items.length > 0 ? (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                {order.items.map((item, idx) => (
+                  <Box key={idx} sx={{
+                    display: "flex",
+                    gap: 2,
+                    p: 2,
+                    borderRadius: "12px",
+                    border: `1px solid ${C.borderClr}`,
+                    bgcolor: "#FAFAFA"
+                  }}>
+                    {/* Product image */}
+                    <Box sx={{
+                      width: 80,
+                      height: 80,
+                      flexShrink: 0,
+                      borderRadius: "10px",
+                      bgcolor: C.primaryLt,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      overflow: "hidden"
+                    }}>
+                      {item.product_image ? (
+                        <img src={item.product_image} alt={item.product_title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      ) : (
+                        <ShoppingCart sx={{ fontSize: 32, color: C.primary, opacity: 0.4 }} />
+                      )}
+                    </Box>
+
+                    {/* Product details */}
+                    <Box sx={{ flex: 1 }}>
+                      <Box sx={{ fontWeight: 600, fontSize: "0.95rem", color: C.heading, mb: 0.5 }}>
+                        {item.product_title || item.product?.supplier_product?.name || "Product"}
+                      </Box>
+                      {item.variant && (
+                        <Box sx={{ fontSize: "0.8rem", color: C.muted, mb: 1 }}>
+                          {item.variant.name}
+                        </Box>
+                      )}
+                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <Box sx={{ fontSize: "0.85rem", color: C.body }}>
+                          Qty: {item.quantity} × ৳{item.final_unit_price || item.original_unit_price}
+                        </Box>
+                        <Box sx={{ fontWeight: 700, color: C.primary, fontSize: "1rem" }}>
+                          ৳{item.total_price || (item.quantity * (item.final_unit_price || item.original_unit_price))}
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+            ) : (
+              <Box sx={{ textAlign: "center", py: 4, color: C.muted }}>No items in this order</Box>
+            )}
+          </Box>
+        </Box>
+
+        {/* Right: Summary and shipping */}
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          {/* Shipping address */}
+          <Box sx={{ ...cardSx, p: 3 }}>
+            <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading, mb: 2, fontFamily: "'Quicksand', sans-serif" }}>
+              Shipping Address
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5 }}>
+              <LocationOn sx={{ fontSize: 20, color: C.primary, mt: 0.3 }} />
+              <Box sx={{ fontSize: "0.9rem", color: C.body, lineHeight: 1.6 }}>
+                {order.shipping_address || "No address provided"}
+              </Box>
+            </Box>
+          </Box>
+
+          {/* Order summary */}
+          <Box sx={{ ...cardSx, p: 3 }}>
+            <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading, mb: 3, fontFamily: "'Quicksand', sans-serif" }}>
+              Order Summary
+            </Box>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Box sx={{ fontSize: "0.85rem", color: C.body }}>Subtotal</Box>
+                <Box sx={{ fontWeight: 600, fontSize: "0.85rem", color: C.heading }}>
+                  ৳{((order.total_amount || order.total_price || 0) - (order.deliver_charge || 0) + (order.coupon_discount || 0)).toFixed(2)}
+                </Box>
+              </Box>
+              {order.coupon_discount > 0 && (
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Box sx={{ fontSize: "0.85rem", color: C.success }}>Discount</Box>
+                  <Box sx={{ fontWeight: 600, fontSize: "0.85rem", color: C.success }}>
+                    -৳{order.coupon_discount}
+                  </Box>
+                </Box>
+              )}
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Box sx={{ fontSize: "0.85rem", color: C.body }}>Delivery Charge</Box>
+                <Box sx={{ fontWeight: 600, fontSize: "0.85rem", color: C.heading }}>
+                  ৳{order.deliver_charge || 0}
+                </Box>
+              </Box>
+              <Divider sx={{ my: 1, borderColor: C.borderClr }} />
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Box sx={{ fontSize: "0.9rem", fontWeight: 700, color: C.heading }}>Total</Box>
+                <Box sx={{ fontWeight: 800, fontSize: "1.2rem", color: C.primary }}>
+                  ৳{order.total_amount || order.total_price || 0}
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+    </>
+  );
+};
+
+/* ════════════════════════════════════════════
    TRACK ORDER TAB
    ════════════════════════════════════════════ */
 const TrackOrderTab = () => {
-  const [trackingId, setTrackingId] = useState("ORD-001");
+  const [trackingId, setTrackingId] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [trackingData, setTrackingData] = useState(null);
+  const [error, setError] = useState("");
+
+  const handleTrackOrder = async () => {
+    if (!trackingId.trim()) {
+      toast.error("Please enter a tracking ID");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/v1.0/customers/orders/track/${trackingId}/`, {
+        headers: { "Content-Type": "application/json", "Authorization": `JWT ${localStorage.getItem("access_token")}` },
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setTrackingData(data?.data);
+        toast.success("Order found!");
+      } else {
+        setError(data.error || "Order not found");
+        toast.error(data.error || "Order not found");
+        setTrackingData(null);
+      }
+    } catch (err) {
+      setError("Failed to track order. Please try again.");
+      toast.error("Failed to track order. Please try again.");
+      setTrackingData(null);
+    }
+
+    setLoading(false);
+  };
+
+  const getStatusIcon = (status) => {
+    const sx = { fontSize: 20 };
+    switch (status) {
+      case "completed": return <TaskAlt sx={{ ...sx, color: C.primary }} />;
+      case "in_progress": return <DirectionsCar sx={{ ...sx, color: C.info }} />;
+      default: return <Pending sx={{ ...sx, color: C.warn }} />;
+    }
+  };
+
+  const getActiveStep = (status) => {
+    const statusMap = {
+      "Placed": 0,
+      "Pending": 0,
+      "Processing": 1,
+      "Shipped": 2,
+      "Delivered": 3,
+    };
+    return statusMap[status] || 0;
+  };
+
+  const getProgressValue = (status) => {
+    const activeStep = getActiveStep(status);
+    return (activeStep / 3) * 100;
+  };
+
+  const statusColor = (s) => {
+    if (s === "Delivered" || s === "Paid") return "success";
+    if (["Processing", "Pending", "Placed"].includes(s)) return "warning";
+    if (s === "Shipped") return "info";
+    if (s === "Cancelled") return "error";
+    return "default";
+  };
+
   const steps = ["Order Placed", "Processing", "Shipped", "Delivered"];
-  const activeStep = 3;
 
   return (
     <>
       <PageHeader title="Track Your Order" subtitle="Real-time tracking for your orders" />
 
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 340px" }, gap: 3 }}>
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: trackingData ? "1fr 340px" : "1fr" }, gap: 3 }}>
         {/* Left: tracking details */}
         <Box sx={{ ...cardSx, p: { xs: 2.5, md: 3.5 } }}>
           {/* Input */}
           <Box sx={{ mb: 4 }}>
             <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading, mb: 2, fontFamily: "'Quicksand', sans-serif" }}>Enter Tracking ID</Box>
             <Box sx={{ display: "flex", gap: 1.5, flexDirection: { xs: "column", sm: "row" } }}>
-              <TextField fullWidth value={trackingId} onChange={(e) => setTrackingId(e.target.value)} placeholder="Enter your tracking ID" variant="outlined" size="small" sx={{ ...inputSx, flex: 1 }} />
-              <Button variant="contained" disableElevation sx={{
-                bgcolor: C.primary, borderRadius: "10px", px: 4, py: 1, fontWeight: 600, textTransform: "none", whiteSpace: "nowrap",
-                "&:hover": { bgcolor: C.primaryDk },
-              }}>
-                Track Order
+              <TextField
+                fullWidth
+                value={trackingId}
+                onChange={(e) => setTrackingId(e.target.value)}
+                placeholder="Enter your order tracking ID (e.g., ABC123XYZ0)"
+                variant="outlined"
+                size="small"
+                sx={{ ...inputSx, flex: 1 }}
+                onKeyPress={(e) => e.key === "Enter" && handleTrackOrder()}
+              />
+              <Button
+                variant="contained"
+                disableElevation
+                onClick={handleTrackOrder}
+                disabled={loading}
+                sx={{
+                  bgcolor: C.primary,
+                  borderRadius: "10px",
+                  px: 4,
+                  py: 1,
+                  fontWeight: 600,
+                  textTransform: "none",
+                  whiteSpace: "nowrap",
+                  "&:hover": { bgcolor: C.primaryDk },
+                  "&:disabled": { bgcolor: "#E0E0E0" },
+                }}
+              >
+                {loading ? "Tracking..." : "Track Order"}
               </Button>
             </Box>
-          </Box>
-
-          {/* Status */}
-          <Box sx={{ mb: 4 }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1.5 }}>
-              <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading }}>Order Status</Box>
-              <Chip label="Delivered" color="success" icon={<TaskAlt sx={{ fontSize: 15 }} />} sx={{ fontWeight: 600, fontSize: "0.8rem" }} />
-            </Box>
-            <LinearProgress variant="determinate" value={100} sx={{
-              height: 8, borderRadius: 4,
-              bgcolor: "#E5E7EB",
-              "& .MuiLinearProgress-bar": { bgcolor: C.primary, borderRadius: 4 },
-            }} />
-          </Box>
-
-          {/* Stepper */}
-          <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
-            {steps.map((label, idx) => (
-              <Step key={label}>
-                <StepLabel
-                  StepIconProps={{ sx: { color: idx <= activeStep ? C.primary : "#D1D5DB", fontSize: 28, "&.Mui-completed": { color: C.primary }, "&.Mui-active": { color: C.primary } } }}
-                  sx={{ "& .MuiStepLabel-label": { fontSize: "0.78rem", fontWeight: idx <= activeStep ? 600 : 400, color: idx <= activeStep ? C.heading : C.muted, mt: 0.5 } }}
-                >
-                  {label}
-                </StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-
-          {/* Timeline */}
-          <Box sx={{ p: 2.5, bgcolor: "#FAFAFA", borderRadius: "12px", border: `1px solid ${C.borderClr}` }}>
-            <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading, mb: 2.5, fontFamily: "'Quicksand', sans-serif" }}>Delivery Timeline</Box>
-            {[
-              { date: "15 Oct 2024, 03:30 PM", event: "Delivered", location: "Uttara, Dhaka", icon: <TaskAlt sx={{ color: C.primary }} /> },
-              { date: "14 Oct 2024, 10:15 AM", event: "Out for delivery", location: "Dhaka Hub", icon: <LocalShipping sx={{ color: C.info }} /> },
-              { date: "13 Oct 2024, 02:00 PM", event: "Processing completed", location: "Warehouse", icon: <Pending sx={{ color: C.warn }} /> },
-              { date: "12 Oct 2024, 11:30 AM", event: "Order confirmed", location: "Sobarbazar BD", icon: <CheckCircle sx={{ color: C.primary }} /> },
-            ].map((item, idx) => (
-              <Box key={idx} sx={{ display: "flex", alignItems: "flex-start", mb: idx < 3 ? 2.5 : 0, pb: idx < 3 ? 2 : 0, borderBottom: idx < 3 ? `1px solid ${C.borderClr}` : "none" }}>
-                <Box sx={{ mr: 2, mt: 0.3, p: 0.8, borderRadius: "10px", bgcolor: C.cardBg, border: `1px solid ${C.borderClr}`, display: "flex" }}>
-                  {item.icon}
-                </Box>
-                <Box sx={{ flex: 1 }}>
-                  <Box sx={{ fontWeight: 600, color: C.heading, mb: 0.3, fontSize: "0.9rem" }}>{item.event}</Box>
-                  <Box sx={{ color: C.muted, fontSize: "0.8rem", mb: 0.3 }}>{item.date}</Box>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                    <LocationOn sx={{ fontSize: 13, color: C.muted }} />
-                    <Box sx={{ color: C.muted, fontSize: "0.75rem" }}>{item.location}</Box>
-                  </Box>
-                </Box>
+            {error && (
+              <Box sx={{ mt: 1.5, p: 1.5, bgcolor: "#FEF2F2", border: "1px solid #FCA5A5", borderRadius: "8px", fontSize: "0.85rem", color: C.danger }}>
+                {error}
               </Box>
-            ))}
+            )}
           </Box>
+
+          {trackingData && trackingData.order ? (
+            <>
+              {/* Status */}
+              <Box sx={{ mb: 4 }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1.5 }}>
+                  <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading }}>Order Status</Box>
+                  <Chip
+                    label={trackingData.order.status}
+                    color={statusColor(trackingData.order.status)}
+                    icon={<TaskAlt sx={{ fontSize: 15 }} />}
+                    sx={{ fontWeight: 600, fontSize: "0.8rem" }}
+                  />
+                </Box>
+                <LinearProgress
+                  variant="determinate"
+                  value={getProgressValue(trackingData.order.status)}
+                  sx={{
+                    height: 8,
+                    borderRadius: 4,
+                    bgcolor: "#E5E7EB",
+                    "& .MuiLinearProgress-bar": { bgcolor: C.primary, borderRadius: 4 },
+                  }}
+                />
+              </Box>
+
+              {/* Stepper */}
+              <Stepper activeStep={getActiveStep(trackingData.order.status)} alternativeLabel sx={{ mb: 4 }}>
+                {steps.map((label, idx) => (
+                  <Step key={label}>
+                    <StepLabel
+                      slotProps={{
+                        stepIcon: {
+                          sx: {
+                            color: idx <= getActiveStep(trackingData.order.status) ? C.primary : "#D1D5DB",
+                            fontSize: 28,
+                            "&.Mui-completed": { color: C.primary },
+                            "&.Mui-active": { color: C.primary }
+                          }
+                        }
+                      }}
+                      sx={{
+                        "& .MuiStepLabel-label": {
+                          fontSize: "0.78rem",
+                          fontWeight: idx <= getActiveStep(trackingData.order.status) ? 600 : 400,
+                          color: idx <= getActiveStep(trackingData.order.status) ? C.heading : C.muted,
+                          mt: 0.5
+                        }
+                      }}
+                    >
+                      {label}
+                    </StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
+
+              {/* Timeline */}
+              {trackingData.tracking_history && trackingData.tracking_history.length > 0 && (
+                <Box sx={{ p: 2.5, bgcolor: "#FAFAFA", borderRadius: "12px", border: `1px solid ${C.borderClr}` }}>
+                  <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading, mb: 2.5, fontFamily: "'Quicksand', sans-serif" }}>
+                    Delivery Timeline
+                  </Box>
+                  {trackingData.tracking_history.map((item, idx) => (
+                    <Box
+                      key={idx}
+                      sx={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        mb: idx < trackingData.tracking_history.length - 1 ? 2.5 : 0,
+                        pb: idx < trackingData.tracking_history.length - 1 ? 2 : 0,
+                        borderBottom: idx < trackingData.tracking_history.length - 1 ? `1px solid ${C.borderClr}` : "none"
+                      }}
+                    >
+                      <Box sx={{
+                        mr: 2,
+                        mt: 0.3,
+                        p: 0.8,
+                        borderRadius: "10px",
+                        bgcolor: C.cardBg,
+                        border: `1px solid ${C.borderClr}`,
+                        display: "flex"
+                      }}>
+                        {getStatusIcon(item.status)}
+                      </Box>
+                      <Box sx={{ flex: 1 }}>
+                        <Box sx={{ fontWeight: 600, color: C.heading, mb: 0.3, fontSize: "0.9rem" }}>
+                          {item.event}
+                        </Box>
+                        {item.date && (
+                          <Box sx={{ color: C.muted, fontSize: "0.8rem", mb: 0.3 }}>
+                            {new Date(item.date).toLocaleString()}
+                          </Box>
+                        )}
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                          <LocationOn sx={{ fontSize: 13, color: C.muted }} />
+                          <Box sx={{ color: C.muted, fontSize: "0.75rem" }}>{item.location}</Box>
+                        </Box>
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
+              )}
+            </>
+          ) : (
+            <Box sx={{ textAlign: "center", py: 6, color: C.muted }}>
+              <LocalShipping sx={{ fontSize: 48, color: C.borderClr, mb: 2 }} />
+              <Box sx={{ fontSize: "0.95rem" }}>Enter your tracking ID to see order details</Box>
+            </Box>
+          )}
         </Box>
 
         {/* Right: order summary */}
-        <Box sx={{ ...cardSx, p: 3, alignSelf: "flex-start", position: { md: "sticky" }, top: { md: 24 } }}>
-          <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading, mb: 3, fontFamily: "'Quicksand', sans-serif" }}>Order Summary</Box>
-          {[
-            { label: "Tracking ID", value: "#ORD-001", highlight: true },
-            { label: "Delivery Address", value: "House 12, Road 8, Uttara, Dhaka" },
-            { label: "Contact", value: "+880 1234 567890" },
-            { label: "Items", value: "3 Products" },
-          ].map((r, i) => (
-            <Box key={i} sx={{ mb: 2.5 }}>
-              <Box sx={{ fontSize: "0.8rem", color: C.muted, mb: 0.3 }}>{r.label}</Box>
-              <Box sx={{ fontWeight: r.highlight ? 700 : 500, color: r.highlight ? C.primary : C.heading, fontSize: "0.9rem" }}>{r.value}</Box>
+        {trackingData && trackingData.order && (
+          <Box sx={{ ...cardSx, p: 3, alignSelf: "flex-start", position: { md: "sticky" }, top: { md: 24 } }}>
+            <Box sx={{ fontWeight: 700, fontSize: "1rem", color: C.heading, mb: 3, fontFamily: "'Quicksand', sans-serif" }}>
+              Order Summary
             </Box>
-          ))}
-          <Divider sx={{ my: 2, borderColor: C.borderClr }} />
-          <Box>
-            <Box sx={{ fontSize: "0.8rem", color: C.muted, mb: 0.3 }}>Total Amount</Box>
-            <Box sx={{ fontWeight: 800, color: C.primary, fontSize: "1.25rem" }}>৳ 1,250.00</Box>
+            <Box sx={{ mb: 2.5 }}>
+              <Box sx={{ fontSize: "0.8rem", color: C.muted, mb: 0.3 }}>Tracking ID</Box>
+              <Box sx={{ fontWeight: 700, color: C.primary, fontSize: "0.9rem" }}>
+                #{trackingData.order.order_number}
+              </Box>
+            </Box>
+            <Box sx={{ mb: 2.5 }}>
+              <Box sx={{ fontSize: "0.8rem", color: C.muted, mb: 0.3 }}>Delivery Address</Box>
+              <Box sx={{ fontWeight: 500, color: C.heading, fontSize: "0.85rem", lineHeight: 1.5 }}>
+                {trackingData.order.shipping_address || "N/A"}
+              </Box>
+            </Box>
+            <Box sx={{ mb: 2.5 }}>
+              <Box sx={{ fontSize: "0.8rem", color: C.muted, mb: 0.3 }}>Payment Method</Box>
+              <Box sx={{ fontWeight: 500, color: C.heading, fontSize: "0.85rem" }}>
+                {trackingData.order.payment_method || "N/A"}
+              </Box>
+            </Box>
+            <Box sx={{ mb: 2.5 }}>
+              <Box sx={{ fontSize: "0.8rem", color: C.muted, mb: 0.3 }}>Items</Box>
+              <Box sx={{ fontWeight: 500, color: C.heading, fontSize: "0.85rem" }}>
+                {trackingData.order.items?.length || 0} Product{trackingData.order.items?.length !== 1 ? "s" : ""}
+              </Box>
+            </Box>
+            <Divider sx={{ my: 2, borderColor: C.borderClr }} />
+            <Box>
+              <Box sx={{ fontSize: "0.8rem", color: C.muted, mb: 0.3 }}>Total Amount</Box>
+              <Box sx={{ fontWeight: 800, color: C.primary, fontSize: "1.25rem" }}>
+                ৳{trackingData.order.total_amount || 0}
+              </Box>
+            </Box>
           </Box>
-        </Box>
+        )}
       </Box>
     </>
   );
