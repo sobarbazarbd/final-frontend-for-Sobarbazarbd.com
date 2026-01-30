@@ -7,7 +7,7 @@ First, run the development server:sdsdsds
 ```bash
 npm run dev heelo hello romeo
 # ordd a
-yarn devda
+yarn devda mj
 # or ds
 pnpm dev
 # or
