@@ -24,7 +24,7 @@ const WishListSection = () => {
 
     try {
       const token = localStorage.getItem("access_token");
-      const res = await fetch(`${API_BASE_URL}/customers/favorite-products/`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1.0/customers/favorite-products/`, {
         headers: {
           Authorization: `JWT ${token}`,
         },
@@ -53,7 +53,7 @@ const WishListSection = () => {
     try {
       const token = localStorage.getItem("access_token");
       const res = await fetch(
-        `${API_BASE_URL}/customers/favorite-products/${itemId}/`,
+        `${API_BASE_URL}/api/v1.0/customers/favorite-products/${itemId}/`,
         {
           method: "DELETE",
           headers: {

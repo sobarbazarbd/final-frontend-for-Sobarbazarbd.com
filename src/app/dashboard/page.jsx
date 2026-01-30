@@ -322,7 +322,7 @@ const DashboardTab = () => {
         const sorted = [...orders].sort((a, b) => new Date(b.order_date) - new Date(a.order_date));
         setRecentOrders(sorted.slice(0, 3));
 
-        const wishRes = await fetch(`${API_BASE_URL}/customers/favorite-products/`, { headers });
+        const wishRes = await fetch(`${API_BASE_URL}/api/v1.0/customers/favorite-products/`, { headers });
         const wishData = await wishRes.json();
         const wishArr = Array.isArray(wishData) ? wishData : (wishData.results || wishData.data || []);
         setWishlist(wishArr);
@@ -731,7 +731,7 @@ const WishlistTab = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("access_token");
-        const res = await fetch(`${API_BASE_URL}/customers/favorite-products/`, {
+        const res = await fetch(`${API_BASE_URL}/api/v1.0/customers/favorite-products/`, {
           headers: { Authorization: `JWT ${token}`, "Content-Type": "application/json" },
         });
         const data = await res.json();

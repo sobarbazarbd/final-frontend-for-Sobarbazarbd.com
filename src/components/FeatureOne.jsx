@@ -179,7 +179,7 @@ const FeatureOne = ({
                     <div key={item.id} className="feature-item text-center px-2">
                       <div className="feature-item__thumb rounded-circle mx-auto">
                         <Link
-                          href={`/shop/?subcategories=${item.id}`}
+                          href={`/shop/?supplier_product__subcategories=${item.id}`}
                           className="w-100 h-100 flex-center"
                         >
                           <img
