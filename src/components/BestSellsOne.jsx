@@ -92,7 +92,7 @@ const BestSellsOne = ({ section, data = [] }) => {
                             {badgeText}
                           </span>
                           <Link
-                            href={`/product-details/${product.id}`}
+                            href={`/shop/${product.id}`}
                             className='product-card__thumb flex-center'
                           >
                             <img src={imageUrl} alt={product.name} />
