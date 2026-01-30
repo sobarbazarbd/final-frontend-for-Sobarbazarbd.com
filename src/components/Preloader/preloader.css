@@ -1,0 +1,697 @@
+/* Preloader Container */
+.preloader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #F3FAF2;
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  font-family: "Quicksand", "Inter", sans-serif;
+}
+
+.preloader-container.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Door Container */
+.door-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.door-container.open {
+  pointer-events: none;
+}
+
+/* Door Styles - Clean Light Theme */
+.door {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  background: #f3faf2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+/* Subtle Shine Overlay */
+.door::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.2) 40%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+}
+
+/* Edge Highlight */
+.door::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    rgba(39, 158, 90, 0.2) 0%,
+    rgba(39, 158, 90, 0.1) 50%,
+    rgba(39, 158, 90, 0.2) 100%
+  );
+}
+
+.door-left::after {
+  right: 0;
+}
+
+.door-right::after {
+  left: 0;
+}
+
+.door-left {
+  left: 0;
+  transform-origin: left center;
+}
+
+.door-right {
+  right: 0;
+  transform-origin: right center;
+}
+
+/* Door Open Animation */
+.door-container.open .door-left {
+  transform: perspective(1200px) rotateY(-105deg);
+}
+
+.door-container.open .door-right {
+  transform: perspective(1200px) rotateY(105deg);
+}
+
+/* Door Pattern */
+.door-pattern {
+  position: relative;
+  width: 80%;
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 20px;
+}
+
+.door-panel {
+  width: 100%;
+  height: 45%;
+  background: linear-gradient(145deg, #e8f5e9 0%, #dcedc8 100%);
+  border: 2px solid rgba(39, 158, 90, 0.15);
+  border-radius: 8px;
+  box-shadow:
+    inset 3px 3px 8px rgba(0, 0, 0, 0.05),
+    inset -3px -3px 8px rgba(255, 255, 255, 0.8),
+    0 4px 12px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shine on panels */
+.door-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  border-radius: 6px 6px 0 0;
+}
+
+/* Door Handle - Green Theme */
+.door-handle {
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 50px;
+  background: linear-gradient(
+    180deg,
+    #34d399 0%,
+    #279E5A 30%,
+    #1F8A4D 60%,
+    #279E5A 100%
+  );
+  border-radius: 6px;
+  box-shadow:
+    2px 2px 8px rgba(39, 158, 90, 0.3),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+/* Handle shine */
+.door-handle::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 2px;
+  width: 3px;
+  height: 30%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent);
+  border-radius: 2px;
+}
+
+.door-handle.left {
+  right: auto;
+  left: 30px;
+}
+
+/* Door Brand Text */
+.door-brand {
+  position: absolute;
+  bottom: 15%;
+  display: flex;
+  gap: 6px;
+}
+
+.door-brand span {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #279E5A;
+  text-shadow: 0 2px 8px rgba(39, 158, 90, 0.2);
+  font-family: "Quicksand", sans-serif;
+}
+
+/* Door Frame - Hidden */
+.door-frame {
+  display: none;
+}
+
+/* Welcome Content */
+.welcome-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding: 40px;
+  pointer-events: none;
+}
+
+.welcome-content.show {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.welcome-logo {
+  margin-bottom: 25px;
+}
+
+.logo-img {
+  width: 160px;
+  height: auto;
+  filter: drop-shadow(0 4px 15px rgba(39, 158, 90, 0.3));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.welcome-title {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.welcome-text {
+  font-size: 1.4rem;
+  color: #279E5A;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-family: "Quicksand", sans-serif;
+}
+
+.brand-name {
+  font-size: 3rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #279E5A 0%, #FF9F29 50%, #279E5A 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shine 3s linear infinite;
+  font-family: "Quicksand", sans-serif;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+.welcome-tagline {
+  font-size: 1rem;
+  color: #5a7a6a;
+  margin-bottom: 35px;
+  letter-spacing: 0.5px;
+  font-family: "Inter", sans-serif;
+}
+
+/* Start Shopping Button */
+.start-shopping-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 40px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #279E5A 0%, #22C55E 100%);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 30px rgba(39, 158, 90, 0.35);
+  opacity: 0;
+  transform: translateY(30px);
+  position: relative;
+  z-index: 100;
+  pointer-events: none;
+  font-family: "Quicksand", sans-serif;
+}
+
+.start-shopping-btn.show {
+  opacity: 1;
+  transform: translateY(0);
+  animation: pulse 2s ease-in-out infinite;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 8px 30px rgba(39, 158, 90, 0.35);
+  }
+  50% {
+    box-shadow: 0 8px 45px rgba(39, 158, 90, 0.5);
+  }
+}
+
+.start-shopping-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(39, 158, 90, 0.45);
+  background: linear-gradient(135deg, #22C55E 0%, #279E5A 100%);
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.start-shopping-btn:hover .btn-icon {
+  transform: translateX(5px);
+}
+
+/* Shop Selection Popup */
+.shop-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s ease;
+}
+
+.shop-popup-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.shop-popup {
+  background: #fff;
+  border-radius: 20px;
+  padding: 35px;
+  max-width: 650px;
+  width: 90%;
+  transform: scale(0.8) translateY(50px);
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15);
+}
+
+.shop-popup.show {
+  transform: scale(1) translateY(0);
+}
+
+.popup-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.popup-header h2 {
+  font-size: 1.6rem;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-family: "Quicksand", sans-serif;
+}
+
+.popup-header p {
+  color: #666;
+  font-size: 0.95rem;
+  font-family: "Inter", sans-serif;
+}
+
+/* Shop Options */
+.popup-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.shop-option {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 22px;
+  background: #F3FAF2;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.shop-option:hover {
+  transform: translateX(8px);
+}
+
+.shop-option.retail {
+  background: linear-gradient(135deg, #F3FAF2 0%, #E8F5E9 100%);
+}
+
+.shop-option.retail:hover {
+  border-color: #279E5A;
+  box-shadow: 0 8px 30px rgba(39, 158, 90, 0.15);
+}
+
+.shop-option.wholesale {
+  background: linear-gradient(135deg, #FFFBF4 0%, #FFF3E0 100%);
+}
+
+.shop-option.wholesale:hover {
+  border-color: #FF9F29;
+  box-shadow: 0 8px 30px rgba(255, 159, 41, 0.15);
+}
+
+.option-icon {
+  width: 70px;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+
+.shop-option.retail .option-icon {
+  background: linear-gradient(135deg, #279E5A, #22C55E);
+  color: #fff;
+}
+
+.shop-option.wholesale .option-icon {
+  background: linear-gradient(135deg, #FF9F29, #FFB347);
+  color: #fff;
+}
+
+.option-content {
+  flex: 1;
+}
+
+.option-content h3 {
+  font-size: 1.3rem;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+  font-weight: 700;
+  font-family: "Quicksand", sans-serif;
+}
+
+.option-content p {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  font-family: "Inter", sans-serif;
+}
+
+.option-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.option-features li {
+  font-size: 0.75rem;
+  color: #555;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-family: "Inter", sans-serif;
+}
+
+.option-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: #ccc;
+  transition: all 0.3s ease;
+}
+
+.enter-text {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: all 0.3s ease;
+}
+
+.shop-option:hover .option-arrow {
+  transform: translateX(5px);
+}
+
+.shop-option:hover .enter-text {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.shop-option.retail:hover .option-arrow {
+  color: #279E5A;
+}
+
+.shop-option.retail:hover .enter-text {
+  color: #279E5A;
+}
+
+.shop-option.wholesale:hover .option-arrow {
+  color: #FF9F29;
+}
+
+.shop-option.wholesale:hover .enter-text {
+  color: #FF9F29;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .door-brand span {
+    font-size: 1.6rem;
+  }
+
+  .brand-name {
+    font-size: 2.2rem;
+  }
+
+  .welcome-text {
+    font-size: 1.1rem;
+  }
+
+  .welcome-tagline {
+    font-size: 0.9rem;
+  }
+
+  .start-shopping-btn {
+    padding: 14px 32px;
+    font-size: 1rem;
+  }
+
+  .shop-popup {
+    padding: 25px;
+    margin: 20px;
+  }
+
+  .popup-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .shop-option {
+    padding: 16px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .option-icon {
+    width: 55px;
+    height: 55px;
+  }
+
+  .option-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .option-content h3 {
+    font-size: 1.1rem;
+  }
+
+  .option-features {
+    justify-content: center;
+  }
+
+  .option-arrow {
+    display: none;
+  }
+
+  .logo-img {
+    width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .door-brand span {
+    font-size: 1.3rem;
+  }
+
+  .brand-name {
+    font-size: 1.8rem;
+  }
+
+  .welcome-text {
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+  }
+
+  .welcome-content {
+    padding: 20px;
+  }
+
+  .door-handle {
+    width: 10px;
+    height: 40px;
+    right: 15px;
+  }
+
+  .door-handle.left {
+    left: 15px;
+  }
+}
+
+/* Light Rays Effect */
+.door-container.open::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(39, 158, 90, 0.1) 0%,
+    transparent 70%
+  );
+  animation: rays 2s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes rays {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+/* Subtle Dot Pattern Effect */
+.preloader-container::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, rgba(39, 158, 90, 0.12), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(39, 158, 90, 0.08), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(39, 158, 90, 0.1), transparent),
+    radial-gradient(2px 2px at 130px 80px, rgba(39, 158, 90, 0.08), transparent),
+    radial-gradient(1px 1px at 160px 120px, rgba(39, 158, 90, 0.1), transparent);
+  background-size: 200px 200px;
+  animation: particles 30s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes particles {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-200px);
+  }
+}

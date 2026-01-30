@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "sass": "^1.71.1",
+    "typescript": "5.9.3",
     "webpack": "^5.90.3"
   }
 }

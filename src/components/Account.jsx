@@ -27,6 +27,7 @@ const Account = () => {
     longitude: "",
     tax_id: "",
     return_policy: "",
+    business_type: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -125,6 +126,7 @@ const Account = () => {
           longitude: "",
           tax_id: "",
           return_policy: "",
+          business_type: "",
         });
       } else {
         // Handle validation errors from API
@@ -250,6 +252,23 @@ const Account = () => {
                       <option value="Company">Company</option>
                     </select>
                   </div>
+                </div>
+
+                <div className="mb-24">
+                  <label className="text-neutral-900 text-lg mb-8 fw-medium">
+                    What type of business do you want to do? <span className="text-danger">*</span>
+                  </label>
+                  <select
+                    className="common-input"
+                    name="business_type"
+                    value={formData.business_type}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select business type</option>
+                    <option value="Retail">Retail</option>
+                    <option value="Wholesale">Wholesale</option>
+                    <option value="Both">Both</option>
+                  </select>
                 </div>
 
                 <div className="row mb-24">

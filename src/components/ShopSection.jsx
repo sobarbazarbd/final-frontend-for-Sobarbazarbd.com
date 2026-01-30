@@ -403,40 +403,6 @@ const ShopSection = ({
     );
   };
 
-  // Render color filter - আগের ডিজাইনের মতো করে
-  const renderColorFilter = () => {
-    const colors = [
-      { id: 'color1', name: 'Black', class: 'checked-black', count: 12 },
-      { id: 'color2', name: 'Blue', class: 'checked-primary', count: 12 },
-      { id: 'color3', name: 'Gray', class: 'checked-gray', count: 12 },
-      { id: 'color4', name: 'Green', class: 'checked-success', count: 12 },
-      { id: 'color5', name: 'Red', class: 'checked-danger', count: 12 },
-      { id: 'color6', name: 'White', class: 'checked-white', count: 12 },
-      { id: 'color7', name: 'Purple', class: 'checked-purple', count: 12 },
-    ];
-
-    return (
-      <ul className='max-h-540 overflow-y-auto scroll-sm'>
-        {colors.map((color) => (
-          <li key={color.id} className='mb-24'>
-            <div className={`form-check common-check common-radio ${color.class}`}>
-              <input
-                className='form-check-input'
-                type='radio'
-                name='color'
-                id={color.id}
-                checked={selectedColor === color.id}
-                onChange={() => handleColorChange(color.id)}
-              />
-              <label className='form-check-label' htmlFor={color.id}>
-                {color.name}({color.count})
-              </label>
-            </div>
-          </li>
-        ))}
-      </ul>
-    );
-  };
 
   // Render products
   const renderProducts = () => {
@@ -891,15 +857,15 @@ const ShopSection = ({
           <div className='col-lg-9'>
             {/* Top Bar */}
             <div className='flex-between gap-16 flex-wrap mb-40'>
-              <div className='d-flex align-items-center gap-12'>
-                <span className='text-gray-900'>
+              <div className='d-flex align-items-center gap-12 flex-wrap'>
+                <span className='text-gray-900 text-sm'>
                   Showing {startItem}-{endItem} of {count} results
                 </span>
                 {/* Clear Filters Button */}
                 {hasActiveFilters() && (
                   <button
                     onClick={handleClearFilters}
-                    className='btn btn-outline-main h-40 px-16 d-flex align-items-center gap-8'
+                    className='btn btn-outline-main h-40 px-16 d-flex align-items-center gap-8 flex-shrink-0'
                     type='button'
                   >
                     <i className='ph ph-x-circle' />
@@ -907,12 +873,12 @@ const ShopSection = ({
                   </button>
                 )}
               </div>
-              <div className='d-flex align-items-center gap-16 flex-wrap'>
+              <div className='d-flex align-items-center gap-16 flex-wrap w-sm-100'>
                 {/* Search */}
                 <form
                   onSubmit={handleSearchSubmit}
-                  className="d-flex"
-                  style={{ minWidth: 240 }}
+                  className="d-flex flex-grow-1"
+                  style={{ minWidth: 0, maxWidth: '300px' }}
                 >
                   <div className="input-group">
                     <input
@@ -995,34 +961,55 @@ const ShopSection = ({
               </div>
             </div>
 
-            {/* Pagination -  */}
+            {/* Pagination */}
             {totalPages > 1 && (
               <div className="mt-60">
-                <ul className='pagination flex-center flex-wrap gap-16'>
+                <ul className='pagination flex-center flex-wrap gap-8'>
                   <li className='page-item'>
                     <button
-                      className='page-link h-64 w-64 flex-center text-xxl rounded-8 fw-medium text-neutral-600 border border-gray-100'
+                      className='page-link h-48 w-48 flex-center text-xl rounded-8 fw-medium text-neutral-600 border border-gray-100'
                       onClick={() => currentPg > 1 && handlePageChange(currentPg - 1)}
                       disabled={currentPg <= 1}
                     >
                       <i className='ph-bold ph-arrow-left' />
                     </button>
                   </li>
-                  
-                  {pageNumbers.map((num) => (
-                    <li key={num} className={`page-item ${currentPg === num ? 'active' : ''}`}>
-                      <button
-                        className='page-link h-64 w-64 flex-center text-md rounded-8 fw-medium text-neutral-600 border border-gray-100'
-                        onClick={() => handlePageChange(num)}
-                      >
-                        {num.toString().padStart(2, "0")}
-                      </button>
-                    </li>
-                  ))}
-                  
+
+                  {(() => {
+                    const pages = [];
+                    const showPage = (num) => (
+                      <li key={num} className={`page-item ${currentPg === num ? 'active' : ''}`}>
+                        <button
+                          className='page-link h-48 w-48 flex-center text-md rounded-8 fw-medium text-neutral-600 border border-gray-100'
+                          onClick={() => handlePageChange(num)}
+                        >
+                          {num}
+                        </button>
+                      </li>
+                    );
+                    const showEllipsis = (key) => (
+                      <li key={key} className='page-item'>
+                        <span className='page-link h-48 w-48 flex-center text-md text-gray-400 border-0'>...</span>
+                      </li>
+                    );
+
+                    if (totalPages <= 5) {
+                      for (let i = 1; i <= totalPages; i++) pages.push(showPage(i));
+                    } else {
+                      pages.push(showPage(1));
+                      if (currentPg > 3) pages.push(showEllipsis('start'));
+                      const start = Math.max(2, currentPg - 1);
+                      const end = Math.min(totalPages - 1, currentPg + 1);
+                      for (let i = start; i <= end; i++) pages.push(showPage(i));
+                      if (currentPg < totalPages - 2) pages.push(showEllipsis('end'));
+                      pages.push(showPage(totalPages));
+                    }
+                    return pages;
+                  })()}
+
                   <li className='page-item'>
                     <button
-                      className='page-link h-64 w-64 flex-center text-xxl rounded-8 fw-medium text-neutral-600 border border-gray-100'
+                      className='page-link h-48 w-48 flex-center text-xl rounded-8 fw-medium text-neutral-600 border border-gray-100'
                       onClick={() => currentPg < totalPages && handlePageChange(currentPg + 1)}
                       disabled={currentPg >= totalPages}
                     >
@@ -1104,15 +1091,29 @@ const ShopSection = ({
           .list-view .product-card {
             flex-direction: column;
           }
-          
+
           .list-view .product-card__thumb {
             flex: 0 0 auto;
             width: 100%;
             height: 220px;
           }
-          
+
           .list-view .product-card__content {
             padding-left: 0;
+          }
+        }
+
+        /* Shop top bar responsive */
+        @media (max-width: 576px) {
+          .w-sm-100 {
+            width: 100% !important;
+          }
+          .w-sm-100 form {
+            max-width: 100% !important;
+            width: 100% !important;
+          }
+          .list-grid-btns {
+            display: none !important;
           }
         }
       `}</style>

@@ -9,10 +9,8 @@ import NewArrivalOne from "@/components/NewArrivalOne";
 import OfferOne from "@/components/OfferOne";
 import OrganicOne from "@/components/OrganicOne";
 import PopularProductsOne from "@/components/PopularProductsOne";
-import PromotionalOne from "@/components/PromotionalOne";
 import PromotionalThree from "@/components/PromotionalThree";
 import RecommendedOne from "@/components/RecommendedOne";
-import ShortProductOne from "@/components/ShortProductOne";
 import TopVendorsOne from "@/components/TopVendorsOne";
 import Trending from "@/components/Trending";
 import ColorInit from "@/helper/ColorInit";
@@ -29,10 +27,7 @@ const getHomePageData = async () => {
     const res = await fetch(
       "https://api.hetdcl.com/api/v1.0/base/home-page-data/",
       {
-        // cache: 'no-store', // or 'force-cache' for static data
-        // next: {
-        //   revalidate: 3600 // Revalidate every hour (optional)
-        // }
+        next: { revalidate: 300 }, // revalidate every 5 minutes
       }
     );
     if (!res.ok) {
@@ -40,7 +35,6 @@ const getHomePageData = async () => {
     }
 
     const json = await res.json();
-    console.log(json.data?.recommended_products,'jsonjsonjson')
     return json;
   } catch (err) {
     console.error("Failed to fetch home page data:", err);
@@ -60,23 +54,25 @@ const Page = async () => {
     });
   }
 
-  // console.log(homeData?.data,'homeData')
-
   return (
     <>
       <ScrollToTopInit color="#299E60" />
       <ColorInit color={false} />
       <HeroBanner section={bannerMap?.HeroBanner} />
+      
       <FeatureOne data={homeData?.data?.subcategories || []} />
+       <TopVendorsOne data={homeData?.data?.stores}/>
+      {/* <MegaDealsBanner section={bannerMap?.Deals} /> */}
       <FlashSalesOne section={bannerMap?.FlashSales} />
       <RecommendedOne data={homeData?.data?.recommended_products} categories={homeData?.data?.categories}  />
+      <HotDealsOne section={bannerMap?.Deals}  data={homeData?.data?.recommended_products} />
       <PopularProductsOne categories={homeData?.data?.categories} section={bannerMap?.PopularProducts} />
       <Trending data={homeData?.data?.recommended_products} />
       <DealsOne section={bannerMap?.Deals}  data={homeData?.data?.recommended_products} />
       <PromotionalThree section={bannerMap?.PromotionalTwo} />
       <OfferOne section={bannerMap?.Offer} />
-      <HotDealsOne section={bannerMap?.Deals}  data={homeData?.data?.recommended_products} />
-      <TopVendorsOne data={homeData?.data?.stores}/>
+      
+     
       <BestSellsOne section={bannerMap?.Deals} data={homeData?.data?.recommended_products} />
       <OrganicOne section={bannerMap?.Deals}  data={homeData?.data?.recommended_products} />
       {/* <ShortProductOne /> */}

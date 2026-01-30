@@ -4,17 +4,17 @@ export const headerConfig = {
     alt: "Logo",
   },
   topLinks: [
+    { text: "About Us", href: "/about-us" },
     { text: "Become A Seller", href: "/become-seller" },
-    { text: "About us", href: "#" },
-    { text: "Free Delivery", href: "#" },
-    { text: "Returns Policy", href: "#" },
+    { text: "Return Policy", href: "/return-policy" },
+    { text: "Contact Us", href: "/contact" },
   ],
   helpCenter: [
-    { icon: "ph ph-headset", text: "Call Center", href: "#" },
-    { icon: "ph ph-chat-circle-dots", text: "Live Chat", href: "#" },
+    { icon: "ph ph-headset", text: "Call Center", href: "/contact" },
+    { icon: "ph ph-chat-circle-dots", text: "Live Chat", href: "/contact" },
   ],
   contact: {
-    phone: "01- 234 567 890",
+    phone: "01713332003",
     icon: "ph ph-phone-call",
   },
 };

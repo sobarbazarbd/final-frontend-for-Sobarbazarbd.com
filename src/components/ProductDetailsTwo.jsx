@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext"; // add this import
 import toast from "react-hot-toast"; // <-- add this import
+import ProductCompare from "./ProductCompare";
 const Slider = dynamic(() => import("react-slick"), { ssr: false });
 
 const API_BASE_URL =
@@ -973,6 +974,10 @@ const ProductDetailsTwo = ({ product, discountText }) => {
             </div>
           </div>
         </div>
+        <ProductCompare
+          currentProduct={product}
+          relatedProducts={product?.related_products}
+        />
         <div className="pt-12">
           <h6 className="mb-32">Related Products</h6>
           <div className="row g-4">

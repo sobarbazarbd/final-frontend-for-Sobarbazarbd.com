@@ -18,4 +18,8 @@ export const navigation = [
     title: "Contact Us",
     path: "/contact",
   },
+  {
+    title: "Sobar Bazar BD",
+    path: "/shop?store=5",
+  }
 ];
