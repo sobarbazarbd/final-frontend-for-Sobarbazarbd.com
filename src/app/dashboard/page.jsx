@@ -311,7 +311,7 @@ const DashboardTab = () => {
         const token = localStorage.getItem("access_token");
         const headers = { Authorization: `JWT ${token}`, "Content-Type": "application/json" };
 
-        const ordersRes = await fetch(`${API_BASE_URL}/customers/orders/`, { headers });
+        const ordersRes = await fetch(`${API_BASE_URL}/api/v1.0/customers/orders/`, { headers });
         const ordersData = await ordersRes.json();
         const orders = Array.isArray(ordersData) ? ordersData : (ordersData.results || ordersData.data || []);
 
@@ -611,7 +611,7 @@ const OrdersTab = () => {
       setLoadingOrders(true);
       try {
         const token = localStorage.getItem("access_token");
-        const res = await fetch(`${API_BASE_URL}/customers/orders/`, {
+        const res = await fetch(`${API_BASE_URL}/api/v1.0/customers/orders/`, {
           headers: { Authorization: `JWT ${token}`, "Content-Type": "application/json" },
         });
         const data = await res.json();

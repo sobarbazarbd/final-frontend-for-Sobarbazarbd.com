@@ -185,6 +185,9 @@ const Checkout = () => {
         }
       } else {
         toast.error(result.error || "Checkout failed. Please try again.");
+        setTimeout(() => {
+          router.push("/order-failed");
+        }, 1500);
       }
     } catch (error) {
       console.error("Checkout error:", error);
@@ -196,7 +199,6 @@ const Checkout = () => {
 
   useEffect(() => {
     if (!loading && cartItems.length === 0) {
-      toast.error("Your cart is empty");
       router.push("/cart");
     }
   }, [cartItems, loading, router]);
