@@ -59,19 +59,23 @@ export const CartProvider = ({ children }) => {
         `${API_BASE_URL}/api/v1.0/customers/carts/${currentCartId}/items/`
       );
 
+      const result = await response.json();
+
       if (!response.ok) {
-        if (response.status === 404) {
-          // Cart not found, create a new one
+        // Check for invalid cart ID errors
+        const action = result.details?.action;
+
+        if (response.status === 404 || response.status === 400 || action === 'create_new_cart') {
+          // Cart not found, invalid, or malformed UUID - clear it
+          console.log("Cart not found/invalid/malformed, clearing cart ID");
           localStorage.removeItem("cart_id");
           setCartId(null);
           setCartItems([]);
           return;
         }
-        throw new Error("Failed to fetch cart items");
+        throw new Error(result.message || "Failed to fetch cart items");
       }
 
-      const result = await response.json();
-      
       if (result.success && Array.isArray(result.data)) {
         setCartItems(result.data);
       } else if (Array.isArray(result.data)) {
@@ -91,7 +95,7 @@ export const CartProvider = ({ children }) => {
   };
 
   // Add item to cart (or update quantity)
-  const addToCart = async (variantId, quantity = 1) => {
+  const addToCart = async (variantId, quantity = 1, retryCount = 0) => {
     setLoading(true);
     setError(null);
 
@@ -122,8 +126,38 @@ export const CartProvider = ({ children }) => {
 
       const result = await response.json();
 
+      // Handle invalid cart ID error
       if (!response.ok) {
-        throw new Error(result.message || result.error || "Failed to add item to cart");
+        // Check if it's an invalid cart ID error
+        const errorMessage = result.message || result.details?.[0] || result.details?.error || result.error || "";
+        const action = result.details?.action;
+
+        // Check for invalid cart ID (malformed UUID or non-existent cart)
+        if ((errorMessage.includes("Invalid cart ID") ||
+             errorMessage.includes("Invalid cart") ||
+             action === 'create_new_cart') && retryCount < 1) {
+          console.log("Invalid cart ID detected (malformed or non-existent), creating new cart and retrying...");
+
+          // Clear old cart ID
+          localStorage.removeItem("cart_id");
+          setCartId(null);
+
+          // Create new cart and retry once
+          const newCartId = await createCart();
+          if (newCartId) {
+            setLoading(false);
+            return addToCart(variantId, quantity, retryCount + 1);
+          }
+        }
+
+        throw new Error(errorMessage || "Failed to add item to cart");
+      }
+
+      // Check if backend created a new cart (auto-recovery)
+      if (result.new_cart_id) {
+        console.log("Backend created new cart:", result.new_cart_id);
+        setCartId(result.new_cart_id);
+        localStorage.setItem("cart_id", result.new_cart_id);
       }
 
       if (result.success && Array.isArray(result.data)) {
@@ -164,6 +198,14 @@ export const CartProvider = ({ children }) => {
       );
 
       if (!response.ok) {
+        // Handle invalid cart
+        if (response.status === 404 || response.status === 400) {
+          console.log("Cart invalid during update, clearing cart");
+          localStorage.removeItem("cart_id");
+          setCartId(null);
+          setCartItems([]);
+          return;
+        }
         throw new Error("Failed to update quantity");
       }
 
@@ -192,6 +234,14 @@ export const CartProvider = ({ children }) => {
       );
 
       if (!response.ok) {
+        // Handle invalid cart
+        if (response.status === 404 || response.status === 400) {
+          console.log("Cart invalid during remove, clearing cart");
+          localStorage.removeItem("cart_id");
+          setCartId(null);
+          setCartItems([]);
+          return;
+        }
         throw new Error("Failed to remove item");
       }
 
