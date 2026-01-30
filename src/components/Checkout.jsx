@@ -197,11 +197,11 @@ const Checkout = () => {
     }
   };
 
-  useEffect(() => {
-    if (!loading && cartItems.length === 0) {
-      router.push("/cart");
-    }
-  }, [cartItems, loading, router]);
+  // useEffect(() => {
+  //   if (!loading && cartItems.length === 0) {
+  //     router.push("/cart");
+  //   }
+  // }, [cartItems, loading, router]);
 
   if (loading || cartItems.length === 0) {
     return (
