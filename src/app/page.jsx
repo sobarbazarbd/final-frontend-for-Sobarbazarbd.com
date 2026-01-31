@@ -1,4 +1,4 @@
-import HeroBanner from "@/components/BannerOne";
+import HeroSection2 from "@/components/HeroSection2";
 import BestSellsOne from "@/components/BestSellsOne";
 import BrandOne from "@/components/BrandOne";
 import DealsOne from "@/components/DealsOne";
@@ -58,8 +58,8 @@ const Page = async () => {
     <>
       <ScrollToTopInit color="#299E60" />
       <ColorInit color={false} />
-      <HeroBanner section={bannerMap?.HeroBanner} />
-      
+      <HeroSection2 section={bannerMap?.HeroBanner} />
+
       <FeatureOne data={homeData?.data?.subcategories || []} />
        <TopVendorsOne data={homeData?.data?.stores}/>
       {/* <MegaDealsBanner section={bannerMap?.Deals} /> */}
