@@ -11,9 +11,10 @@ import { headerConfig } from "./data/headerConfig";
 import { navigation } from "./data/navigation";
 import { locationOptions } from "./data/selectOptions";
 import TextSlider from "../TextSlider";
+import CartSidebar from "../CartSidebar";
 
 const HeaderOne = () => {
-  const { cartCount } = useCart();
+  const { cartCount, openSidebar } = useCart();
   const { user, logout } = useAuth();
   let pathname = usePathname();
   const router = useRouter();
@@ -410,7 +411,7 @@ const HeaderOne = () => {
                     Wishlist
                   </span>
                 </Link>
-                <Link href='/cart' className='flex-align gap-4 item-hover'>
+                <button type='button' onClick={openSidebar} className='flex-align gap-4 item-hover' style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
                   <span className='text-2xl text-gray-700 d-flex position-relative me-6 mt-6 item-hover__text'>
                     <i className='ph ph-shopping-cart-simple' />
                     {cartCount > 0 && (
@@ -422,7 +423,7 @@ const HeaderOne = () => {
                   <span className='text-md text-gray-500 item-hover__text d-none d-lg-flex'>
                     Cart
                   </span>
-                </Link>
+                </button>
               </div>
             </div>
             {/* Header Middle Right End  */}
@@ -620,7 +621,7 @@ const HeaderOne = () => {
                       Wishlist
                     </span>
                   </Link>
-                  <Link href='/cart' className='flex-align gap-4 item-hover'>
+                  <button type='button' onClick={openSidebar} className='flex-align gap-4 item-hover' style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
                     <span className='text-2xl text-gray-700 d-flex position-relative me-6 mt-6 item-hover__text'>
                       <i className='ph ph-shopping-cart-simple' />
                       {cartCount > 0 && (
@@ -632,7 +633,7 @@ const HeaderOne = () => {
                     <span className='text-md text-gray-500 item-hover__text d-none d-lg-flex'>
                       Cart
                     </span>
-                  </Link>
+                  </button>
                 </div>
               </div>
               <button
@@ -661,7 +662,7 @@ const HeaderOne = () => {
             <i className="ph ph-storefront fs-4 d-block"></i>
             <small className="d-block">Shop</small>
           </Link>
-          <Link href="/cart" className="flex-fill text-decoration-none text-dark py-2 position-relative">
+          <button type="button" onClick={openSidebar} className="flex-fill text-decoration-none text-dark py-2 position-relative" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
             <i className="ph ph-shopping-cart-simple fs-4 d-block"></i>
             <small className="d-block">Cart</small>
             {cartCount > 0 && (
@@ -669,7 +670,7 @@ const HeaderOne = () => {
                 {cartCount}
               </span>
             )}
-          </Link>
+          </button>
           <Link href="/wishlist" className="flex-fill text-decoration-none text-dark py-2 position-relative">
             <i className="ph ph-heart fs-4 d-block"></i>
             <small className="d-block">Wishlist</small>
@@ -683,6 +684,9 @@ const HeaderOne = () => {
       {/* Spacer so page content isn't hidden behind fixed bottom nav on mobile */}
       <div className="d-lg-none" style={{ height: '64px' }} />
       {/* ==================== Mobile Bottom Navbar End ==================== */}
+
+      {/* ==================== Cart Sidebar ==================== */}
+      <CartSidebar />
     </>
   );
 };

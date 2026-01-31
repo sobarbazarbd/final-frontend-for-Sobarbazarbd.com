@@ -10,6 +10,11 @@ export const CartProvider = ({ children }) => {
   const [cartId, setCartId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const openSidebar = () => setIsSidebarOpen(true);
+  const closeSidebar = () => setIsSidebarOpen(false);
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
   // Initialize cart ID from localStorage
   useEffect(() => {
@@ -366,7 +371,11 @@ export const CartProvider = ({ children }) => {
         clearCart,
         refreshCart,
         fetchCartItems,
-        checkout, // Add checkout function
+        checkout,
+        isSidebarOpen,
+        openSidebar,
+        closeSidebar,
+        toggleSidebar,
       }}
     >
       {children}
