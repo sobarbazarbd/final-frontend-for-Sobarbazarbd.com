@@ -23,7 +23,7 @@
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     background: #f5f5f5;
-    height: 650px;
+    height: 550px;
 
     // Make slick fill the container height
     .slick-slider,
@@ -60,26 +60,26 @@
 
   // Custom arrows
   &__arrow {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--main-600);
     border: none;
     display: flex !important;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
-    color: #333;
+    font-size: 20px;
+    color: #fff;
     cursor: pointer;
     z-index: 2;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-    opacity: 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    opacity: 1;
 
     &:hover {
-      background: var(--main-600);
-      color: #fff;
-      transform: scale(1.08);
+      background: var(--main-700);
+      transform: scale(1.1);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
     }
 
     &::before {
@@ -95,46 +95,48 @@
     }
   }
 
-  // Show arrows on hover
-  &__slider-inner:hover &__arrow,
-  &__slider-inner:hover .hero2__arrow {
-    opacity: 1;
-  }
-
   // Dots
   &__dots {
-    position: absolute;
-    bottom: 14px;
-    left: 50%;
+    position: absolute !important;
+    bottom: 16px !important;
+    left: 50% !important;
     transform: translateX(-50%);
     display: flex !important;
-    gap: 6px;
-    padding: 0;
-    margin: 0;
+    gap: 8px;
+    padding: 6px 14px !important;
+    margin: 0 !important;
     list-style: none;
     z-index: 2;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
 
     li {
-      margin: 0;
+      margin: 0 !important;
       padding: 0;
       line-height: 0;
+      width: auto !important;
+      height: auto !important;
 
       button {
-        width: 10px;
-        height: 10px;
+        width: 10px !important;
+        height: 10px !important;
         border-radius: 50%;
         border: none;
         padding: 0;
-        background: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.6) !important;
         font-size: 0;
         cursor: pointer;
         transition: background 0.25s ease, width 0.25s ease, border-radius 0.25s ease;
+
+        &::before {
+          display: none !important; // remove slick default dot text
+        }
       }
 
       &.slick-active button {
-        width: 26px;
+        width: 28px !important;
         border-radius: 5px;
-        background: var(--main-600);
+        background: var(--main-600) !important;
       }
     }
   }
