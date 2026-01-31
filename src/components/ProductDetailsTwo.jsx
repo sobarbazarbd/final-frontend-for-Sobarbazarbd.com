@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ProductCard } from "./ProductTabSection";
 import dynamic from "next/dynamic";
 import { useCart } from "@/context/CartContext";
@@ -78,10 +79,12 @@ const ProductDetailsTwo = ({ product, discountText }) => {
     focusOnSelect: true,
   };
 
+  const router = useRouter();
   const { addToCart, loading: cartLoading } = useCart();
   const { user } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const [addingToCart, setAddingToCart] = useState(false);
+  const [buyingNow, setBuyingNow] = useState(false);
 
   // Reviews state
   const [reviews, setReviews] = useState([]);
@@ -237,6 +240,30 @@ const ProductDetailsTwo = ({ product, discountText }) => {
       setQuantity(1);
     } else {
       toast.error(result.error || "Failed to add item to cart"); // changed from alert
+    }
+  };
+
+  const handleBuyNow = async () => {
+    if (!selectedVariant) {
+      toast.error("Please select a variant");
+      return;
+    }
+
+    if (quantity > selectedVariant.available_stock) {
+      toast.error(
+        `Only ${selectedVariant.available_stock} items available in stock`
+      );
+      return;
+    }
+
+    setBuyingNow(true);
+    const result = await addToCart(selectedVariant.id, quantity);
+
+    if (result.success) {
+      router.push("/checkout");
+    } else {
+      toast.error(result.error || "Failed to add item to cart");
+      setBuyingNow(false);
     }
   };
 
@@ -628,6 +655,37 @@ const ProductDetailsTwo = ({ product, discountText }) => {
                   <>
                     <i className="ph ph-shopping-cart-simple text-lg" />
                     Add To Cart
+                  </>
+                )}
+              </button>
+              {/* Buy Now button */}
+              <button
+                onClick={handleBuyNow}
+                disabled={
+                  buyingNow ||
+                  cartLoading ||
+                  !selectedVariant ||
+                  selectedVariant.available_stock === 0
+                }
+                className="btn btn-main-600 flex-center gap-8 rounded-8 py-16 fw-normal mt-12 w-100"
+                style={{
+                  background: "var(--main-700)",
+                  border: "none",
+                  color: "#fff",
+                }}
+              >
+                {buyingNow ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm"
+                      role="status"
+                    ></span>
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <i className="ph ph-lightning text-lg" />
+                    Buy Now
                   </>
                 )}
               </button>
